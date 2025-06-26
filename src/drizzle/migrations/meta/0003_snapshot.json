@@ -1,6 +1,6 @@
 {
-  "id": "8987bfc3-de44-408c-aff5-aef44c5825bf",
-  "prevId": "e5fbf171-8ae5-4121-8fd4-24937feebf52",
+  "id": "7c56310a-d1b8-4387-adc5-ad404341f99d",
+  "prevId": "8987bfc3-de44-408c-aff5-aef44c5825bf",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -130,12 +130,6 @@
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": true
-        },
-        "test": {
-          "name": "test",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
         }
       },
       "indexes": {},

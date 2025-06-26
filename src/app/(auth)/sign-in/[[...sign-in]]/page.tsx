@@ -10,10 +10,7 @@ export default function Page() {
         justifyContent: "center",
       }}
     >
-      <SignIn
-        afterSignInUrl="/"
-        signUpUrl="/sign-up"
-      />
+      <SignIn afterSignInUrl="/" signUpUrl="/sign-up" />
     </div>
   );
 }

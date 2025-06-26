@@ -90,12 +90,8 @@
           "name": "tasks_deadline_id_deadlines_id_fk",
           "tableFrom": "tasks",
           "tableTo": "deadlines",
-          "columnsFrom": [
-            "deadline_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["deadline_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }

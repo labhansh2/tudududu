@@ -2,9 +2,10 @@
 
 minimalist to do app for habit tracking.
 
-
 - [x] db
-- [ ] deadline page
-- [ ] fix date mismatch
-- [ ] tasks page
+- [x] deadline page
+- [x] fix date mismatch
+- [x] tasks page
+- [ ] start/end session
+- [ ] store hrs
 - [ ] activity page

@@ -1,23 +1,28 @@
 import { auth } from "@clerk/nextjs/server";
-import { SignOutButton } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 import { eq } from "drizzle-orm";
 
 import { db } from "@/drizzle";
-import { deadlines } from "@/drizzle/schema";
+import { tasks } from "@/drizzle/schema";
+import TaskList from "@/components/TaskList";
 
 export default async function Home() {
   const { userId } = await auth();
-  const deadline = await db.select().from(deadlines).where(eq(deadlines.userId, userId!));
 
-  if (deadline.length === 0) {
-    redirect("/deadline");
+  if (!userId) {
+    redirect("/sign-in");
   }
 
+  // Get user's tasks
+  const userTasks = await db
+    .select()
+    .from(tasks)
+    .where(eq(tasks.userId, userId))
+    .orderBy(tasks.updatedAt);
+
   return (
-    <>
-      <div>Main Page</div>
-      <SignOutButton />
-    </>
+    <div className="pb-8">
+      <TaskList initialTasks={userTasks} />
+    </div>
   );
 }

@@ -1,16 +1,22 @@
-import Link from "next/link";
+import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
+import Header from "@/components/Header";
 
-export default function MainLayout({
+export default async function MainLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const { userId } = await auth();
+
+  if (!userId) {
+    redirect("/sign-in");
+  }
+
   return (
-    <div>
-      <div>Header</div>
-      <Link href="/activity">Activity</Link>
-      <Link href="/deadline">Change Deadline</Link>
-      {children}
+    <div className="min-h-screen bg-[var(--background)]">
+      <Header userId={userId} />
+      <main>{children}</main>
     </div>
   );
 }

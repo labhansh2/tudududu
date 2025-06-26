@@ -70,12 +70,8 @@
           "name": "sessions_task_id_tasks_id_fk",
           "tableFrom": "sessions",
           "tableTo": "tasks",
-          "columnsFrom": [
-            "task_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["task_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -180,11 +176,7 @@
     "public.task_status": {
       "name": "task_status",
       "schema": "public",
-      "values": [
-        "active",
-        "not_active",
-        "completed"
-      ]
+      "values": ["active", "not_active", "completed"]
     }
   },
   "schemas": {},
