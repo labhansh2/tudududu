@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1750926405919,
+      "tag": "0000_magenta_the_hand",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1750927447802,
+      "tag": "0001_unique_tony_stark",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1750936122537,
+      "tag": "0002_tearful_manta",
+      "breakpoints": true
+    }
+  ]
+}

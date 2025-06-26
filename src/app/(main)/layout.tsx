@@ -8,7 +8,8 @@ export default function MainLayout({
   return (
     <div>
       <div>Header</div>
-      <Link href="/stats">Stats</Link> 
+      <Link href="/activity">Activity</Link>
+      <Link href="/deadline">Change Deadline</Link>
       {children}
     </div>
   );
