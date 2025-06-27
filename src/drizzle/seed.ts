@@ -6,7 +6,6 @@ export const seed = async () => {
     userId: "1",
     name: "Test Task",
     status: "active",
-    test: "test",
   });
 };
 

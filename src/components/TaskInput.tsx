@@ -1,12 +1,14 @@
 "use client";
 import { useState } from "react";
 
+import { addTask } from "@/actions";
+
 interface TaskInputProps {
   onSearch: (query: string) => void;
-  onAddTask: (taskName: string) => Promise<void>;
+  // onAddTask: (taskName: string) => Promise<void>;
 }
 
-export default function TaskInput({ onSearch, onAddTask }: TaskInputProps) {
+export default function TaskInput({ onSearch }: TaskInputProps) {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -21,7 +23,8 @@ export default function TaskInput({ onSearch, onAddTask }: TaskInputProps) {
 
     setIsLoading(true);
     try {
-      await onAddTask(input.trim());
+      // await onAddTask(input.trim());
+      await addTask(input.trim());
       setInput("");
       onSearch(""); // Clear search after adding
     } catch (error) {
@@ -44,7 +47,7 @@ export default function TaskInput({ onSearch, onAddTask }: TaskInputProps) {
           type="text"
           value={input}
           onChange={handleInputChange}
-          onKeyPress={handleKeyPress}
+          onKeyUp={handleKeyPress}
           placeholder="Add a task or search..."
           className="w-full px-4 py-3 bg-[var(--card-bg)] border border-[var(--border)] rounded-lg focus:outline-none focus:border-[var(--accent)] transition-colors text-[var(--foreground)] placeholder-[var(--secondary)]"
           disabled={isLoading}

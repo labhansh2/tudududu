@@ -1,34 +1,26 @@
 "use client";
 import { useState } from "react";
 
-interface Task {
-  id: number;
-  name: string;
-  status: "active" | "not_active" | "completed";
-  updatedAt: Date;
-}
+import { Task } from "@/types";
+import {
+  completeTask,
+  editTask,
+  deleteTask,
+} from "@/actions";
 
 interface TaskTileProps {
   task: Task;
   isActiveTask: boolean;
-  onToggleWorking: (taskId: number) => Promise<void>;
-  onComplete: (taskId: number) => Promise<void>;
-  onEdit: (taskId: number, newName: string) => Promise<void>;
-  onDelete: (taskId: number) => Promise<void>;
+  onToggleWorkingStatus: (taskId: number) => void;
 }
 
-export default function TaskTile({
-  task,
-  isActiveTask,
-  onToggleWorking,
-  onComplete,
-  onEdit,
-  onDelete,
-}: TaskTileProps) {
+export default function TaskTile({ task, isActiveTask, onToggleWorkingStatus }: TaskTileProps) {
   const [showMenu, setShowMenu] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editName, setEditName] = useState(task.name);
   const [isLoading, setIsLoading] = useState(false);
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  // const isActiveTask = activeTask?.id === task.id;
 
   const handleEdit = async () => {
     if (!editName.trim() || editName === task.name) {
@@ -39,7 +31,7 @@ export default function TaskTile({
 
     setIsLoading(true);
     try {
-      await onEdit(task.id, editName.trim());
+      await editTask(task.id, editName.trim());
       setIsEditing(false);
     } catch (error) {
       console.error("Failed to edit task:", error);
@@ -73,7 +65,7 @@ export default function TaskTile({
       <div className="flex items-center gap-3">
         {/* Working status checkbox */}
         <button
-          onClick={() => onToggleWorking(task.id)}
+          onClick={() => onToggleWorkingStatus(task.id)}
           disabled={task.status === "completed" || isLoading}
           className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all ${
             isActiveTask
@@ -104,7 +96,7 @@ export default function TaskTile({
               value={editName}
               onChange={(e) => setEditName(e.target.value)}
               onBlur={handleEdit}
-              onKeyPress={handleKeyPress}
+              onKeyUp={handleKeyPress}
               className="w-full bg-transparent border-none outline-none text-[var(--foreground)] font-medium"
               autoFocus
               disabled={isLoading}
@@ -124,7 +116,7 @@ export default function TaskTile({
 
         {/* Complete button */}
         <button
-          onClick={() => onComplete(task.id)}
+          onClick={() => completeTask(task, timezone)}
           disabled={task.status === "completed" || isLoading}
           className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
             task.status === "completed"
@@ -148,25 +140,25 @@ export default function TaskTile({
         </button>
 
         {/* Options menu */}
-        {task.status !== "completed" && (
-          <div className="relative">
-            <button
-              onClick={() => setShowMenu(!showMenu)}
-              className="w-5 h-5 flex items-center justify-center text-[var(--secondary)] hover:text-[var(--foreground)] transition-colors"
-              disabled={isLoading}
-            >
-              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
-              </svg>
-            </button>
+        <div className="relative">
+          <button
+            onClick={() => setShowMenu(!showMenu)}
+            className="w-5 h-5 flex items-center justify-center text-[var(--secondary)] hover:text-[var(--foreground)] transition-colors"
+            disabled={isLoading}
+          >
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
+            </svg>
+          </button>
 
-            {showMenu && (
-              <>
-                <div
-                  className="fixed inset-0 z-10"
-                  onClick={() => setShowMenu(false)}
-                />
-                <div className="absolute right-0 top-6 z-20 bg-[var(--card-bg)] border border-[var(--border)] rounded-lg shadow-lg py-1 min-w-[100px]">
+          {showMenu && (
+            <>
+              <div
+                className="fixed inset-0 z-10"
+                onClick={() => setShowMenu(false)}
+              />
+              <div className="absolute right-0 top-6 z-20 bg-[var(--card-bg)] border border-[var(--border)] rounded-lg shadow-lg py-1 min-w-[100px]">
+                {task.status !== "completed" && (
                   <button
                     onClick={() => {
                       setIsEditing(true);
@@ -176,20 +168,20 @@ export default function TaskTile({
                   >
                     Edit
                   </button>
-                  <button
-                    onClick={() => {
-                      onDelete(task.id);
-                      setShowMenu(false);
-                    }}
-                    className="w-full px-3 py-1.5 text-left text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors"
-                  >
-                    Delete
-                  </button>
-                </div>
-              </>
-            )}
-          </div>
-        )}
+                )}
+                <button
+                  onClick={() => {
+                    deleteTask(task, timezone);
+                    setShowMenu(false);
+                  }}
+                  className="w-full px-3 py-1.5 text-left text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors"
+                >
+                  Delete
+                </button>
+              </div>
+            </>
+          )}
+        </div>
       </div>
     </div>
   );

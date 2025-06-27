@@ -37,9 +37,9 @@ export const sessions = pgTable("sessions", {
   endedAt: timestamp("ended_at"),
 });
 
-export const workHours = pgTable("work_hours", {
+export const workTime = pgTable("work_time", {
   id: serial("id").primaryKey(),
   userId: text("user_id").notNull(),
   date: timestamp("date").notNull(),
-  totalHours: integer("total_hours").notNull(),
+  total_seconds: integer("total_seconds").notNull(),
 });
