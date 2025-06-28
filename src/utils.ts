@@ -39,19 +39,23 @@ function getLevel(totalSeconds: number) {
 
 // Generate dates for the selected period
 function generateDates(startDate: Date, endDate: Date): string[] {
-    const dates: string[] = [];
-    const currentDate = new Date(startDate);
+  const dates: string[] = [];
+  const currentDate = new Date(startDate);
 
-    while (currentDate <= endDate) {
-      dates.push(currentDate.toISOString().split("T")[0]);
-      currentDate.setDate(currentDate.getDate() + 1);
-    }
-
-    return dates;
+  while (currentDate <= endDate) {
+    dates.push(currentDate.toISOString().split("T")[0]);
+    currentDate.setDate(currentDate.getDate() + 1);
   }
 
+  return dates;
+}
+
 // Convert database data to Activity format
-export function convertToActivityData(data: WorkTimeData[], startDate: Date, endDate: Date): Activity[] {
+export function convertToActivityData(
+  data: WorkTimeData[],
+  startDate: Date,
+  endDate: Date,
+): Activity[] {
   const dates = generateDates(startDate, endDate);
   const dataMap = new Map<string, number>();
 
@@ -71,7 +75,6 @@ export function convertToActivityData(data: WorkTimeData[], startDate: Date, end
     };
   });
 }
-
 
 /**
  * Splits the duration between two ISO timestamps across the days they span,
@@ -111,5 +114,3 @@ export function splitDurationByDay(
   }
   return secondsPerDay;
 }
-
-

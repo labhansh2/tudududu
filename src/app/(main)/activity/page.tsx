@@ -124,8 +124,6 @@ export default async function Activity({
             </div>
           </div>
         )}
-
-
       </div>
     </div>
   );
