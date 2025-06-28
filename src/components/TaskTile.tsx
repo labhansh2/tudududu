@@ -2,11 +2,7 @@
 import { useState } from "react";
 
 import { Task } from "@/types";
-import {
-  completeTask,
-  editTask,
-  deleteTask,
-} from "@/actions";
+import { completeTask, editTask, deleteTask } from "@/actions";
 
 interface TaskTileProps {
   task: Task;
@@ -14,7 +10,11 @@ interface TaskTileProps {
   onToggleWorkingStatus: (taskId: number) => void;
 }
 
-export default function TaskTile({ task, isActiveTask, onToggleWorkingStatus }: TaskTileProps) {
+export default function TaskTile({
+  task,
+  isActiveTask,
+  onToggleWorkingStatus,
+}: TaskTileProps) {
   const [showMenu, setShowMenu] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editName, setEditName] = useState(task.name);

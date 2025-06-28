@@ -5,6 +5,7 @@ import { db } from "@/drizzle";
 import { deadlines } from "@/drizzle/schema";
 import Countdown from "./Countdown";
 import { redirect } from "next/navigation";
+import Nav from "./Nav";
 
 interface HeaderProps {
   userId: string;
@@ -31,12 +32,7 @@ export default async function Header({ userId }: { userId: string }) {
 
           {/* Right side - Activity button and User profile */}
           <div className="flex items-center gap-3">
-            <Link
-              href="/activity"
-              className="px-3 py-1.5 text-sm font-medium text-[var(--secondary)] hover:text-[var(--foreground)] transition-colors"
-            >
-              Activity
-            </Link>
+            <Nav />
 
             <UserButton
               appearance={{

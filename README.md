@@ -8,7 +8,8 @@ minimalist to do app for habit tracking.
 - [x] tasks page
 - [x] start/end session
 - [x] store seconds
-- [ ] count seconds bug
-- [ ] activity page
+- [x] count seconds bug
+- [x] activity page
+- [ ] maybe there is a days mismatch on activity calendar look into that
 - [ ] try adding optimistic updates
 - [ ] try theme gen on this one

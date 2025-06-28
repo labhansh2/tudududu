@@ -21,6 +21,7 @@
     "luxon": "^3.6.1",
     "next": "15.3.4",
     "react": "^19.0.0",
+    "react-activity-calendar": "^2.7.12",
     "react-dom": "^19.0.0"
   },
   "devDependencies": {

@@ -6,3 +6,14 @@ export interface Task {
   createdAt: Date;
   userId: string;
 }
+
+export interface Activity {
+  date: string;
+  count: number;
+  level: number;
+}
+
+export interface WorkTimeData {
+  date: Date;
+  total_seconds: number;
+}

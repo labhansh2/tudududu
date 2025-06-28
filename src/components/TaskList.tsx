@@ -22,7 +22,6 @@ export default function TaskList({ initialTasks }: { initialTasks: Task[] }) {
   const activeTask = initialTasks.find((task) => task.status === "active");
   const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-
   const handleToggleWorkingStatus = async (taskId: number) => {
     await toggleWorkingStatus(taskId, activeTask, timezone);
   };
