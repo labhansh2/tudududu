@@ -26,9 +26,8 @@ export default async function Activity({
 
   // Get selected year from URL or default to current year
   const currentYear = new Date().getFullYear();
-  const selectedYear = searchParams.year
-    ? parseInt(searchParams.year)
-    : currentYear;
+  const params = await searchParams
+  const selectedYear = params.year ? parseInt(params.year) : currentYear
 
   // Get available years for year selection
   const availableYears = await db
@@ -76,11 +75,11 @@ export default async function Activity({
   const avgHoursPerDay = totalHours / totalDays;
 
   return (
-    <div className="max-w-2xl mx-auto px-4 sm:px-6 py-6">
+    <div className="mx-auto px-4 sm:px-6 py-6">
       <div className="space-y-4">
         {/* Activity Calendar */}
         <div className="border border-[var(--input-border)] rounded-[var(--border-radius)] shadow-sm p-4 bg-[var(--card-bg)] overflow-x-auto">
-          <div className="min-w-[600px] flex justify-center">
+          <div className="flex justify-center">
             <ActivityCalendar
               data={activityData}
               // showWeekdayLabels={['mon', 'wed', 'fri']}
@@ -90,8 +89,8 @@ export default async function Activity({
                 color: "var(--foreground)",
               }}
               blockSize={15}
-              blockMargin={3}
-              blockRadius={4}
+              blockMargin={2.9}
+              blockRadius={3}
               fontSize={12}
               hideTotalCount={true}
             />
@@ -102,9 +101,9 @@ export default async function Activity({
         {years.length > 1 && (
           <div className="mt-2 border border-[var(--input-border)] rounded-[var(--border-radius)] shadow-sm p-2.5 bg-[var(--card-bg)]">
             <div className="flex items-center justify-between">
-              {/* <span className="text-sm font-medium text-[var(--foreground)]" style={{ marginLeft: 8 }}>
+              <span className="text-sm font-medium text-[var(--foreground)]" style={{ marginLeft: 8 }}>
                 {totalHours}h in last {totalDays} days
-              </span> */}
+              </span>
               <div className="flex gap-1 ">
                 {years.map((year) => (
                   <Link
