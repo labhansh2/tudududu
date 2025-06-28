@@ -6,6 +6,7 @@ import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
 
 import { customTheme, convertToActivityData } from "@/utils";
+import ActivityCalendarContainer from "@/components/ActivityCalendarContainer";
 
 export default async function Activity({
   searchParams,
@@ -26,8 +27,8 @@ export default async function Activity({
 
   // Get selected year from URL or default to current year
   const currentYear = new Date().getFullYear();
-  const params = await searchParams
-  const selectedYear = params.year ? parseInt(params.year) : currentYear
+  const params = await searchParams;
+  const selectedYear = params.year ? parseInt(params.year) : currentYear;
 
   // Get available years for year selection
   const availableYears = await db
@@ -78,7 +79,7 @@ export default async function Activity({
     <div className="mx-auto px-4 sm:px-6 py-6">
       <div className="space-y-4">
         {/* Activity Calendar */}
-        <div className="border border-[var(--input-border)] rounded-[var(--border-radius)] shadow-sm p-4 bg-[var(--card-bg)] overflow-x-auto">
+        {/* <div className="border border-[var(--input-border)] rounded-[var(--border-radius)] shadow-sm p-4 bg-[var(--card-bg)] overflow-x-auto">
           <div className="flex justify-center">
             <ActivityCalendar
               data={activityData}
@@ -95,13 +96,21 @@ export default async function Activity({
               hideTotalCount={true}
             />
           </div>
-        </div>
+        </div> */}
+
+        <ActivityCalendarContainer
+          activityData={activityData}
+          customTheme={customTheme}
+        />
 
         {/* Year Selection */}
         {years.length > 1 && (
           <div className="mt-2 border border-[var(--input-border)] rounded-[var(--border-radius)] shadow-sm p-2.5 bg-[var(--card-bg)]">
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium text-[var(--foreground)]" style={{ marginLeft: 8 }}>
+              <span
+                className="text-sm font-medium text-[var(--foreground)]"
+                style={{ marginLeft: 8 }}
+              >
                 {totalHours}h in last {totalDays} days
               </span>
               <div className="flex gap-1 ">
