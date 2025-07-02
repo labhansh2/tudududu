@@ -36,7 +36,7 @@ export default function TotalTimeSpentToday({
     (activeSessionStartedAt
       ? Math.floor((currentTime - activeSessionStartedAt.getTime()) / 1000)
       : 0);
-      
+
   return (
     <div className="flex flex-col items-center justify-center text-sm sm:text-base py-1">
       <span className="font-semibold">

@@ -78,7 +78,6 @@ export default async function Activity({
   return (
     <div className="mx-auto px-4 sm:px-6 py-6">
       <div className="space-y-4">
-
         <ActivityCalendarContainer
           activityData={activityData}
           customTheme={customTheme}

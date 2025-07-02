@@ -8,6 +8,7 @@ import Nav from "./Nav";
 import { cookies } from "next/headers";
 import { DateTime } from "luxon";
 import TotalTimeSpentToday from "./TotalTimeSpentToday";
+import TimeZoneSetter from "./TimeZoneSetter";
 
 interface HeaderProps {
   userId: string;
@@ -27,6 +28,9 @@ export default async function Header({ userId }: { userId: string }) {
     redirect("/deadline");
   }
 
+  if (!timezone) {
+    return <TimeZoneSetter />;
+  }
   const today = DateTime.now().setZone(timezone).toISODate();
 
   const totalSecondsToday = await db
