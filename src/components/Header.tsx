@@ -23,7 +23,7 @@ export default async function Header({ userId }: { userId: string }) {
   const cookieStore = await cookies();
   const timezone = cookieStore.get("timezone")?.value;
 
-  if (userDeadlines.length === 0 || !timezone) {
+  if (userDeadlines.length === 0) {
     redirect("/deadline");
   }
 
