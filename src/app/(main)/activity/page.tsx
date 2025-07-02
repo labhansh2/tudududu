@@ -1,7 +1,7 @@
 import { ActivityCalendar } from "react-activity-calendar";
 import { db } from "@/drizzle";
 import { workTime } from "@/drizzle/schema";
-import { eq, gte, sql, and } from "drizzle-orm";
+import { eq, gte, sql, and, lte } from "drizzle-orm";
 import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
 
@@ -65,7 +65,7 @@ export default async function Activity({
       and(
         eq(workTime.userId, userId),
         gte(workTime.date, startDate),
-        sql`${workTime.date} <= ${endDate}`,
+        lte(workTime.date, endDate),
       ),
     );
 
@@ -78,25 +78,6 @@ export default async function Activity({
   return (
     <div className="mx-auto px-4 sm:px-6 py-6">
       <div className="space-y-4">
-        {/* Activity Calendar */}
-        {/* <div className="border border-[var(--input-border)] rounded-[var(--border-radius)] shadow-sm p-4 bg-[var(--card-bg)] overflow-x-auto">
-          <div className="flex justify-center">
-            <ActivityCalendar
-              data={activityData}
-              // showWeekdayLabels={['mon', 'wed', 'fri']}
-              maxLevel={7}
-              theme={customTheme}
-              style={{
-                color: "var(--foreground)",
-              }}
-              blockSize={15}
-              blockMargin={2.9}
-              blockRadius={3}
-              fontSize={12}
-              hideTotalCount={true}
-            />
-          </div>
-        </div> */}
 
         <ActivityCalendarContainer
           activityData={activityData}

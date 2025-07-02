@@ -2,11 +2,13 @@
 import { auth } from "@clerk/nextjs/server";
 import { eq, and, desc, isNull, gte, lt, asc, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { DateTime } from "luxon";
 
 import { db } from "@/drizzle";
 import { sessions, tasks, workTime } from "@/drizzle/schema";
 import { Task } from "./types";
 import { splitDurationByDay } from "./utils";
+import { cookies } from "next/headers";
 
 export async function addTask(name: string) {
   const { userId } = await auth();
@@ -68,17 +70,20 @@ export async function deleteTask(task: Task, timezone: string) {
   if (!userId) {
     throw new Error("User not authenticated");
   }
+  const cookieStore = await cookies();
+  const timezoneFromCookie = cookieStore.get("timezone")?.value;
 
+  const now = DateTime.now().setZone(timezoneFromCookie).toJSDate();
   try {
     if (task.status === "active") {
       await db
         .update(sessions)
         .set({
-          endedAt: new Date(),
+          endedAt: now,
         })
         .where(eq(sessions.taskId, task.id));
 
-      await updateWorkTime(task.id, new Date(), timezone);
+      await updateWorkTime(task.id, now, timezone);
     }
 
     await db.delete(sessions).where(eq(sessions.taskId, task.id));
@@ -100,8 +105,16 @@ export async function toggleWorkingStatus(
   activeTask: Task | undefined,
   timezone: string,
 ) {
+  const { userId } = await auth();
+
+  if (!userId) {
+    throw new Error("User not authenticated");
+  }
+
   try {
-    const now = new Date();
+    const cookieStore = await cookies();
+    const timezoneFromCookie = cookieStore.get("timezone")?.value;
+    const now = DateTime.now().setZone(timezoneFromCookie).toJSDate();
 
     if (activeTask && activeTask.id === taskId) {
       // deactivate task
@@ -149,6 +162,7 @@ export async function toggleWorkingStatus(
           .where(eq(tasks.id, taskId)),
         db.insert(sessions).values({
           taskId,
+          userId,
           startedAt: now,
         }),
         updateWorkTime(activeTask.id, now, timezone),
@@ -164,6 +178,7 @@ export async function toggleWorkingStatus(
           .where(eq(tasks.id, taskId)),
         db.insert(sessions).values({
           taskId,
+          userId,
           startedAt: now,
         }),
       ]);
@@ -186,15 +201,19 @@ export async function completeTask(task: Task, timezone: string) {
     throw new Error("User not authenticated");
   }
 
+  const cookieStore = await cookies();
+  const timezoneFromCookie = cookieStore.get("timezone")?.value;
+  const now = DateTime.now().setZone(timezoneFromCookie).toJSDate();
+
   try {
     if (task.status === "active") {
       await db
         .update(sessions)
         .set({
-          endedAt: new Date(),
+          endedAt: now,
         })
         .where(eq(sessions.taskId, task.id));
-      await updateWorkTime(task.id, new Date(), timezone);
+      await updateWorkTime(task.id, now, timezone);
     }
 
     await db

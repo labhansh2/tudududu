@@ -36,6 +36,27 @@
       "when": 1750983051841,
       "tag": "0004_fat_gorgon",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1751411313576,
+      "tag": "0005_abandoned_captain_stacy",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1751411743238,
+      "tag": "0006_seed-userids-sessions",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1751413394963,
+      "tag": "0007_fluffy_frog_thor",
+      "breakpoints": true
     }
   ]
 }

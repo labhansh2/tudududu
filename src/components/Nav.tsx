@@ -1,12 +1,17 @@
 "use client";
 
 import Link from "next/link";
+import { ActivityIcon, ListIcon } from "lucide-react";
 import { usePathname } from "next/navigation";
 
 export default function Nav() {
   const pathname = usePathname();
   const isActivity = pathname.startsWith("/activity");
-  const text = isActivity ? "Task List" : "Activity";
+  const text = isActivity ? (
+    <ListIcon className="w-4 h-4" />
+  ) : (
+    <ActivityIcon className="w-4 h-4" />
+  );
   return (
     <Link
       href={isActivity ? "/" : "/activity"}

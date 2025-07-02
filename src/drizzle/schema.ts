@@ -33,6 +33,7 @@ export const sessions = pgTable("sessions", {
   taskId: integer("task_id")
     .notNull()
     .references(() => tasks.id),
+  userId: text("user_id").notNull(),
   startedAt: timestamp("started_at").notNull(),
   endedAt: timestamp("ended_at"),
 });
