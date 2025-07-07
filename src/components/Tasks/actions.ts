@@ -101,6 +101,8 @@ export async function deleteTask(task: Task) {
 }
 
 // there is a bug here
+// when you toggle through a window that has stale state, it will create new session when it should not
+// ig instead of taking active task from the stale component snapshot, you should get it from the databse
 export async function toggleTaskStatus(
   taskId: number,
   activeTask: Task | undefined,

@@ -38,24 +38,19 @@ export default async function Activity({
   const totalHours = Math.round((totalSeconds / 3600) * 10) / 10;
 
   return (
-    <div className="mx-auto px-4 sm:px-6 py-6">
-      <div className="space-y-4">
-        <ActivityMap
-          activityData={activityData}
-          customTheme={customTheme}
-        />
+    <>
+      <ActivityMap activityData={activityData} customTheme={customTheme} />
 
-        {/* Year Selection */}
-        {years.length > 1 && (
-          <YearSelection
-            years={years}
-            selectedYear={selectedYear}
-            totalHours={totalHours}
-            totalDays={365}
-          />
-        )}
-      </div>
-    </div>
+      {/* Year Selection */}
+      {years.length > 1 && (
+        <YearSelection
+          years={years}
+          selectedYear={selectedYear}
+          totalHours={totalHours}
+          totalDays={365}
+        />
+      )}
+    </>
   );
 }
 

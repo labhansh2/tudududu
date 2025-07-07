@@ -46,7 +46,6 @@ export async function getActivityData(startDate: string, endDate: string) {
     )
     .orderBy(asc(workTime.date));
 
-
   // this is sorta sloppy but it works
   // clean this up later if you want
   const bounds = [

@@ -1,7 +1,5 @@
 # tudududu
 
-A minimilistic github style to do app.
-
 - [x] db
 - [x] deadline page
 - [x] fix date mismatch
@@ -20,5 +18,6 @@ A minimilistic github style to do app.
 - [x] sessions bug fix
 - [x] cross day session update work_time
 - [x] get overall date time right
+- [ ] db source of truth not state for toggle
 - [ ] try adding optimistic updates
 - [ ] try theme gen on this one
