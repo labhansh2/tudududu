@@ -1,6 +1,6 @@
 # tudududu
 
-minimalist to do app for habit tracking.
+A minimilistic github style to do app.
 
 - [x] db
 - [x] deadline page
@@ -11,7 +11,14 @@ minimalist to do app for habit tracking.
 - [x] count seconds bug
 - [x] activity page
 - [x] maybe there is a days mismatch on activity calendar look into that (no there's not)
-- [ ] cross day session update work_time
-- [ ] get overall date time right
+- [x] restructure
+  - [x] Header
+  - [x] Activity Map
+  - [x] Tasks
+  - [x] Deadline Form
+- [ ] timeline
+- [x] sessions bug fix
+- [x] cross day session update work_time
+- [x] get overall date time right
 - [ ] try adding optimistic updates
 - [ ] try theme gen on this one

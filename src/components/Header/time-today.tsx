@@ -1,13 +1,6 @@
 "use client";
-import { DateTime } from "luxon";
 import { useState, useEffect } from "react";
-
-function convertSecondsToTime(seconds: number) {
-  const hours = Math.floor(seconds / 3600);
-  const minutes = Math.floor((seconds % 3600) / 60);
-  const remainingSeconds = seconds % 60;
-  return `${hours}h ${minutes}m ${remainingSeconds}s`;
-}
+import { convertSecondsToTime } from "@/utils";
 
 export default function TotalTimeSpentToday({
   totalSeconds,
@@ -34,7 +27,10 @@ export default function TotalTimeSpentToday({
   const totalSecondsCalc =
     totalSeconds +
     (activeSessionStartedAt
-      ? Math.floor((currentTime - activeSessionStartedAt.getTime()) / 1000)
+      ? Math.floor(
+          (currentTime - new Date(activeSessionStartedAt).getTime()) /
+            1000,
+        )
       : 0);
 
   return (

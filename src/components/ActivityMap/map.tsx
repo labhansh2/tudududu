@@ -3,17 +3,17 @@
 import { useEffect, useRef } from "react";
 import { ActivityCalendar } from "react-activity-calendar";
 
-interface ActivityCalendarContainerProps {
+interface ActivityMapProps {
   activityData: any[];
   customTheme: any;
   autoScrollToRecent?: boolean;
 }
 
-export default function ActivityCalendarContainer({
+export default function ActivityMap({
   activityData,
   customTheme,
   autoScrollToRecent = true,
-}: ActivityCalendarContainerProps) {
+}: ActivityMapProps) {
   const calendarRef = useRef<HTMLDivElement>(null);
 
   const scrollToRecent = () => {

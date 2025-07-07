@@ -4,9 +4,9 @@ import { eq } from "drizzle-orm";
 
 import { db } from "@/drizzle";
 import { tasks } from "@/drizzle/schema";
-import TaskList from "@/components/TaskList";
+import TaskList from "@/components/Tasks";
 
-export default async function Home() {
+export default async function Page() {
   const { userId } = await auth();
 
   if (!userId) {

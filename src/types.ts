@@ -7,6 +7,14 @@ export interface Task {
   userId: string;
 }
 
+export interface Session {
+  sessionId: number;
+  userId: string;
+  taskId: number;
+  startedAt: Date;
+  endedAt: Date;
+}
+
 export interface Activity {
   date: string;
   count: number;

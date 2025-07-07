@@ -23,7 +23,11 @@ async function seedActivity() {
       ).getDate();
 
       for (let day = 1; day <= daysInMonth; day++) {
-        const date = new Date(currentDate.getFullYear() - year, month, day);
+        const date = new Date(
+          currentDate.getFullYear() - year,
+          month,
+          day,
+        );
 
         // Skip future dates
         if (date > currentDate) continue;
@@ -43,7 +47,7 @@ async function seedActivity() {
 
           activityData.push({
             userId,
-            date,
+            date: date.toISOString().split('T')[0], // Convert Date to "YYYY-MM-DD" string
             total_seconds: totalSeconds,
           });
         }
