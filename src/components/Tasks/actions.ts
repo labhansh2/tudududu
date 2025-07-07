@@ -327,6 +327,10 @@ export async function addClosedSessionTime(closedActiveSession: Session) {
     total_seconds: seconds,
   }));
 
+  if (records.length === 0) {
+    return;
+  }
+
   await db
     .insert(workTime)
     .values(records)
