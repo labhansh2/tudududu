@@ -1,1 +1,1 @@
-ALTER TABLE "tasks" DROP COLUMN "test";
+-- ALTER TABLE "tasks" DROP COLUMN "test";

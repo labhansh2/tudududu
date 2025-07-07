@@ -3,7 +3,6 @@ import { eq } from "drizzle-orm";
 
 import { db } from "@/drizzle";
 import { deadlines } from "@/drizzle/schema";
-import { submitDeadline } from "./_submit";
 
 import DeadlineForm from "@/components/DeadlineForm";
 
@@ -16,15 +15,12 @@ export default async function Page() {
 
   const defaultValue =
     deadline.length > 0 && deadline[0].deadline
-      ? new Date(deadline[0].deadline).toISOString().slice(0, 16)
-      : new Date().toISOString().slice(0, 16);
+      ? new Date(deadline[0].deadline)
+      : new Date();
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-neutral-900">
-      <DeadlineForm
-        defaultValue={defaultValue}
-        submitDeadline={submitDeadline}
-      />
+      <DeadlineForm defaultValue={defaultValue} />
     </div>
   );
 }

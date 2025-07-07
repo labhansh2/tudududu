@@ -8,6 +8,7 @@ export default function TimezoneSetter() {
 
   useEffect(() => {
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    console.log(timezone);
     const existing = document.cookie
       .split("; ")
       .find((row) => row.startsWith("timezone="));

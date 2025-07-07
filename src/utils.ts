@@ -1,5 +1,3 @@
-import { DateTime } from "luxon";
-
 import { Activity, WorkTimeData } from "@/types";
 
 // Custom theme for activity calendar
@@ -26,7 +24,7 @@ export const customTheme = {
   ],
 };
 
-function getLevel(totalSeconds: number) {
+export function getLevel(totalSeconds: number) {
   if (totalSeconds >= 46800) return 7; // 13+ hours
   if (totalSeconds >= 39600) return 6; // 11+ hours
   if (totalSeconds >= 32400) return 5; // 9+ hour
@@ -37,80 +35,42 @@ function getLevel(totalSeconds: number) {
   return 0;
 }
 
-// Generate dates for the selected period
-function generateDates(startDate: Date, endDate: Date): string[] {
-  const dates: string[] = [];
-  const currentDate = new Date(startDate);
-
-  while (currentDate <= endDate) {
-    dates.push(currentDate.toISOString().split("T")[0]);
-    currentDate.setDate(currentDate.getDate() + 1);
-  }
-
-  return dates;
-}
-
-// Convert database data to Activity format
-export function convertToActivityData(
-  data: WorkTimeData[],
-  startDate: Date,
-  endDate: Date,
-): Activity[] {
-  const dates = generateDates(startDate, endDate);
-  const dataMap = new Map<string, number>();
-
-  // Create a map of date -> total_seconds from database data
-  data.forEach((item) => {
-    const dateStr = new Date(item.date).toISOString().split("T")[0];
-    dataMap.set(dateStr, item.total_seconds);
-  });
-
-  // Generate activity data for all dates
-  return dates.map((date) => {
-    const totalSeconds = dataMap.get(date) || 0;
-    return {
-      date,
-      count: totalSeconds,
-      level: getLevel(totalSeconds),
-    };
-  });
-}
-
-/**
- * Splits the duration between two ISO timestamps across the days they span,
- * returning a map of `yyyy-MM-dd` (in user timezone) to number of seconds worked on that day.
- */
-export function splitDurationByDay(
-  startISO: string,
-  endISO: string,
+// Main function: Gets dates based on selected year logic
+export function getDateRange(
+  selectedYear: number,
+  currentYear: number,
   timezone: string,
-): Map<string, number> {
-  const start = DateTime.fromISO(startISO, { zone: timezone });
-  const end = DateTime.fromISO(endISO, { zone: timezone });
+) {
+  const formatter = new Intl.DateTimeFormat("en-CA", {
+    timeZone: timezone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
 
-  const secondsPerDay = new Map<string, number>();
+  if (selectedYear == currentYear) {
+    const today = new Date();
+    const oneYearAgo = new Date(today);
+    oneYearAgo.setFullYear(today.getFullYear() - 1);
 
-  if (!start.isValid || !end.isValid || end <= start) return secondsPerDay;
+    return {
+      startDate: formatter.format(oneYearAgo),
+      endDate: formatter.format(today),
+    };
+  } else {
+    const firstDay = new Date(selectedYear, 0, 1);
+    const lastDay = new Date(selectedYear, 11, 31);
 
-  let cursor = start;
-
-  while (cursor < end) {
-    const endOfDay = cursor.endOf("day");
-    const segmentEnd = end < endOfDay ? end : endOfDay;
-
-    const diffInSeconds = segmentEnd.diff(cursor, "seconds").seconds;
-    const dayKey = cursor.toFormat("yyyy-MM-dd");
-
-    secondsPerDay.set(
-      dayKey,
-      (secondsPerDay.get(dayKey) || 0) + Math.round(diffInSeconds),
-    );
-
-    cursor = segmentEnd;
+    return {
+      startDate: formatter.format(firstDay),
+      endDate: formatter.format(lastDay),
+    };
   }
-  console.log("secondsPerDay", secondsPerDay.size);
-  for (const [day, seconds] of secondsPerDay.entries()) {
-    console.log(`${day}: ${seconds} seconds`);
-  }
-  return secondsPerDay;
+}
+
+export function convertSecondsToTime(seconds: number) {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const remainingSeconds = seconds % 60;
+  return `${hours}h ${minutes}m ${remainingSeconds}s`;
 }

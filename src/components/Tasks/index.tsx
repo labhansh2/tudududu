@@ -1,23 +1,21 @@
 "use client";
-import { useTransition } from "react";
 
 import { Task } from "@/types";
-import useTaskFilter from "@/hooks/use-taskfilter";
-import { toggleWorkingStatus } from "@/actions";
+import useTaskFilter from "@/components/Tasks/use-task-filter";
 
-import TaskTile from "./TaskTile";
-import TaskInput from "./TaskInput";
+import TaskTile from "./tile";
+import TaskInput from "./input";
 
-export default function TaskList({ initialTasks }: { initialTasks: Task[] }) {
+export default function TaskList({
+  initialTasks,
+}: {
+  initialTasks: Task[];
+}) {
   const { filteredTasks, searchQuery, setSearchQuery } =
     useTaskFilter(initialTasks);
 
+  // this is bad because it might take stale data from the state
   const activeTask = initialTasks.find((task) => task.status === "active");
-  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-
-  const handleToggleWorkingStatus = async (taskId: number) => {
-    await toggleWorkingStatus(taskId, activeTask, timezone);
-  };
 
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 py-6">
@@ -34,12 +32,7 @@ export default function TaskList({ initialTasks }: { initialTasks: Task[] }) {
           </div>
         ) : (
           filteredTasks.map((task) => (
-            <TaskTile
-              key={task.id}
-              task={task}
-              isActiveTask={activeTask?.id === task.id}
-              onToggleWorkingStatus={handleToggleWorkingStatus}
-            />
+            <TaskTile key={task.id} task={task} activeTask={activeTask} />
           ))
         )}
       </div>

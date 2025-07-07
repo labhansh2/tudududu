@@ -1,20 +1,24 @@
-import { UserButton } from "@clerk/nextjs";
 import { and, eq, isNull } from "drizzle-orm";
-import { db } from "@/drizzle/index";
-import { deadlines, sessions, tasks, workTime } from "@/drizzle/schema";
-import Countdown from "./Countdown";
 import { redirect } from "next/navigation";
-import Nav from "./Nav";
 import { cookies } from "next/headers";
-import { DateTime } from "luxon";
-import TotalTimeSpentToday from "./TotalTimeSpentToday";
-import TimeZoneSetter from "./TimeZoneSetter";
+import { UserButton } from "@clerk/nextjs";
+import { auth } from "@clerk/nextjs/server";
 
-interface HeaderProps {
-  userId: string;
-}
+import { db } from "@/drizzle";
+import { deadlines, sessions, workTime } from "@/drizzle/schema";
 
-export default async function Header({ userId }: { userId: string }) {
+import Countdown from "./countdown";
+import Nav from "./nav";
+import TimeZoneSetter from "../TimeZoneSetter";
+import TotalTimeSpentToday from "./time-today";
+
+export default async function Header() {
+  const { userId } = await auth();
+
+  if (!userId) {
+    redirect("/sign-in");
+  }
+
   // Get user's deadline
   const userDeadlines = await db
     .select()
@@ -31,23 +35,19 @@ export default async function Header({ userId }: { userId: string }) {
   if (!timezone) {
     return <TimeZoneSetter />;
   }
-  const today = DateTime.now().setZone(timezone).toISODate();
 
+  const today = new Date().toLocaleDateString("en-CA", {
+    timeZone: timezone,
+  });
+
+  // get total seconds spent today (User Timezone)
   const totalSecondsToday = await db
     .select({ total: workTime.total_seconds })
     .from(workTime)
-    .where(
-      and(
-        eq(workTime.userId, userId),
-        eq(
-          // Compare only the date part (YYYY-MM-DD) of the timestamp in the DB
-          workTime.date,
-          new Date(`${today}`),
-        ),
-      ),
-    )
+    .where(and(eq(workTime.userId, userId), eq(workTime.date, today)))
     .then((res) => res[0]?.total || 0);
 
+  // get active session started at (UTC)
   const activeSessionStartedAt = await db
     .select({ startedAt: sessions.startedAt })
     .from(sessions)
@@ -55,6 +55,7 @@ export default async function Header({ userId }: { userId: string }) {
     .then((res) => res[0]?.startedAt || null);
 
   const deadline = userDeadlines[0].deadline;
+
   return (
     <header className="border-b border-[var(--border)] bg-[var(--card-bg)]">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">

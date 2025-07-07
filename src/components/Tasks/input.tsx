@@ -1,43 +1,35 @@
 "use client";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 
-import { addTask } from "@/actions";
+import { createTask } from "@/components/Tasks/actions";
 
-interface TaskInputProps {
+export default function TaskInput({
+  onSearch,
+}: {
   onSearch: (query: string) => void;
-  // onAddTask: (taskName: string) => Promise<void>;
-}
-
-export default function TaskInput({ onSearch }: TaskInputProps) {
+}) {
   const [input, setInput] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
+  // debounce isn't needed here, but it's a good practice to use it
+  // use it if you wanna update using the search params
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
+    const handler = setTimeout(() => {
+      onSearch(value);
+    }, 500);
     setInput(value);
-    onSearch(value);
+    return () => clearTimeout(handler);
   };
 
   const handleAddTask = async () => {
     if (!input.trim()) return;
 
-    setIsLoading(true);
-    try {
-      // await onAddTask(input.trim());
-      await addTask(input.trim());
+    startTransition(async () => {
+      await createTask(input.trim());
       setInput("");
-      onSearch(""); // Clear search after adding
-    } catch (error) {
-      console.error("Failed to add task:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      handleAddTask();
-    }
+      onSearch("");
+    });
   };
 
   return (
@@ -47,19 +39,23 @@ export default function TaskInput({ onSearch }: TaskInputProps) {
           type="text"
           value={input}
           onChange={handleInputChange}
-          onKeyUp={handleKeyPress}
+          onKeyUp={(e) => {
+            if (e.key === "Enter") {
+              handleAddTask();
+            }
+          }}
           placeholder="Add a task or search..."
           className="w-full px-4 py-3 bg-[var(--card-bg)] border border-[var(--border)] rounded-lg focus:outline-none focus:border-[var(--accent)] transition-colors text-[var(--foreground)] placeholder-[var(--secondary)]"
-          disabled={isLoading}
+          disabled={isPending}
         />
       </div>
 
       <button
         onClick={handleAddTask}
-        disabled={!input.trim() || isLoading}
+        disabled={!input.trim() || isPending}
         className="flex items-center justify-center w-11 h-11 bg-[var(--accent)] text-white rounded-lg hover:bg-[var(--accent)]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
       >
-        {isLoading ? (
+        {isPending ? (
           <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
         ) : (
           <svg
