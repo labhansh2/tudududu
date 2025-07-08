@@ -34,7 +34,7 @@ export default function TaskTile({ task, activeTask }: Props) {
 
   const handleToggleTaskStatus = async () => {
     startToggleTransition(async () => {
-      await toggleTaskStatus(task.id, activeTask);
+      await toggleTaskStatus(task.id);
     });
   };
 

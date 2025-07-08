@@ -100,18 +100,20 @@ export async function deleteTask(task: Task) {
   }
 }
 
-// there is a bug here
-// when you toggle through a window that has stale state, it will create new session when it should not
-// ig instead of taking active task from the stale component snapshot, you should get it from the databse
-export async function toggleTaskStatus(
-  taskId: number,
-  activeTask: Task | undefined,
-) {
+export async function toggleTaskStatus(taskId: number) {
   const { userId } = await auth();
 
   if (!userId) {
     throw new Error("User not authenticated");
   }
+
+  // db: source of truth for active task
+  const activeTask = await db
+    .select()
+    .from(tasks)
+    .where(and(eq(tasks.status, "active"), eq(tasks.userId, userId)))
+    .limit(1)
+    .then((res) => (res.length > 0 ? res[0] : undefined));
 
   let closedActiveSession: Session | undefined = undefined;
 
@@ -248,6 +250,9 @@ export async function completeTask(task: Task) {
   }
 }
 
+// this is not working on server because of the timezone issue
+// it works in dev because the server is running in the same timezone as the client
+// TODO: fix this
 export async function addClosedSessionTime(closedActiveSession: Session) {
   console.log(closedActiveSession);
   const { userId } = await auth();
