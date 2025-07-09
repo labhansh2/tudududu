@@ -3,8 +3,8 @@ import { auth } from "@clerk/nextjs/server";
 import { cookies } from "next/headers";
 
 import { db } from "@/drizzle";
-import { sessions, tasks } from "@/drizzle/schema";
-import { eq, and, gte, lte, asc, or, isNull } from "drizzle-orm";
+import { sessions, tasks, workTime } from "@/drizzle/schema";
+import { eq, and, gte, lte, asc, or, isNull, sql, lt } from "drizzle-orm";
 
 export interface TimelineSession {
   sessionId: string;
@@ -59,4 +59,36 @@ export async function getTimelineSessions(
     startedAt: row.startedAt,
     endedAt: row.endedAt,
   }));
+}
+
+export interface TimelineStats {
+  total_hours: number;
+}
+
+export async function getTimelineStats(
+  startDate: Date,
+  endDate: Date,
+): Promise<TimelineStats> {
+  const { userId } = await auth();
+
+  if (!userId) {
+    throw new Error("User not authenticated");
+  }
+
+  const data = await db
+    .select({
+      total_seconds: sql<number>`SUM(total_seconds)`,
+    })
+    .from(workTime)
+    .where(
+      and(
+        eq(workTime.userId, userId),
+        gte(workTime.date, startDate.toISOString()),
+        lt(workTime.date, endDate.toISOString()),
+      ),
+    );
+
+  return {
+    total_hours: Math.round((data[0].total_seconds / 3600) * 10) / 10,
+  };
 }

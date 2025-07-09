@@ -1,4 +1,3 @@
-import React from "react";
 import { TimelineSession } from "./actions";
 import {
   TimeRange,
@@ -19,6 +18,77 @@ interface TimelineGridProps {
   onSessionClick: (session: TimelineSession, rect: DOMRect) => void;
   isFullHeight?: boolean;
   currentTime: Date;
+}
+
+export default function TimelineGrid({
+  viewMode,
+  timeRange,
+  taskGroups,
+  isMobile,
+  clickedSession,
+  onSessionHover,
+  onSessionLeave,
+  onSessionClick,
+  isFullHeight = false,
+  currentTime,
+}: TimelineGridProps) {
+  return (
+    <div
+      className={`space-y-4 overflow-x-auto ${isFullHeight ? "h-full flex flex-col" : ""}`}
+    >
+      <div
+        className={`min-w-[600px] sm:min-w-0 space-y-4 ${isFullHeight ? "flex flex-col h-full" : ""}`}
+      >
+        {/* Time labels - full width */}
+        <div className={isFullHeight ? "flex-shrink-0" : ""}>
+          <TimeLabels viewMode={viewMode} timeRange={timeRange} />
+        </div>
+
+        {/* Timeline grid with task rows */}
+        <div
+          className={`relative ${isFullHeight ? "flex-1 min-h-0" : ""}`}
+        >
+          {/* Grid lines - full width */}
+          <div className="absolute inset-0 flex">
+            {(viewMode === "day"
+              ? timeRange.hours
+              : viewMode === "week"
+                ? timeRange.days
+                : Array.from({ length: 4 }, (_, i) => i)
+            )?.map((_, index) => (
+              <div
+                key={index}
+                className="flex-1 border-l border-[var(--border)] first:border-l-0"
+              />
+            ))}
+          </div>
+
+          {/* Task rows - scrollable when in full height mode */}
+          <div
+            className={`space-y-1 ${isFullHeight ? "overflow-y-auto h-full pr-2" : ""}`}
+          >
+            {taskGroups.map((taskGroup) => (
+              <TaskRow
+                key={taskGroup.taskId}
+                taskGroup={taskGroup}
+                timeRange={timeRange}
+                viewMode={viewMode}
+                isMobile={isMobile}
+                clickedSession={clickedSession}
+                onSessionHover={onSessionHover}
+                onSessionLeave={onSessionLeave}
+                onSessionClick={onSessionClick}
+                currentTime={currentTime}
+              />
+            ))}
+
+            {/* Add some bottom padding when scrollable */}
+            {isFullHeight && <div className="h-4" />}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 interface TimeLabelsProps {
@@ -221,77 +291,6 @@ function TaskRow({
             currentTime={currentTime}
           />
         ))}
-      </div>
-    </div>
-  );
-}
-
-export function TimelineGrid({
-  viewMode,
-  timeRange,
-  taskGroups,
-  isMobile,
-  clickedSession,
-  onSessionHover,
-  onSessionLeave,
-  onSessionClick,
-  isFullHeight = false,
-  currentTime,
-}: TimelineGridProps) {
-  return (
-    <div
-      className={`space-y-4 overflow-x-auto ${isFullHeight ? "h-full flex flex-col" : ""}`}
-    >
-      <div
-        className={`min-w-[600px] sm:min-w-0 space-y-4 ${isFullHeight ? "flex flex-col h-full" : ""}`}
-      >
-        {/* Time labels - full width */}
-        <div className={isFullHeight ? "flex-shrink-0" : ""}>
-          <TimeLabels viewMode={viewMode} timeRange={timeRange} />
-        </div>
-
-        {/* Timeline grid with task rows */}
-        <div
-          className={`relative ${isFullHeight ? "flex-1 min-h-0" : ""}`}
-        >
-          {/* Grid lines - full width */}
-          <div className="absolute inset-0 flex">
-            {(viewMode === "day"
-              ? timeRange.hours
-              : viewMode === "week"
-                ? timeRange.days
-                : Array.from({ length: 4 }, (_, i) => i)
-            )?.map((_, index) => (
-              <div
-                key={index}
-                className="flex-1 border-l border-[var(--border)] first:border-l-0"
-              />
-            ))}
-          </div>
-
-          {/* Task rows - scrollable when in full height mode */}
-          <div
-            className={`space-y-1 ${isFullHeight ? "overflow-y-auto h-full pr-2" : ""}`}
-          >
-            {taskGroups.map((taskGroup) => (
-              <TaskRow
-                key={taskGroup.taskId}
-                taskGroup={taskGroup}
-                timeRange={timeRange}
-                viewMode={viewMode}
-                isMobile={isMobile}
-                clickedSession={clickedSession}
-                onSessionHover={onSessionHover}
-                onSessionLeave={onSessionLeave}
-                onSessionClick={onSessionClick}
-                currentTime={currentTime}
-              />
-            ))}
-
-            {/* Add some bottom padding when scrollable */}
-            {isFullHeight && <div className="h-4" />}
-          </div>
-        </div>
       </div>
     </div>
   );

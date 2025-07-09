@@ -1,30 +1,33 @@
 "use client";
-import React, { useMemo, useEffect, useState } from "react";
-import { TimelineSession as Session } from "./actions";
+import { useMemo, useEffect, useState } from "react";
+
+import { TimelineSession as Session, TimelineStats } from "./actions";
 import {
   getTimeRange,
   getDateRangeLabel,
   groupSessionsByTask,
-  TaskGroup,
 } from "./utils";
 import {
   useMobileDetection,
   useURLSync,
   useSessionInteraction,
 } from "./hooks";
-import { TimelineHeader } from "./header";
-import { TimelineGrid } from "./grid";
-import { SessionTooltip } from "./session-tooltip";
+
+import TimelineHeader from "./header";
+import TimelineGrid from "./grid";
+import SessionTooltip from "./session-tooltip";
 
 // Main Component
 export default function SessionTimeline({
   sessionsData,
+  stats,
   initialViewMode = "week",
   initialCurrentDate,
   isFullHeight = false,
   isFullPage = true,
 }: {
   sessionsData: Session[];
+  stats: TimelineStats;
   initialViewMode?: "day" | "week" | "month";
   initialCurrentDate?: string;
   isFullHeight?: boolean;
@@ -105,9 +108,10 @@ export default function SessionTimeline({
           dateRangeLabel={dateRangeLabel}
           onViewModeChange={handleViewModeChange}
           onNavigate={handleNavigateTime}
-          isFullHeight={isFullHeight}
           isFullPage={isFullPage}
+          isMobile={isMobile}
           currentDate={currentDate.toISOString()}
+          stats={stats}
         />
       </div>
 

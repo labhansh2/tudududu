@@ -14,14 +14,17 @@
   - [x] Activity Map
   - [x] Tasks
   - [x] Deadline Form
-- [ ] timeline
+- [x] timeline
   - [x] rendering active task
   - [x] display task names better
-  - [ ] sticky task name in mobile
+  - ~~Sticky task name in mobile~~
+  - [x] stats for the range
 - [x] sessions bug fix
 - [x] cross day session update work_time
 - [x] get overall date time right
 - [x] toggle task bug fix : db source of truth not state for toggle
+- [ ] bug: wrong update time calc on server
+- [ ] bug: wrong countdown on server
 - [ ] taks activity
 - [ ] try adding optimistic updates
 - [ ] try theme gen on this one

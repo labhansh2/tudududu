@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { TimelineSession } from "./actions";
-import { navigateDate } from "./utils";
+import { navigateDate, parseLocalDate, formatLocalDate } from "./utils";
 
 export function useMobileDetection() {
   const [isMobile, setIsMobile] = useState(false);
@@ -30,7 +30,7 @@ export function useURLSync(
     initialViewMode,
   );
   const [currentDate, setCurrentDate] = useState(
-    initialCurrentDate ? new Date(initialCurrentDate) : new Date(),
+    initialCurrentDate ? parseLocalDate(initialCurrentDate) : new Date(),
   );
 
   const updateURL = (
@@ -42,9 +42,8 @@ export function useURLSync(
     if (newViewMode) {
       params.set("view", newViewMode);
     }
-
     if (newDate) {
-      params.set("date", newDate.toISOString().split("T")[0]);
+      params.set("date", formatLocalDate(newDate));
     }
 
     router.push(`?${params.toString()}`);

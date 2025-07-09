@@ -9,7 +9,7 @@ interface SessionTooltipProps {
   clickedSession: TimelineSession | null;
 }
 
-export function SessionTooltip({
+export default function SessionTooltip({
   hoveredSession,
   hoveredPosition,
   isMobile,
