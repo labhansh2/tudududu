@@ -15,9 +15,13 @@
   - [x] Tasks
   - [x] Deadline Form
 - [ ] timeline
+  - [x] rendering active task
+  - [x] display task names better
+  - [ ] sticky task name in mobile
 - [x] sessions bug fix
 - [x] cross day session update work_time
 - [x] get overall date time right
-- [ ] db source of truth not state for toggle
+- [x] toggle task bug fix : db source of truth not state for toggle
+- [ ] taks activity
 - [ ] try adding optimistic updates
 - [ ] try theme gen on this one

@@ -1,8 +1,10 @@
+"use server";
 import { auth } from "@clerk/nextjs/server";
 import { cookies } from "next/headers";
+
 import { db } from "@/drizzle";
 import { sessions, tasks } from "@/drizzle/schema";
-import { eq, and, gte, lte, asc } from "drizzle-orm";
+import { eq, and, gte, lte, asc, or, isNull } from "drizzle-orm";
 
 export interface TimelineSession {
   sessionId: string;
@@ -43,10 +45,7 @@ export async function getTimelineSessions(
       and(
         eq(sessions.userId, userId),
         lte(sessions.startedAt, endDate),
-        gte(
-          sessions.endedAt ?? new Date(),
-          startDate,
-        ),
+        or(gte(sessions.endedAt, startDate), isNull(sessions.endedAt)),
       ),
     )
     .orderBy(asc(sessions.startedAt));
@@ -60,46 +59,4 @@ export async function getTimelineSessions(
     startedAt: row.startedAt,
     endedAt: row.endedAt,
   }));
-}
-
-export function getDateRangeForView(
-  currentDate: Date,
-  viewMode: "day" | "week" | "month",
-): { startDate: Date; endDate: Date } {
-  const baseDate = new Date(
-    currentDate.getFullYear(),
-    currentDate.getMonth(),
-    currentDate.getDate(),
-  );
-
-  switch (viewMode) {
-    case "day":
-      const dayStart = baseDate;
-      const dayEnd = new Date(baseDate.getTime() + 24 * 60 * 60 * 1000);
-      return { startDate: dayStart, endDate: dayEnd };
-
-    case "week":
-      const weekStart = new Date(baseDate);
-      weekStart.setDate(baseDate.getDate() - baseDate.getDay());
-      const weekEnd = new Date(
-        weekStart.getTime() + 7 * 24 * 60 * 60 * 1000,
-      );
-      return { startDate: weekStart, endDate: weekEnd };
-
-    case "month":
-      const monthStart = new Date(
-        baseDate.getFullYear(),
-        baseDate.getMonth(),
-        1,
-      );
-      const monthEnd = new Date(
-        baseDate.getFullYear(),
-        baseDate.getMonth() + 1,
-        1,
-      );
-      return { startDate: monthStart, endDate: monthEnd };
-
-    default:
-      return { startDate: baseDate, endDate: baseDate };
-  }
 }
