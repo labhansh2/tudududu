@@ -47,7 +47,7 @@ async function seedActivity() {
 
           activityData.push({
             userId,
-            date: date.toISOString().split('T')[0], // Convert Date to "YYYY-MM-DD" string
+            date: date.toISOString().split("T")[0], // Convert Date to "YYYY-MM-DD" string
             total_seconds: totalSeconds,
           });
         }

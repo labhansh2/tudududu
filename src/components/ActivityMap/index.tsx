@@ -1,20 +1,19 @@
 import { cookies } from "next/headers";
 import Link from "next/link";
 
-import { customTheme, getDateRange } from "@/utils";
-import {
-  getActivityData,
-  getAvailableYears,
-} from "@/components/ActivityMap/actions";
+import { customTheme, getDateRange } from "./utils";
+import { getActivityData, getAvailableYears } from "./actions";
 
-import ActivityMap from "@/components/ActivityMap/map";
+import ActivityMap from "./map";
 
 export default async function Activity({
   selectedYear,
   currentYear,
+  searchParams,
 }: {
   selectedYear: number;
   currentYear: number;
+  searchParams?: Record<string, string>;
 }) {
   const cookieStore = await cookies();
   const timezone = cookieStore.get("timezone")?.value;
@@ -38,24 +37,20 @@ export default async function Activity({
   const totalHours = Math.round((totalSeconds / 3600) * 10) / 10;
 
   return (
-    <div className="mx-auto px-4 sm:px-6 py-6">
-      <div className="space-y-4">
-        <ActivityMap
-          activityData={activityData}
-          customTheme={customTheme}
-        />
+    <>
+      <ActivityMap activityData={activityData} customTheme={customTheme} />
 
-        {/* Year Selection */}
-        {years.length > 1 && (
-          <YearSelection
-            years={years}
-            selectedYear={selectedYear}
-            totalHours={totalHours}
-            totalDays={365}
-          />
-        )}
-      </div>
-    </div>
+      {/* Year Selection */}
+      {years.length > 1 && (
+        <YearSelection
+          years={years}
+          selectedYear={selectedYear}
+          totalHours={totalHours}
+          totalDays={365}
+          searchParams={searchParams}
+        />
+      )}
+    </>
   );
 }
 
@@ -64,6 +59,7 @@ interface YearSelectionProps {
   selectedYear: number;
   totalHours: number;
   totalDays: number;
+  searchParams?: Record<string, string>;
 }
 
 function YearSelection({
@@ -71,7 +67,24 @@ function YearSelection({
   selectedYear,
   totalHours,
   totalDays,
+  searchParams,
 }: YearSelectionProps) {
+  const buildYearUrl = (year: number) => {
+    const params = new URLSearchParams();
+    
+    params.set("year", year.toString());
+    
+    if (searchParams) {
+      Object.entries(searchParams).forEach(([key, value]) => {
+        if (key !== "year" && value) {
+          params.set(key, value);
+        }
+      });
+    }
+    
+    return `/activity?${params.toString()}`;
+  };
+
   return (
     <div className="mt-2 border border-[var(--input-border)] rounded-[var(--border-radius)] shadow-sm p-2.5 bg-[var(--card-bg)]">
       <div className="flex items-center justify-between">
@@ -85,7 +98,7 @@ function YearSelection({
           {years.map((year) => (
             <Link
               key={year}
-              href={`/activity?year=${year}`}
+              href={buildYearUrl(year)}
               className={`px-3 py-1.5 text-sm border transition-all rounded-[var(--border-radius)] ${
                 selectedYear === year
                   ? "bg-[var(--accent)] text-white border-[var(--accent)] shadow-sm"

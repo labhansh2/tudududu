@@ -3,9 +3,10 @@ import { auth } from "@clerk/nextjs/server";
 import { eq, and, isNull, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
+
+import { Task, Session } from "@/types";
 import { db } from "@/drizzle";
 import { sessions, tasks, workTime } from "@/drizzle/schema";
-import { Task, Session } from "../../types";
 
 export async function createTask(name: string) {
   const { userId } = await auth();
@@ -100,16 +101,20 @@ export async function deleteTask(task: Task) {
   }
 }
 
-// there is a bug here
-export async function toggleTaskStatus(
-  taskId: number,
-  activeTask: Task | undefined,
-) {
+export async function toggleTaskStatus(taskId: number) {
   const { userId } = await auth();
 
   if (!userId) {
     throw new Error("User not authenticated");
   }
+
+  // db: source of truth for active task
+  const activeTask = await db
+    .select()
+    .from(tasks)
+    .where(and(eq(tasks.status, "active"), eq(tasks.userId, userId)))
+    .limit(1)
+    .then((res) => (res.length > 0 ? res[0] : undefined));
 
   let closedActiveSession: Session | undefined = undefined;
 
@@ -246,6 +251,9 @@ export async function completeTask(task: Task) {
   }
 }
 
+// this is not working on server because of the timezone issue
+// it works in dev because the server is running in the same timezone as the client
+// TODO: fix this
 export async function addClosedSessionTime(closedActiveSession: Session) {
   console.log(closedActiveSession);
   const { userId } = await auth();

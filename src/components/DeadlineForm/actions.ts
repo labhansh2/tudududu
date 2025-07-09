@@ -1,10 +1,11 @@
 "use server";
 
 import { auth } from "@clerk/nextjs/server";
-import { db } from "@/drizzle";
-import { deadlines } from "@/drizzle/schema";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+
+import { db } from "@/drizzle";
+import { deadlines } from "@/drizzle/schema";
 
 export async function submitDeadline(formData: FormData) {
   const deadline = formData.get("deadline") as string;

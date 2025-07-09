@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ActivityIcon, ListIcon } from "lucide-react";
 import { usePathname } from "next/navigation";
 
+// TODO: persist query params from /activity and /activity/timeline
 export default function Nav() {
   const pathname = usePathname();
   const isActivity = pathname.startsWith("/activity");

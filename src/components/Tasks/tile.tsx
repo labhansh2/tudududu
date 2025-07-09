@@ -2,13 +2,13 @@
 import { useState, useTransition } from "react";
 
 import { Task } from "@/types";
+
 import {
   completeTask,
   updateTaskName,
   deleteTask,
   toggleTaskStatus,
-  addClosedSessionTime,
-} from "@/components/Tasks/actions";
+} from "./actions";
 
 interface Props {
   task: Task;
@@ -34,7 +34,7 @@ export default function TaskTile({ task, activeTask }: Props) {
 
   const handleToggleTaskStatus = async () => {
     startToggleTransition(async () => {
-      await toggleTaskStatus(task.id, activeTask);
+      await toggleTaskStatus(task.id);
     });
   };
 

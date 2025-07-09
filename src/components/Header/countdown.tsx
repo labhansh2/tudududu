@@ -1,5 +1,5 @@
 "use client";
-import { useCountdown } from "@/components/Header/use-countdown";
+import { useCountdown } from "./use-countdown";
 
 export default function Countdown({ deadline }: { deadline: Date }) {
   const timeLeft = useCountdown(deadline);

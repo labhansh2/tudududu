@@ -1,7 +1,8 @@
 "use client";
 
 import { Task } from "@/types";
-import useTaskFilter from "@/components/Tasks/use-task-filter";
+
+import useTaskFilter from "./use-task-filter";
 
 import TaskTile from "./tile";
 import TaskInput from "./input";

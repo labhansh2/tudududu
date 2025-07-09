@@ -50,9 +50,7 @@
         "deadlines_user_id_unique": {
           "name": "deadlines_user_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "user_id"
-          ]
+          "columns": ["user_id"]
         }
       },
       "policies": {},
@@ -131,12 +129,8 @@
           "name": "sessions_task_id_tasks_id_fk",
           "tableFrom": "sessions",
           "tableTo": "tasks",
-          "columnsFrom": [
-            "task_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["task_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -267,10 +261,7 @@
         "work_time_user_date_unique": {
           "name": "work_time_user_date_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "user_id",
-            "date"
-          ]
+          "columns": ["user_id", "date"]
         }
       },
       "policies": {},
@@ -282,11 +273,7 @@
     "public.task_status": {
       "name": "task_status",
       "schema": "public",
-      "values": [
-        "active",
-        "not_active",
-        "completed"
-      ]
+      "values": ["active", "not_active", "completed"]
     }
   },
   "schemas": {},
