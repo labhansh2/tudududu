@@ -1,7 +1,7 @@
 "use client";
 import { useState, useTransition } from "react";
 
-import { createTask } from "@/components/Tasks/actions";
+import { createTask } from "./actions";
 
 export default function TaskInput({
   onSearch,

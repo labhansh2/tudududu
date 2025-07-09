@@ -1,6 +1,3 @@
-import { Activity, WorkTimeData } from "@/types";
-
-// Custom theme for activity calendar
 export const customTheme = {
   light: [
     "#f3f4f6", // Level 0 - Light gray (similar to --completed-task)
@@ -35,7 +32,6 @@ export function getLevel(totalSeconds: number) {
   return 0;
 }
 
-// Main function: Gets dates based on selected year logic
 export function getDateRange(
   selectedYear: number,
   currentYear: number,
@@ -66,11 +62,4 @@ export function getDateRange(
       endDate: formatter.format(lastDay),
     };
   }
-}
-
-export function convertSecondsToTime(seconds: number) {
-  const hours = Math.floor(seconds / 3600);
-  const minutes = Math.floor((seconds % 3600) / 60);
-  const remainingSeconds = seconds % 60;
-  return `${hours}h ${minutes}m ${remainingSeconds}s`;
 }

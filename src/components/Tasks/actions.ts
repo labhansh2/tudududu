@@ -3,9 +3,10 @@ import { auth } from "@clerk/nextjs/server";
 import { eq, and, isNull, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
+
+import { Task, Session } from "@/types";
 import { db } from "@/drizzle";
 import { sessions, tasks, workTime } from "@/drizzle/schema";
-import { Task, Session } from "../../types";
 
 export async function createTask(name: string) {
   const { userId } = await auth();

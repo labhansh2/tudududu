@@ -1,13 +1,10 @@
 import { cookies } from "next/headers";
 import Link from "next/link";
 
-import { customTheme, getDateRange } from "@/utils";
-import {
-  getActivityData,
-  getAvailableYears,
-} from "@/components/ActivityMap/actions";
+import { customTheme, getDateRange } from "./utils";
+import { getActivityData, getAvailableYears } from "./actions";
 
-import ActivityMap from "@/components/ActivityMap/map";
+import ActivityMap from "./map";
 
 export default async function Activity({
   selectedYear,

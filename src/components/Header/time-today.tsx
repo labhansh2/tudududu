@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
-import { convertSecondsToTime } from "@/utils";
+
+import { convertSecondsToTime } from "./utils";
 
 export default function TotalTimeSpentToday({
   totalSeconds,

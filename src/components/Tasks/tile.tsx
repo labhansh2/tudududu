@@ -2,13 +2,13 @@
 import { useState, useTransition } from "react";
 
 import { Task } from "@/types";
+
 import {
   completeTask,
   updateTaskName,
   deleteTask,
   toggleTaskStatus,
-  addClosedSessionTime,
-} from "@/components/Tasks/actions";
+} from "./actions";
 
 interface Props {
   task: Task;

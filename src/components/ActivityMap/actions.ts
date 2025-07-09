@@ -1,11 +1,12 @@
 "use server";
 import { auth } from "@clerk/nextjs/server";
 import { cookies } from "next/headers";
+import { lte, gte, eq, sql, and, asc } from "drizzle-orm";
 
 import { db } from "@/drizzle";
 import { workTime } from "@/drizzle/schema";
-import { lte, gte, eq, sql, and, asc } from "drizzle-orm";
-import { getLevel } from "@/utils";
+
+import { getLevel } from "./utils";
 
 export async function getAvailableYears() {
   const { userId } = await auth();
