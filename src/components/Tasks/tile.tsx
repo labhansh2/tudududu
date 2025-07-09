@@ -13,9 +13,14 @@ import {
 interface Props {
   task: Task;
   activeTask: Task | undefined;
+  isDetailedView: boolean;
 }
 
-export default function TaskTile({ task, activeTask }: Props) {
+export default function TaskTile({
+  task,
+  activeTask,
+  isDetailedView,
+}: Props) {
   const [toggleIsPending, startToggleTransition] = useTransition();
   const [completeIsPending, startCompleteTransition] = useTransition();
   const [editIsPending, startEditTransition] = useTransition();
@@ -105,6 +110,14 @@ export default function TaskTile({ task, activeTask }: Props) {
           onDeleteClick={handleDeleteTask}
         />
       </div>
+
+      {/* Detailed view */}
+      {/* TO DO : Add sparklines, hrs spend, longest sessions, and other stats*/}
+      {isDetailedView && (
+        <div className="mt-2 text-sm text-[var(--secondary)]">
+          {task.createdAt.toLocaleDateString()}
+        </div>
+      )}
     </div>
   );
 }

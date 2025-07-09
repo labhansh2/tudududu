@@ -42,12 +42,17 @@ export default function TimelineHeader({
   };
 
   return (
-    <div className={`flex ${isMobile ? 'flex-col' : 'flex-row'} gap-4 mb-6`}>
+    <div
+      className={`flex ${isMobile ? "flex-col" : "flex-row"} gap-4 mb-6`}
+    >
       {/* Div A: Stats + Date Navigation */}
       <div className="flex justify-between items-center gap-2 flex-1">
         {/* Stats Section */}
         <div className="inline-flex items-center gap-2 bg-[var(--card-bg)] border border-[var(--border)] rounded-lg px-3 py-2 text-sm flex-shrink-0">
-          <Clock size={16} className="text-[var(--accent)] flex-shrink-0" />
+          <Clock
+            size={16}
+            className="text-[var(--accent)] flex-shrink-0"
+          />
           <div className="flex items-baseline gap-1">
             <span className="font-semibold text-[var(--foreground)]">
               {formatHours(stats.total_hours)}

@@ -4,15 +4,30 @@ import { useMemo, useState } from "react";
 
 import { Task } from "@/types";
 
-export default function useTaskFilter(initialTasks: Task[]) {
+export default function useTaskFilter(
+  initialTasks: Task[], 
+  sort: "all" | "completed" | "incomplete" = "all"
+) {
   const [searchQuery, setSearchQuery] = useState("");
+  
   const filteredTasks = useMemo(() => {
     let filtered = initialTasks;
 
     if (searchQuery.trim()) {
-      filtered = initialTasks.filter((task) =>
+      filtered = filtered.filter((task) =>
         task.name.toLowerCase().includes(searchQuery.toLowerCase()),
       );
+    }
+
+    switch (sort) {
+      case "completed":
+        filtered = filtered.filter((task) => task.status === "completed");
+        break;
+      case "incomplete":
+        filtered = filtered.filter((task) => task.status !== "completed");
+        break;
+      default:
+        break;
     }
 
     return filtered.sort((a, b) => {
@@ -26,7 +41,7 @@ export default function useTaskFilter(initialTasks: Task[]) {
         new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
       );
     });
-  }, [initialTasks, searchQuery]);
+  }, [initialTasks, searchQuery, sort]);
 
   return { filteredTasks, searchQuery, setSearchQuery };
 }

@@ -71,9 +71,9 @@ function YearSelection({
 }: YearSelectionProps) {
   const buildYearUrl = (year: number) => {
     const params = new URLSearchParams();
-    
+
     params.set("year", year.toString());
-    
+
     if (searchParams) {
       Object.entries(searchParams).forEach(([key, value]) => {
         if (key !== "year" && value) {
@@ -81,7 +81,7 @@ function YearSelection({
         }
       });
     }
-    
+
     return `/activity?${params.toString()}`;
   };
 
