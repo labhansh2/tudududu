@@ -25,6 +25,9 @@
 - [x] toggle task bug fix : db source of truth not state for toggle
 - [ ] bug: wrong update time calc on server
 - [ ] bug: wrong countdown on server
-- [ ] taks activity
+- [ ] sprarklines
+  - [ ] contorls
+  - [ ] get stats
+  - [ ] render stats + sparkline
 - [ ] try adding optimistic updates
 - [ ] try theme gen on this one
