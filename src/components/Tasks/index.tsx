@@ -1,26 +1,27 @@
 "use client";
 import { useState } from "react";
 
-import { Task } from "@/types";
-
 import useTaskFilter from "./use-task-filter";
 
 import TaskTile from "./tile";
 import TaskInput from "./input";
 import Controls from "./controls";
+import { type TaskWithStatsAndSparkline } from "./actions";
 
 export default function TaskList({
   initialTasks,
 }: {
-  initialTasks: Task[];
+  initialTasks: TaskWithStatsAndSparkline[];
 }) {
   const [sort, setSort] = useState<"all" | "completed" | "incomplete">(
     "all",
   );
   const [detailedView, setDetailedView] = useState(false);
 
-  const { filteredTasks, searchQuery, setSearchQuery } =
-    useTaskFilter(initialTasks, sort);
+  const { filteredTasks, searchQuery, setSearchQuery } = useTaskFilter(
+    initialTasks,
+    sort,
+  );
 
   // this is bad because it might take stale data from the state
   const activeTask = initialTasks.find((task) => task.status === "active");

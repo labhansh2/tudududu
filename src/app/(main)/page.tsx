@@ -1,11 +1,8 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import { eq } from "drizzle-orm";
-
-import { db } from "@/drizzle";
-import { tasks } from "@/drizzle/schema";
 
 import TaskList from "@/components/Tasks";
+import { getTasksWithStatsAndSparkline } from "@/components/Tasks/actions";
 
 export default async function Page() {
   const { userId } = await auth();
@@ -14,16 +11,12 @@ export default async function Page() {
     redirect("/sign-in");
   }
 
-  // Get user's tasks
-  const userTasks = await db
-    .select()
-    .from(tasks)
-    .where(eq(tasks.userId, userId))
-    .orderBy(tasks.updatedAt);
+  // Get all tasks with stats and sparkline data in a single call
+  const tasksWithStatsAndSparkline = await getTasksWithStatsAndSparkline();
 
   return (
     <div className="pb-8">
-      <TaskList initialTasks={userTasks} />
+      <TaskList initialTasks={tasksWithStatsAndSparkline} />
     </div>
   );
 }

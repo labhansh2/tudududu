@@ -50,15 +50,16 @@ export default function Controls({
           >
             Completed
           </button>
-           
         </div>
 
         {/* View toggle */}
         <div className="flex items-center gap-2 flex-shrink-0">
-          <span className="text-xs sm:text-sm font-medium text-[var(--foreground)]">Detailed</span>
-          <ToggleSwitch 
-            checked={detailedView} 
-            onChange={setDetailedView} 
+          <span className="text-xs sm:text-sm font-medium text-[var(--foreground)]">
+            Detailed
+          </span>
+          <ToggleSwitch
+            checked={detailedView}
+            onChange={setDetailedView}
           />
         </div>
       </div>
@@ -76,9 +77,7 @@ function ToggleSwitch({ checked, onChange }: ToggleSwitchProps) {
     <button
       onClick={() => onChange(!checked)}
       className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none focus:ring-1 focus:ring-[var(--accent)] focus:ring-offset-1 focus:ring-offset-[var(--background)] ${
-        checked 
-          ? "bg-[var(--accent)]" 
-          : "bg-[var(--border)]"
+        checked ? "bg-[var(--accent)]" : "bg-[var(--border)]"
       }`}
     >
       <span

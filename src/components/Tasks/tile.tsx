@@ -1,18 +1,22 @@
 "use client";
 import { useState, useTransition } from "react";
+import { LineChart, Line, ResponsiveContainer } from "recharts";
 
-import { Task } from "@/types";
+import { type TaskWithStatsAndSparkline } from "./actions";
+import { useMobile } from "@/hooks/useMobile";
 
 import {
   completeTask,
   updateTaskName,
   deleteTask,
   toggleTaskStatus,
+  type SparklineData,
+  type TaskStats,
 } from "./actions";
 
 interface Props {
-  task: Task;
-  activeTask: Task | undefined;
+  task: TaskWithStatsAndSparkline;
+  activeTask: TaskWithStatsAndSparkline | undefined;
   isDetailedView: boolean;
 }
 
@@ -24,6 +28,8 @@ export default function TaskTile({
   const [toggleIsPending, startToggleTransition] = useTransition();
   const [completeIsPending, startCompleteTransition] = useTransition();
   const [editIsPending, startEditTransition] = useTransition();
+
+  const isMobile = useMobile();
 
   const [isEditing, setIsEditing] = useState(false);
 
@@ -61,7 +67,7 @@ export default function TaskTile({
 
   return (
     <div
-      className={`p-4 rounded-lg border transition-all ${getTaskStyles()}`}
+      className={`p-3 rounded-lg border transition-all ${getTaskStyles()}`}
     >
       <div className="flex items-center gap-3">
         {/* Working status checkbox */}
@@ -88,6 +94,10 @@ export default function TaskTile({
           onEdit={handleUpdateTaskName}
         />
 
+        {!isMobile && !isDetailedView && (
+          <Sparkline sparklineData={task.sparklineData} />
+        )}
+
         {/* Complete button */}
         <CompleteBtn
           completeIsPending={completeIsPending}
@@ -112,13 +122,75 @@ export default function TaskTile({
       </div>
 
       {/* Detailed view */}
-      {/* TO DO : Add sparklines, hrs spend, longest sessions, and other stats*/}
       {isDetailedView && (
-        <div className="mt-2 text-sm text-[var(--secondary)]">
-          {task.createdAt.toLocaleDateString()}
+        <div className="mt-2 pt-2 border-t border-[var(--border)]/50">
+          <div className="flex items-center justify-between gap-3">
+            <Stats
+              totalTime={task.taskStats.total_time_spent}
+              longestSession={task.taskStats.longest_session}
+            />
+            <div className="flex-shrink-0">
+              <Sparkline sparklineData={task.sparklineData} />
+            </div>
+          </div>
         </div>
       )}
     </div>
+  );
+}
+
+interface StatsProps {
+  totalTime: number;
+  longestSession: number;
+}
+
+function Stats({ totalTime, longestSession }: StatsProps) {
+  return (
+    <div className="flex items-center gap-4">
+      <div className="text-center">
+        <div className="text-base font-bold text-[var(--foreground)] leading-none">
+          {(totalTime / 3600).toFixed(1)}h
+        </div>
+        <div className="text-[9px] text-[var(--secondary)] uppercase tracking-wider mt-0.5">
+          Total
+        </div>
+      </div>
+      <div className="w-px h-6 bg-[var(--border)]"></div>
+      <div className="text-center">
+        <div className="text-base font-bold text-[var(--success)] leading-none">
+          {(longestSession / 3600).toFixed(1)}h
+        </div>
+        <div className="text-[9px] text-[var(--secondary)] uppercase tracking-wider mt-0.5">
+          Best
+        </div>
+      </div>
+    </div>
+  );
+}
+
+interface SparklineProps {
+  sparklineData: SparklineData[];
+}
+
+function Sparkline({ sparklineData }: SparklineProps) {
+  // console.log(sparklineData);
+  return (
+    <>
+      <div className="w-20 h-8">
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart data={sparklineData}>
+            <Line
+              type="monotone"
+              dataKey="hours"
+              stroke="#22c55e"
+              strokeWidth={1.5}
+              dot={false}
+              activeDot={false}
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+    </>
   );
 }
 

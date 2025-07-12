@@ -3,22 +3,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { TimelineSession } from "./actions";
 import { navigateDate, parseLocalDate, formatLocalDate } from "./utils";
 
-export function useMobileDetection() {
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768 || "ontouchstart" in window);
-    };
-
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
-
-  return isMobile;
-}
-
 export function useURLSync(
   initialViewMode: "day" | "week" | "month",
   initialCurrentDate?: string,

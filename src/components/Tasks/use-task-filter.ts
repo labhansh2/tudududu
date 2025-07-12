@@ -2,14 +2,14 @@
 
 import { useMemo, useState } from "react";
 
-import { Task } from "@/types";
+import { type TaskWithStatsAndSparkline } from "./actions";
 
 export default function useTaskFilter(
-  initialTasks: Task[], 
-  sort: "all" | "completed" | "incomplete" = "all"
+  initialTasks: TaskWithStatsAndSparkline[],
+  sort: "all" | "completed" | "incomplete" = "all",
 ) {
   const [searchQuery, setSearchQuery] = useState("");
-  
+
   const filteredTasks = useMemo(() => {
     let filtered = initialTasks;
 
