@@ -179,7 +179,7 @@ function Sparkline({ sparklineData }: SparklineProps) {
       <div className="w-20 h-8">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={sparklineData}>
-            <YAxis hide domain={[0, 7]} />
+            <YAxis hide domain={[0,4]} />
             <Line
               type="monotone"
               dataKey="hours"
