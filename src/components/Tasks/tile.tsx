@@ -1,6 +1,6 @@
 "use client";
 import { useState, useTransition } from "react";
-import { LineChart, Line, ResponsiveContainer } from "recharts";
+import { LineChart, Line, ResponsiveContainer, YAxis } from "recharts";
 
 import { type TaskWithStatsAndSparkline } from "./actions";
 import { useMobile } from "@/hooks/useMobile";
@@ -179,6 +179,7 @@ function Sparkline({ sparklineData }: SparklineProps) {
       <div className="w-20 h-8">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={sparklineData}>
+            <YAxis hide domain={[0, 7]} />
             <Line
               type="monotone"
               dataKey="hours"

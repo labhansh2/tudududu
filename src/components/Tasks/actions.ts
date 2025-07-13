@@ -95,7 +95,7 @@ export async function getTasksWithStatsAndSparkline(): Promise<
     );
     // console.log("TASK SPARKLINE DATA", taskSparklineData);
     const sparklineData = fillMissingDays(taskSparklineData, task.id);
-    // console.log("SPARKLINE DATA", sparklineData);
+    console.log("SPARKLINE DATA for task", task.name, sparklineData);
     return {
       id: task.id,
       name: task.name,
