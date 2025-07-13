@@ -1,17 +1,15 @@
 "use client";
 import { useMemo, useEffect, useState } from "react";
 
+import { useMobile } from "@/hooks/useMobile";
+
 import { TimelineSession as Session, TimelineStats } from "./actions";
 import {
   getTimeRange,
   getDateRangeLabel,
   groupSessionsByTask,
 } from "./utils";
-import {
-  useMobileDetection,
-  useURLSync,
-  useSessionInteraction,
-} from "./hooks";
+import { useURLSync, useSessionInteraction } from "./hooks";
 
 import TimelineHeader from "./header";
 import TimelineGrid from "./grid";
@@ -34,7 +32,7 @@ export default function SessionTimeline({
   isFullPage?: boolean;
 }) {
   // Custom hooks for state management
-  const isMobile = useMobileDetection();
+  const isMobile = useMobile();
   const {
     viewMode,
     currentDate,

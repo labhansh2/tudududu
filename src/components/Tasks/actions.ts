@@ -4,9 +4,131 @@ import { eq, and, isNull, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 
-import { Task, Session } from "@/types";
+import { type Task, type Session } from "@/types";
+
 import { db } from "@/drizzle";
 import { sessions, tasks, workTime } from "@/drizzle/schema";
+
+export interface TaskStats {
+  taskId: number;
+  total_time_spent: number;
+  longest_session: number;
+  // think about whant kinda stats are needed
+}
+
+export interface SparklineData {
+  taskId: number;
+  day: number;
+  hours: number;
+}
+
+export interface TaskWithStatsAndSparkline {
+  id: number;
+  name: string;
+  status: "active" | "not_active" | "completed";
+  updatedAt: Date;
+  createdAt: Date;
+  userId: string;
+  taskStats: TaskStats;
+  sparklineData: SparklineData[];
+}
+
+export async function getTasksWithStatsAndSparkline(): Promise<
+  TaskWithStatsAndSparkline[]
+> {
+  const { userId } = await auth();
+
+  if (!userId) {
+    throw new Error("User not authenticated");
+  }
+
+  const tasksWithStats = await db
+    .select({
+      id: tasks.id,
+      name: tasks.name,
+      status: tasks.status,
+      updatedAt: tasks.updatedAt,
+      createdAt: tasks.createdAt,
+      userId: tasks.userId,
+      total_time_spent: sql<number>`COALESCE(SUM(EXTRACT(EPOCH FROM (${sessions.endedAt} - ${sessions.startedAt}))), 0)`,
+      longest_session: sql<number>`COALESCE(MAX(EXTRACT(EPOCH FROM (${sessions.endedAt} - ${sessions.startedAt}))), 0)`,
+    })
+    .from(tasks)
+    .leftJoin(sessions, eq(tasks.id, sessions.taskId))
+    .where(eq(tasks.userId, userId))
+    .groupBy(
+      tasks.id,
+      tasks.name,
+      tasks.status,
+      tasks.updatedAt,
+      tasks.createdAt,
+      tasks.userId,
+    )
+    .orderBy(tasks.updatedAt);
+
+  // day 30 = today, day 29 = yesterday, etc.
+  const sparklineResults = await db
+    .select({
+      taskId: sessions.taskId,
+      day: sql<number>`30 - FLOOR(EXTRACT(EPOCH FROM (NOW() - ${sessions.startedAt})) / 86400)`,
+      hours: sql<number>`SUM(EXTRACT(EPOCH FROM (${sessions.endedAt} - ${sessions.startedAt}))) / 3600`,
+    })
+    .from(sessions)
+    .innerJoin(tasks, eq(sessions.taskId, tasks.id))
+    .where(
+      and(
+        eq(tasks.userId, userId),
+        sql`${sessions.startedAt} >= NOW() - INTERVAL '30 days'`,
+        sql`${sessions.endedAt} IS NOT NULL`,
+      ),
+    )
+    .groupBy(
+      sessions.taskId,
+      sql`30 - FLOOR(EXTRACT(EPOCH FROM (NOW() - ${sessions.startedAt})) / 86400)`,
+    );
+
+  // console.log(sparklineResults);
+  // Combine the results
+  return tasksWithStats.map((task) => {
+    const taskSparklineData = sparklineResults.filter(
+      (s) => s.taskId === task.id,
+    );
+    // console.log("TASK SPARKLINE DATA", taskSparklineData);
+    const sparklineData = fillMissingDays(taskSparklineData, task.id);
+    console.log("SPARKLINE DATA for task", task.name, sparklineData);
+    return {
+      id: task.id,
+      name: task.name,
+      status: task.status,
+      updatedAt: task.updatedAt,
+      createdAt: task.createdAt,
+      userId: task.userId,
+      taskStats: {
+        taskId: task.id,
+        total_time_spent: task.total_time_spent,
+        longest_session: task.longest_session,
+      },
+      sparklineData,
+    };
+  });
+}
+
+function fillMissingDays(
+  sparklineData: SparklineData[],
+  taskId: number,
+): SparklineData[] {
+  const days = Array.from({ length: 30 }, (_, i) => i + 1);
+
+  return days.map((day) => {
+    const dayData = sparklineData.find((d) => d.day == day);
+    // console.log("DAY DATA", dayData);
+    return {
+      taskId,
+      day: Number(dayData?.day || day),
+      hours: Number(dayData?.hours || 0),
+    };
+  });
+}
 
 export async function createTask(name: string) {
   const { userId } = await auth();

@@ -46,7 +46,13 @@ export default async function Activity({
           years={years}
           selectedYear={selectedYear}
           totalHours={totalHours}
-          totalDays={365}
+          totalDays={Math.floor(
+            (new Date(
+              activityData[activityData.length - 1].date,
+            ).getTime() -
+              new Date(activityData[0].date).getTime()) /
+              (1000 * 60 * 60 * 24),
+          )}
           searchParams={searchParams}
         />
       )}
@@ -71,9 +77,9 @@ function YearSelection({
 }: YearSelectionProps) {
   const buildYearUrl = (year: number) => {
     const params = new URLSearchParams();
-    
+
     params.set("year", year.toString());
-    
+
     if (searchParams) {
       Object.entries(searchParams).forEach(([key, value]) => {
         if (key !== "year" && value) {
@@ -81,7 +87,7 @@ function YearSelection({
         }
       });
     }
-    
+
     return `/activity?${params.toString()}`;
   };
 
