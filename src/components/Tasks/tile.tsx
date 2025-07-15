@@ -1,6 +1,7 @@
 "use client";
 import { useState, useTransition } from "react";
 import { LineChart, Line, ResponsiveContainer, YAxis } from "recharts";
+import { Check, Ellipsis } from "lucide-react";
 
 import { type TaskWithStatsAndSparkline } from "./actions";
 import { useMobile } from "@/hooks/useMobile";
@@ -179,7 +180,7 @@ function Sparkline({ sparklineData }: SparklineProps) {
       <div className="w-20 h-8">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={sparklineData}>
-            <YAxis hide domain={[0,4]} />
+            <YAxis hide domain={[0, 4]} />
             <Line
               type="monotone"
               dataKey="hours"
@@ -224,19 +225,7 @@ function Checkbox({
               : "border-[var(--border)] hover:border-[var(--accent)]"
           }`}
         >
-          {checked && (
-            <svg
-              className="w-3 h-3 text-white"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
-              <path
-                fillRule="evenodd"
-                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                clipRule="evenodd"
-              />
-            </svg>
-          )}
+          {checked && <Check className="w-3 h-3 text-white" />}
         </button>
       )}
     </>
@@ -337,19 +326,7 @@ function CompleteBtn({
               : "border-[var(--border)] hover:border-[var(--success)] hover:bg-[var(--success)]"
           } ${completed ? "cursor-default" : "cursor-pointer"}`}
         >
-          {completed && (
-            <svg
-              className="w-3 h-3 text-white"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
-              <path
-                fillRule="evenodd"
-                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                clipRule="evenodd"
-              />
-            </svg>
-          )}
+          {completed && <Check className="w-3 h-3 text-white" />}
         </button>
       )}
     </>
@@ -372,9 +349,7 @@ function Menu({ isCompleted, onEditClick, onDeleteClick }: MenuProps) {
           className="w-5 h-5 flex items-center justify-center text-[var(--secondary)] hover:text-[var(--foreground)] transition-colors"
           // disabled={editIsPending}
         >
-          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
-          </svg>
+          <Ellipsis className="w-4 h-4 rotate-90" />
         </button>
 
         {showMenu && (
