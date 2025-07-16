@@ -1,7 +1,5 @@
 "use client";
 
-import { useState, useTransition } from "react";
-
 interface Props {
   sort: "all" | "completed" | "incomplete";
   setSort: (sort: "all" | "completed" | "incomplete") => void;
@@ -20,36 +18,21 @@ export default function Controls({
       <div className="flex justify-between items-center gap-3">
         {/* Filter buttons */}
         <div className="flex items-center gap-1 p-1 bg-[var(--background)] rounded-lg border border-[var(--border)]">
-          <button
-            className={`px-2 py-1 text-xs font-medium rounded-md transition-all ${
-              sort === "all"
-                ? "bg-[var(--accent)] text-white shadow-sm"
-                : "text-[var(--secondary)] hover:text-[var(--foreground)] hover:bg-[var(--card-bg)]"
-            }`}
-            onClick={() => setSort("all")}
-          >
-            All
-          </button>
-          <button
-            className={`px-2 py-1 text-xs font-medium rounded-md transition-all ${
-              sort === "incomplete"
-                ? "bg-[var(--accent)] text-white shadow-sm"
-                : "text-[var(--secondary)] hover:text-[var(--foreground)] hover:bg-[var(--card-bg)]"
-            }`}
-            onClick={() => setSort("incomplete")}
-          >
-            Incomplete
-          </button>
-          <button
-            className={`px-2 py-1 text-xs font-medium rounded-md transition-all ${
-              sort === "completed"
-                ? "bg-[var(--accent)] text-white shadow-sm"
-                : "text-[var(--secondary)] hover:text-[var(--foreground)] hover:bg-[var(--card-bg)]"
-            }`}
-            onClick={() => setSort("completed")}
-          >
-            Completed
-          </button>
+          <FilterButton
+            sort="all"
+            selected={sort === "all"}
+            setSort={setSort}
+          />
+          <FilterButton
+            sort="incomplete"
+            selected={sort === "incomplete"}
+            setSort={setSort}
+          />
+          <FilterButton
+            sort="completed"
+            selected={sort === "completed"}
+            setSort={setSort}
+          />
         </div>
 
         {/* View toggle */}
@@ -64,6 +47,27 @@ export default function Controls({
         </div>
       </div>
     </div>
+  );
+}
+
+interface FilterButtonProps {
+  sort: "all" | "completed" | "incomplete";
+  selected: boolean;
+  setSort: (sort: "all" | "completed" | "incomplete") => void;
+}
+
+function FilterButton({ sort, selected, setSort }: FilterButtonProps) {
+  return (
+    <button
+      className={`px-2 py-1 text-xs font-medium rounded-md transition-all ${
+        selected
+          ? "bg-[var(--accent)] text-white shadow-sm"
+          : "text-[var(--secondary)] hover:text-[var(--foreground)] hover:bg-[var(--card-bg)]"
+      }`}
+      onClick={() => setSort(sort)}
+    >
+      {sort.charAt(0).toUpperCase() + sort.slice(1)}
+    </button>
   );
 }
 

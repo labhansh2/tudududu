@@ -1,6 +1,5 @@
 "use server";
 import { auth } from "@clerk/nextjs/server";
-import { cookies } from "next/headers";
 import { lte, gte, eq, sql, and, asc } from "drizzle-orm";
 
 import { db } from "@/drizzle";
@@ -29,9 +28,6 @@ export async function getActivityData(startDate: string, endDate: string) {
   if (!userId) {
     throw new Error("User not authenticated");
   }
-
-  const cookieStore = await cookies();
-  const timezone = cookieStore.get("timezone")?.value;
 
   const data = await db
     .select({

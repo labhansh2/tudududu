@@ -67,7 +67,7 @@ export async function getTotalSecondsToday() {
     totalSecondsToday:
       totalSecondsToday +
       Math.floor(
-        new Date().getTime() - activeSessionStartedAt.getTime() / 1000,
+        (new Date().getTime() - activeSessionStartedAt.getTime()) / 1000,
       ),
     sessionIsActive: true,
   };

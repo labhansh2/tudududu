@@ -3,8 +3,10 @@ import { useState, useTransition } from "react";
 import { LineChart, Line, ResponsiveContainer, YAxis } from "recharts";
 import { Check, Ellipsis } from "lucide-react";
 
-import { type TaskWithStatsAndSparkline } from "./actions";
 import { useMobile } from "@/hooks/useMobile";
+
+import { type TaskWithStatsAndSparkline } from "./actions";
+import { getTaskStyles } from "./utils";
 
 import {
   completeTask,
@@ -12,7 +14,6 @@ import {
   deleteTask,
   toggleTaskStatus,
   type SparklineData,
-  type TaskStats,
 } from "./actions";
 
 interface Props {
@@ -56,19 +57,9 @@ export default function TaskTile({
     });
   };
 
-  const getTaskStyles = () => {
-    if (task.status === "completed") {
-      return "bg-[var(--completed-task)] border-[var(--border)]";
-    }
-    if (activeTask?.id === task.id) {
-      return "bg-[var(--active-task)] border-[var(--accent)]";
-    }
-    return "bg-[var(--card-bg)] border-[var(--border)] hover:border-[var(--accent)]/50";
-  };
-
   return (
     <div
-      className={`p-3 rounded-lg border transition-all ${getTaskStyles()}`}
+      className={`p-3 rounded-lg border transition-all ${getTaskStyles(task.status)}`}
     >
       <div className="flex items-center gap-3">
         {/* Working status checkbox */}
