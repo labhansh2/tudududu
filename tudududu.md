@@ -23,8 +23,10 @@
 - [x] cross day session update work_time
 - [x] get overall date time right
 - [x] toggle task bug fix : db source of truth not state for toggle
-- [ ] bug: wrong update time calc on server
-- [ ] bug: wrong countdown on server
+- [x] bug: default value in local time in deadline form
+- [ ] bug: wrong update time calc on server (cross day)
+- [x] bug: wrong countdown on server
+- [x] rewrite: timetoday logic
 - [ ] bug: wrong hydration due to some timezone issue
 - [x] sprarklines
   - [x] contorls

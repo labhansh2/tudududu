@@ -1,17 +1,31 @@
 "use client";
-import { useCountdown } from "./use-countdown";
+import { useEffect, useState } from "react";
 
-export default function Countdown({ deadline }: { deadline: Date }) {
-  const timeLeft = useCountdown(deadline);
+import { useMobile } from "@/hooks/useMobile";
 
-  const formatTime = (time: number) => time.toString().padStart(2, "0");
+import { convertSecondsToTimeWithDays } from "./utils";
+
+export default function Countdown({
+  secondsLeft,
+}: {
+  secondsLeft: number;
+}) {
+  const [timeLeft, setTimeLeft] = useState(secondsLeft);
+
+  const isMobile = useMobile();
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTimeLeft(timeLeft - 1);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [timeLeft]);
 
   return (
     <>
       <div className="flex items-center gap-3">
         <div className="font-mono text-lg sm:text-xl font-semibold text-[var(--foreground)]">
-          {timeLeft.days}d {formatTime(timeLeft.hours)}h{" "}
-          {formatTime(timeLeft.minutes)}m
+          {convertSecondsToTimeWithDays(timeLeft, !isMobile)}
         </div>
         <span className="hidden sm:block text-[var(--secondary)] text-sm">
           to go
