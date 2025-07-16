@@ -1,20 +1,12 @@
 "use client";
+import { useTimeline } from "./context";
 import { TimelineSession } from "./actions";
 import { formatDuration } from "./utils";
 
-interface SessionTooltipProps {
-  hoveredSession: TimelineSession | null;
-  hoveredPosition: { x: number; y: number } | null;
-  isMobile: boolean;
-  clickedSession: TimelineSession | null;
-}
+export default function SessionTooltip() {
+  const { hoveredSession, hoveredPosition, isMobile, clickedSession } =
+    useTimeline();
 
-export default function SessionTooltip({
-  hoveredSession,
-  hoveredPosition,
-  isMobile,
-  clickedSession,
-}: SessionTooltipProps) {
   if (
     !hoveredSession ||
     !hoveredPosition ||

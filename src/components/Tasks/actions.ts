@@ -368,7 +368,10 @@ export async function addClosedSessionTime(closedActiveSession: Session) {
     throw new Error("Timezone not found");
   }
 
-  const userDateToday = format(toZonedTime(new Date(), timezone), "yyyy-MM-dd");
+  const userDateToday = format(
+    toZonedTime(new Date(), timezone),
+    "yyyy-MM-dd",
+  );
 
   console.log("USER DATE TODAY:", userDateToday);
 
@@ -379,16 +382,18 @@ export async function addClosedSessionTime(closedActiveSession: Session) {
   }[] = [];
 
   let startedAtUTC = closedActiveSession.startedAt;
-  let startedAtDateUserTz = format(toZonedTime(startedAtUTC, timezone), "yyyy-MM-dd");
+  let startedAtDateUserTz = format(
+    toZonedTime(startedAtUTC, timezone),
+    "yyyy-MM-dd",
+  );
 
   console.log("STARTED AT DATE USER TZ:", startedAtDateUserTz);
   console.log("STARTED AT UTC:", startedAtUTC);
 
   while (startedAtDateUserTz !== userDateToday) {
-
     const nextDayDateUserTz = new Date(startedAtDateUserTz + "T00:00:00");
     nextDayDateUserTz.setDate(nextDayDateUserTz.getDate() + 1);
-    
+
     const nextDayMidnightUTC = fromZonedTime(nextDayDateUserTz, timezone);
 
     console.log("NEXT DAY MIDNIGHT UTC:", nextDayMidnightUTC);
@@ -403,7 +408,10 @@ export async function addClosedSessionTime(closedActiveSession: Session) {
       total_seconds: differenceInSeconds,
     });
 
-    startedAtDateUserTz = format(toZonedTime(nextDayMidnightUTC, timezone), "yyyy-MM-dd");
+    startedAtDateUserTz = format(
+      toZonedTime(nextDayMidnightUTC, timezone),
+      "yyyy-MM-dd",
+    );
     startedAtUTC = nextDayMidnightUTC;
 
     console.log("STARTED AT DATE USER TZ:", startedAtDateUserTz);
@@ -413,7 +421,10 @@ export async function addClosedSessionTime(closedActiveSession: Session) {
   console.log("STARTED AT DATE USER TZ:", startedAtDateUserTz);
   console.log("STARTED AT UTC:", startedAtUTC);
 
-  const lastDifferenceInSeconds = Math.floor((closedActiveSession.endedAt.getTime() - startedAtUTC.getTime()) / 1000);
+  const lastDifferenceInSeconds = Math.floor(
+    (closedActiveSession.endedAt.getTime() - startedAtUTC.getTime()) /
+      1000,
+  );
 
   record.push({
     userId,
@@ -423,10 +434,13 @@ export async function addClosedSessionTime(closedActiveSession: Session) {
 
   console.log("RECORD:", record);
 
-  await db.insert(workTime).values(record).onConflictDoUpdate({
-    target: [workTime.userId, workTime.date],
-    set: {
-      total_seconds: sql`${workTime.total_seconds} + excluded.total_seconds`,
-    },
-  });
+  await db
+    .insert(workTime)
+    .values(record)
+    .onConflictDoUpdate({
+      target: [workTime.userId, workTime.date],
+      set: {
+        total_seconds: sql`${workTime.total_seconds} + excluded.total_seconds`,
+      },
+    });
 }

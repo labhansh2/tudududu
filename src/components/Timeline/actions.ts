@@ -28,7 +28,7 @@ export async function getTimelineSessions(
 
   const cookieStore = await cookies();
   const timezone = cookieStore.get("timezone")?.value;
-
+  // TODO: this is wrong query, fix it
   const data = await db
     .select({
       sessionId: sessions.sessionId,
@@ -44,8 +44,13 @@ export async function getTimelineSessions(
     .where(
       and(
         eq(sessions.userId, userId),
-        lte(sessions.startedAt, endDate),
-        or(gte(sessions.endedAt, startDate), isNull(sessions.endedAt)),
+        or(
+          and(
+            gte(sessions.startedAt, startDate),
+            lt(sessions.startedAt, endDate),
+          ),
+          isNull(sessions.endedAt),
+        ),
       ),
     )
     .orderBy(asc(sessions.startedAt));
@@ -84,7 +89,7 @@ export async function getTimelineStats(
       and(
         eq(workTime.userId, userId),
         gte(workTime.date, startDate.toISOString()),
-        lt(workTime.date, endDate.toISOString()),
+        lte(workTime.date, endDate.toISOString()),
       ),
     );
 

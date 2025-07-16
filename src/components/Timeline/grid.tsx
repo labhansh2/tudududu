@@ -1,37 +1,15 @@
+import { useTimeline } from "./context";
 import { TimelineSession } from "./actions";
 import {
-  TimeRange,
   TaskGroup,
   getSessionPosition,
   formatDuration,
   getStatusColor,
 } from "./utils";
 
-interface TimelineGridProps {
-  viewMode: "day" | "week" | "month";
-  timeRange: TimeRange;
-  taskGroups: TaskGroup[];
-  isMobile: boolean;
-  clickedSession: TimelineSession | null;
-  onSessionHover: (session: TimelineSession, rect: DOMRect) => void;
-  onSessionLeave: () => void;
-  onSessionClick: (session: TimelineSession, rect: DOMRect) => void;
-  isFullHeight?: boolean;
-  currentTime: Date;
-}
+export default function TimelineGrid() {
+  const { viewMode, timeRange, taskGroups, isFullHeight } = useTimeline();
 
-export default function TimelineGrid({
-  viewMode,
-  timeRange,
-  taskGroups,
-  isMobile,
-  clickedSession,
-  onSessionHover,
-  onSessionLeave,
-  onSessionClick,
-  isFullHeight = false,
-  currentTime,
-}: TimelineGridProps) {
   return (
     <div
       className={`space-y-4 overflow-x-auto ${isFullHeight ? "h-full flex flex-col" : ""}`}
@@ -41,7 +19,7 @@ export default function TimelineGrid({
       >
         {/* Time labels - full width */}
         <div className={isFullHeight ? "flex-shrink-0" : ""}>
-          <TimeLabels viewMode={viewMode} timeRange={timeRange} />
+          <TimeLabels />
         </div>
 
         {/* Timeline grid with task rows */}
@@ -68,18 +46,7 @@ export default function TimelineGrid({
             className={`space-y-1 ${isFullHeight ? "overflow-y-auto h-full pr-2" : ""}`}
           >
             {taskGroups.map((taskGroup) => (
-              <TaskRow
-                key={taskGroup.taskId}
-                taskGroup={taskGroup}
-                timeRange={timeRange}
-                viewMode={viewMode}
-                isMobile={isMobile}
-                clickedSession={clickedSession}
-                onSessionHover={onSessionHover}
-                onSessionLeave={onSessionLeave}
-                onSessionClick={onSessionClick}
-                currentTime={currentTime}
-              />
+              <TaskRow key={taskGroup.taskId} taskGroup={taskGroup} />
             ))}
 
             {/* Add some bottom padding when scrollable */}
@@ -91,12 +58,8 @@ export default function TimelineGrid({
   );
 }
 
-interface TimeLabelsProps {
-  viewMode: "day" | "week" | "month";
-  timeRange: TimeRange;
-}
-
-function TimeLabels({ viewMode, timeRange }: TimeLabelsProps) {
+function TimeLabels() {
+  const { viewMode, timeRange } = useTimeline();
   if (viewMode === "day") {
     return (
       <div className="flex text-xs text-[var(--secondary)] mb-2">
@@ -162,27 +125,19 @@ function TimeLabels({ viewMode, timeRange }: TimeLabelsProps) {
 
 interface SessionBarProps {
   session: TimelineSession;
-  timeRange: TimeRange;
-  viewMode: "day" | "week" | "month";
-  isMobile: boolean;
-  clickedSession: TimelineSession | null;
-  onSessionHover: (session: TimelineSession, rect: DOMRect) => void;
-  onSessionLeave: () => void;
-  onSessionClick: (session: TimelineSession, rect: DOMRect) => void;
-  currentTime: Date;
 }
 
-function SessionBar({
-  session,
-  timeRange,
-  viewMode,
-  isMobile,
-  clickedSession,
-  onSessionHover,
-  onSessionLeave,
-  onSessionClick,
-  currentTime,
-}: SessionBarProps) {
+function SessionBar({ session }: SessionBarProps) {
+  const {
+    timeRange,
+    viewMode,
+    isMobile,
+    clickedSession,
+    handleSessionHover,
+    handleSessionLeave,
+    handleSessionClick,
+    currentTime,
+  } = useTimeline();
   // For active sessions (no endedAt), use currentTime as the end time
   const effectiveSession = session.endedAt
     ? session
@@ -209,19 +164,19 @@ function SessionBar({
       onMouseEnter={(e) => {
         if (!isMobile) {
           const rect = e.currentTarget.getBoundingClientRect();
-          onSessionHover(session, rect);
+          handleSessionHover(session, rect);
         }
       }}
       onMouseLeave={() => {
         if (!isMobile) {
-          onSessionLeave();
+          handleSessionLeave();
         }
       }}
       onClick={(e) => {
         e.stopPropagation();
         if (isMobile) {
           const rect = e.currentTarget.getBoundingClientRect();
-          onSessionClick(session, rect);
+          handleSessionClick(session, rect);
         }
       }}
     >
@@ -242,27 +197,11 @@ function SessionBar({
 
 interface TaskRowProps {
   taskGroup: TaskGroup;
-  timeRange: TimeRange;
-  viewMode: "day" | "week" | "month";
-  isMobile: boolean;
-  clickedSession: TimelineSession | null;
-  onSessionHover: (session: TimelineSession, rect: DOMRect) => void;
-  onSessionLeave: () => void;
-  onSessionClick: (session: TimelineSession, rect: DOMRect) => void;
-  currentTime: Date;
 }
 
-function TaskRow({
-  taskGroup,
-  timeRange,
-  viewMode,
-  isMobile,
-  clickedSession,
-  onSessionHover,
-  onSessionLeave,
-  onSessionClick,
-  currentTime,
-}: TaskRowProps) {
+function TaskRow({ taskGroup }: TaskRowProps) {
+  const { isMobile } = useTimeline();
+
   return (
     <div className="space-y-0.5">
       {/* Task name above the row - sticky on mobile */}
@@ -278,18 +217,7 @@ function TaskRow({
       <div className="relative h-12 sm:h-12 bg-[var(--card-bg)] rounded border border-[var(--border)]">
         {/* Sessions */}
         {taskGroup.sessions.map((session: TimelineSession) => (
-          <SessionBar
-            key={session.sessionId}
-            session={session}
-            timeRange={timeRange}
-            viewMode={viewMode}
-            isMobile={isMobile}
-            clickedSession={clickedSession}
-            onSessionHover={onSessionHover}
-            onSessionLeave={onSessionLeave}
-            onSessionClick={onSessionClick}
-            currentTime={currentTime}
-          />
+          <SessionBar key={session.sessionId} session={session} />
         ))}
       </div>
     </div>
