@@ -14,15 +14,16 @@ export default function TotalTimeSpentToday({
 
   useEffect(() => {
     if (!sessionIsActive) {
+      setTotalSeconds(initialTotalSeconds);
       return;
     }
 
     const interval = setInterval(() => {
-      setTotalSeconds(totalSeconds + 1);
+      setTotalSeconds((prev) => prev + 1);
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [totalSeconds, sessionIsActive]);
+  }, [sessionIsActive, initialTotalSeconds]);
 
   return (
     <div className="flex flex-col items-center justify-center text-sm sm:text-base py-1">

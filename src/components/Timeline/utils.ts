@@ -240,6 +240,10 @@ export function groupSessionsByTask(sessions: TimelineSession[]) {
   );
 }
 
+/**
+ * gets reange in user tz
+ * i.e midnight to midnight in user tz
+ */
 export function getDateRangeForView(
   currentDate: Date,
   viewMode: "day" | "week" | "month",

@@ -8,42 +8,42 @@ import {
 } from "./utils";
 
 export default function TimelineGrid() {
-  const { viewMode, timeRange, taskGroups, isFullHeight } = useTimeline();
+  const { taskGroups, isFullHeight } = useTimeline();
 
   return (
     <div
-      className={`space-y-4 overflow-x-auto ${isFullHeight ? "h-full flex flex-col" : ""}`}
+      className={`space-y-4 overflow-x-auto ${
+        isFullHeight
+          ? "h-full flex flex-col"
+          : "h-full flex flex-col overflow-y-auto"
+      }`}
     >
       <div
-        className={`min-w-[600px] sm:min-w-0 space-y-4 ${isFullHeight ? "flex flex-col h-full" : ""}`}
+        className={`min-w-[600px] sm:min-w-0 space-y-4 ${
+          isFullHeight
+            ? "flex flex-col h-full"
+            : "flex flex-col h-full overflow-y-auto"
+        }`}
       >
-        {/* Time labels - full width */}
-        <div className={isFullHeight ? "flex-shrink-0" : ""}>
-          <TimeLabels />
-        </div>
+        <TimeLabels />
 
         {/* Timeline grid with task rows */}
         <div
-          className={`relative ${isFullHeight ? "flex-1 min-h-0" : ""}`}
+          className={`relative ${
+            isFullHeight
+              ? "flex-1 min-h-0"
+              : "flex-1 min-h-0 overflow-y-auto"
+          }`}
         >
-          {/* Grid lines - full width */}
-          <div className="absolute inset-0 flex">
-            {(viewMode === "day"
-              ? timeRange.hours
-              : viewMode === "week"
-                ? timeRange.days
-                : Array.from({ length: 4 }, (_, i) => i)
-            )?.map((_, index) => (
-              <div
-                key={index}
-                className="flex-1 border-l border-[var(--border)] first:border-l-0"
-              />
-            ))}
-          </div>
+          <GridLines />
 
           {/* Task rows - scrollable when in full height mode */}
           <div
-            className={`space-y-1 ${isFullHeight ? "overflow-y-auto h-full pr-2" : ""}`}
+            className={`space-y-1 ${
+              isFullHeight
+                ? "overflow-y-auto h-full pr-2"
+                : "overflow-y-auto h-full pr-2"
+            }`}
           >
             {taskGroups.map((taskGroup) => (
               <TaskRow key={taskGroup.taskId} taskGroup={taskGroup} />
@@ -58,69 +58,31 @@ export default function TimelineGrid() {
   );
 }
 
-function TimeLabels() {
-  const { viewMode, timeRange } = useTimeline();
-  if (viewMode === "day") {
-    return (
-      <div className="flex text-xs text-[var(--secondary)] mb-2">
-        {timeRange.hours?.map((hour, index) => (
-          <div key={hour} className="flex-1 text-center">
-            <span
-              className={`${index % 2 === 0 ? "block" : "hidden sm:block"}`}
-            >
-              {hour === 0
-                ? "12AM"
-                : hour < 12
-                  ? `${hour}AM`
-                  : hour === 12
-                    ? "12PM"
-                    : `${hour - 12}PM`}
-            </span>
-          </div>
+interface TaskRowProps {
+  taskGroup: TaskGroup;
+}
+
+function TaskRow({ taskGroup }: TaskRowProps) {
+  console.log("TASK GROUP", taskGroup);
+  return (
+    <div className="space-y-0.5">
+      <div className="relative">
+        <div
+          className={`text-xs text-[var(--secondary)] font-medium px-1}`}
+        >
+          {taskGroup.taskName}
+        </div>
+      </div>
+
+      {/* Sessions row */}
+      <div className="relative h-12 sm:h-12 bg-[var(--card-bg)] rounded border border-[var(--border)]">
+        {/* Sessions */}
+        {taskGroup.sessions.map((session: TimelineSession) => (
+          <SessionBar key={session.sessionId} session={session} />
         ))}
       </div>
-    );
-  } else if (viewMode === "week") {
-    return (
-      <div className="flex text-xs text-[var(--secondary)] mb-2">
-        {timeRange.days?.map((day) => (
-          <div key={day.toISOString()} className="flex-1 text-center px-1">
-            <div className="hidden sm:block">
-              {day.toLocaleDateString("en-US", {
-                weekday: "short",
-                month: "numeric",
-                day: "numeric",
-              })}
-            </div>
-            <div className="sm:hidden">
-              {day.toLocaleDateString("en-US", { weekday: "short" })}
-            </div>
-          </div>
-        ))}
-      </div>
-    );
-  } else {
-    const weeks: number[] = [];
-    if (timeRange.days) {
-      for (
-        let week = 0;
-        week < Math.ceil(timeRange.days.length / 7);
-        week++
-      ) {
-        weeks.push(week);
-      }
-    }
-    return (
-      <div className="flex text-xs text-[var(--secondary)] mb-2">
-        {weeks.map((week) => (
-          <div key={week} className="flex-1 text-center">
-            <div className="hidden sm:block">Week {week + 1}</div>
-            <div className="sm:hidden">W{week + 1}</div>
-          </div>
-        ))}
-      </div>
-    );
-  }
+    </div>
+  );
 }
 
 interface SessionBarProps {
@@ -195,31 +157,95 @@ function SessionBar({ session }: SessionBarProps) {
   );
 }
 
-interface TaskRowProps {
-  taskGroup: TaskGroup;
-}
-
-function TaskRow({ taskGroup }: TaskRowProps) {
-  const { isMobile } = useTimeline();
-
-  return (
-    <div className="space-y-0.5">
-      {/* Task name above the row - sticky on mobile */}
-      <div className="relative">
-        <div
-          className={`text-xs text-[var(--secondary)] font-medium px-1 ${isMobile ? "sticky left-0 z-30 bg-[var(--card-bg)]/90 backdrop-blur-sm inline-block rounded-sm border border-[var(--border)]/20" : ""}`}
-        >
-          {taskGroup.taskName}
+function TimeLabels() {
+  const { viewMode, timeRange, isFullHeight } = useTimeline();
+  if (viewMode === "day") {
+    return (
+      <div className={isFullHeight ? "flex-shrink-0" : ""}>
+        <div className="flex text-xs text-[var(--secondary)] mb-2">
+          {timeRange.hours?.map((hour, index) => (
+            <div key={hour} className="flex-1">
+              <span
+                className={`${index % 2 === 0 ? "block" : "hidden md:block"}`}
+              >
+                {hour === 0
+                  ? "12AM"
+                  : hour < 12
+                    ? `${hour}AM`
+                    : hour === 12
+                      ? "12PM"
+                      : `${hour - 12}PM`}
+              </span>
+            </div>
+          ))}
         </div>
       </div>
-
-      {/* Sessions row */}
-      <div className="relative h-12 sm:h-12 bg-[var(--card-bg)] rounded border border-[var(--border)]">
-        {/* Sessions */}
-        {taskGroup.sessions.map((session: TimelineSession) => (
-          <SessionBar key={session.sessionId} session={session} />
-        ))}
+    );
+  } else if (viewMode === "week") {
+    return (
+      <div className={isFullHeight ? "flex-shrink-0" : ""}>
+        <div className="flex text-xs text-[var(--secondary)] mb-2">
+          {timeRange.days?.map((day) => (
+            <div
+              key={day.toISOString()}
+              className="flex-1 text-center px-1"
+            >
+              <div className="hidden sm:block">
+                {day.toLocaleDateString("en-US", {
+                  weekday: "short",
+                  month: "numeric",
+                  day: "numeric",
+                })}
+              </div>
+              <div className="sm:hidden">
+                {day.toLocaleDateString("en-US", { weekday: "short" })}
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
+    );
+  } else {
+    const weeks: number[] = [];
+    if (timeRange.days) {
+      for (
+        let week = 0;
+        week < Math.ceil(timeRange.days.length / 7);
+        week++
+      ) {
+        weeks.push(week);
+      }
+    }
+    return (
+      <div className={isFullHeight ? "flex-shrink-0" : ""}>
+        <div className="flex text-xs text-[var(--secondary)] mb-2">
+          {weeks.map((week) => (
+            <div key={week} className="flex-1 text-center">
+              <div className="hidden sm:block">Week {week + 1}</div>
+              <div className="sm:hidden">W{week + 1}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+}
+
+function GridLines() {
+  const { viewMode, timeRange } = useTimeline();
+  return (
+    <div className="absolute inset-0 flex">
+      {(viewMode === "day"
+        ? timeRange.hours
+        : viewMode === "week"
+          ? timeRange.days
+          : Array.from({ length: 4 }, (_, i) => i)
+      )?.map((_, index) => (
+        <div
+          key={index}
+          className="flex-1 border-l border-[var(--border)] first:border-l-0"
+        />
+      ))}
     </div>
   );
 }

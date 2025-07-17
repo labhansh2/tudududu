@@ -1,10 +1,11 @@
 "use server";
 import { auth } from "@clerk/nextjs/server";
 import { cookies } from "next/headers";
+import { fromZonedTime } from "date-fns-tz";
 
 import { db } from "@/drizzle";
 import { sessions, tasks, workTime } from "@/drizzle/schema";
-import { eq, and, gte, lte, asc, or, isNull, sql, lt } from "drizzle-orm";
+import { eq, and, gte, lte, asc, or, gt, sql, lt, ne } from "drizzle-orm";
 
 export interface TimelineSession {
   sessionId: string;
@@ -28,7 +29,10 @@ export async function getTimelineSessions(
 
   const cookieStore = await cookies();
   const timezone = cookieStore.get("timezone")?.value;
-  // TODO: this is wrong query, fix it
+
+  const startDateUTC = fromZonedTime(startDate, timezone!);
+  const endDateUTC = fromZonedTime(endDate, timezone!);
+
   const data = await db
     .select({
       sessionId: sessions.sessionId,
@@ -40,16 +44,23 @@ export async function getTimelineSessions(
       endedAt: sessions.endedAt,
     })
     .from(sessions)
-    .innerJoin(tasks, eq(sessions.taskId, tasks.id))
+    .innerJoin(
+      tasks,
+      and(eq(sessions.taskId, tasks.id), eq(sessions.userId, userId)),
+    )
     .where(
-      and(
-        eq(sessions.userId, userId),
-        or(
-          and(
-            gte(sessions.startedAt, startDate),
-            lt(sessions.startedAt, endDate),
-          ),
-          isNull(sessions.endedAt),
+      or(
+        and(
+          gte(sessions.startedAt, startDateUTC),
+          lt(sessions.startedAt, endDateUTC),
+        ),
+        and(
+          gte(sessions.endedAt, startDateUTC),
+          lt(sessions.endedAt, endDateUTC),
+        ),
+        and(
+          lt(sessions.startedAt, startDateUTC),
+          gt(sessions.endedAt, endDateUTC),
         ),
       ),
     )

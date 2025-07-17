@@ -1,5 +1,5 @@
 import { getTimelineSessions, getTimelineStats } from "./actions";
-import { getDateRangeForView, parseLocalDate } from "./utils";
+import { getDateRangeForView } from "./utils";
 import { TimelineProvider } from "./context";
 import SessionTimeline from "./timeline";
 
@@ -16,11 +16,14 @@ export default async function Timeline({
   isFullHeight = false,
   isFullPage = true,
 }: TimelineProps) {
-  const parsedDate = parseLocalDate(
-    new Date().toLocaleDateString("en-CA"),
+  const { startDate, endDate } = getDateRangeForView(
+    new Date(paramsDateUserTz),
+    viewMode,
   );
 
-  const { startDate, endDate } = getDateRangeForView(parsedDate, viewMode);
+  console.log("START DATE", startDate);
+  console.log("END DATE", endDate);
+
   const sessionsData = await getTimelineSessions(startDate, endDate);
   const stats = await getTimelineStats(startDate, endDate);
 

@@ -12,8 +12,8 @@ export default function SessionTimeline() {
   return (
     <div
       className={`w-full bg-[var(--card-bg)] text-[var(--foreground)] ${
-        isFullPage 
-          ? "h-full flex flex-col p-4" 
+        isFullPage
+          ? "h-full flex flex-col p-4"
           : `p-4 sm:p-6 rounded-lg border border-[var(--border)] ${isFullHeight ? "h-full flex flex-col" : ""}`
       }`}
     >
