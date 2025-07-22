@@ -5,6 +5,7 @@ import { format, toZonedTime } from "date-fns-tz";
 
 import Activity from "@/components/ActivityMap";
 import Timeline from "@/components/Timeline";
+import { View } from "@/components/Timeline/types";
 
 export default async function Page({
   searchParams,
@@ -38,7 +39,7 @@ export default async function Page({
     : parseInt(format(todayUserTz, "yyyy"));
 
   // parse params for timeline
-  const timelineView = (params.view as "day" | "week" | "month") || "day";
+  const timelineView = (params.view as View) || View.DAY;
   const timelineDate = params.date || format(todayUserTz, "yyyy-MM-dd");
 
   return (
@@ -54,10 +55,11 @@ export default async function Page({
 
         <div className="flex-1 min-h-0 sm:flex-1 sm:min-h-0">
           <Timeline
-            viewMode={timelineView}
-            paramsDateUserTz={timelineDate}
             isFullHeight={true}
             isFullPage={false}
+            viewMode={timelineView}
+            paramsDateUserTz={timelineDate}
+            timezone={timezone}
           />
         </div>
       </div>

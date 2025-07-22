@@ -1,21 +1,13 @@
 "use server";
 import { auth } from "@clerk/nextjs/server";
 import { cookies } from "next/headers";
-import { fromZonedTime } from "date-fns-tz";
+import { toZonedTime } from "date-fns-tz";
 
 import { db } from "@/drizzle";
 import { sessions, tasks, workTime } from "@/drizzle/schema";
-import { eq, and, gte, lte, asc, or, gt, sql, lt, ne } from "drizzle-orm";
+import { eq, and, gte, lte, asc, or, gt, sql, lt } from "drizzle-orm";
 
-export interface TimelineSession {
-  sessionId: string;
-  taskId: string;
-  taskName: string;
-  taskStatus: "completed" | "active" | "not_active";
-  updatedAt: Date;
-  startedAt: Date;
-  endedAt: Date | null;
-}
+import { type TimelineSession } from "./types";
 
 export async function getTimelineSessions(
   startDate: Date,
@@ -26,12 +18,6 @@ export async function getTimelineSessions(
   if (!userId) {
     throw new Error("User not authenticated");
   }
-
-  const cookieStore = await cookies();
-  const timezone = cookieStore.get("timezone")?.value;
-
-  const startDateUTC = fromZonedTime(startDate, timezone!);
-  const endDateUTC = fromZonedTime(endDate, timezone!);
 
   const data = await db
     .select({
@@ -51,16 +37,16 @@ export async function getTimelineSessions(
     .where(
       or(
         and(
-          gte(sessions.startedAt, startDateUTC),
-          lt(sessions.startedAt, endDateUTC),
+          gte(sessions.startedAt, startDate),
+          lt(sessions.startedAt, endDate),
         ),
         and(
-          gte(sessions.endedAt, startDateUTC),
-          lt(sessions.endedAt, endDateUTC),
+          gte(sessions.endedAt, startDate),
+          lt(sessions.endedAt, endDate),
         ),
         and(
-          lt(sessions.startedAt, startDateUTC),
-          gt(sessions.endedAt, endDateUTC),
+          lt(sessions.startedAt, startDate),
+          gt(sessions.endedAt, endDate),
         ),
       ),
     )
@@ -91,6 +77,12 @@ export async function getTimelineStats(
     throw new Error("User not authenticated");
   }
 
+  const cookieStore = await cookies();
+  const timezone = cookieStore.get("timezone")?.value;
+
+  const startDateZoned = toZonedTime(startDate, timezone!);
+  const endDateZoned = toZonedTime(endDate, timezone!);
+
   const data = await db
     .select({
       total_seconds: sql<number>`SUM(total_seconds)`,
@@ -99,8 +91,8 @@ export async function getTimelineStats(
     .where(
       and(
         eq(workTime.userId, userId),
-        gte(workTime.date, startDate.toISOString()),
-        lte(workTime.date, endDate.toISOString()),
+        gte(workTime.date, startDateZoned.toISOString()),
+        lt(workTime.date, endDateZoned.toISOString()),
       ),
     );
 

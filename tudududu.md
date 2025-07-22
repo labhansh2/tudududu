@@ -26,7 +26,16 @@
 - [x] bug: default value in local time in deadline form
 - [x] bug: wrong countdown on server
 - [x] rewrite: timetoday logic
-- [ ] bug: wrong hydration on /activity due to some timezone issue
+- [x] bug: wrong hydration on /activity due to some timezone issue
+- [x] bug: wrong timeline stats -> not calculating from midnight to midnight
+- [x] header
+  - [x] display labeled date for range
+  - [x] implement navigation
+- [x] grid
+  - [x] render session bars in local not utc
+  - [x] render active session
+  - [x] bug: session bars not rendering after view change
+- [ ] bug: grid doesn't work for march month
 - [x] bug: wrong update time calc on server (cross day)
 - [x] sprarklines
   - [x] contorls

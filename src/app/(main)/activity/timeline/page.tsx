@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { format, toZonedTime } from "date-fns-tz";
 
 import Timeline from "@/components/Timeline";
+import { View } from "@/components/Timeline/types";
 
 export default async function Page({
   searchParams,
@@ -29,16 +30,17 @@ export default async function Page({
   const todayUserTz = toZonedTime(new Date(), timezone);
 
   const params = await searchParams;
-  const timelineView = (params.view as "day" | "week" | "month") || "day";
+  const timelineView = (params.view as View) || View.DAY;
   const timelineDate = params.date || format(todayUserTz, "yyyy-MM-dd");
 
   return (
     <div className="h-[calc(100vh-4rem)]">
       <Timeline
-        viewMode={timelineView}
-        paramsDateUserTz={timelineDate}
         isFullHeight={true}
         isFullPage={true}
+        viewMode={timelineView}
+        paramsDateUserTz={timelineDate}
+        timezone={timezone}
       />
     </div>
   );

@@ -1,56 +1,68 @@
-import { useTimeline } from "./context";
-import { TimelineSession } from "./actions";
+"use client";
+
+import { useState, useEffect } from "react";
+
+import { useMobile } from "@/hooks/useMobile";
+
 import {
-  TaskGroup,
+  useTimelineData,
+  useTimelineDate,
+  useTimelineView,
+  useSessionTooltip,
+} from "./context";
+import { type TimelineSession, type TaskWithSessions } from "./types";
+import {
   getSessionPosition,
-  formatDuration,
   getStatusColor,
 } from "./utils";
 
 export default function TimelineGrid() {
-  const { taskGroups, isFullHeight } = useTimeline();
+  const { isFullHeight, isFullPage } = useTimelineView();
+  const { sessionsDataByTask } = useTimelineData();
 
   return (
-    <div
-      className={`space-y-4 overflow-x-auto ${
-        isFullHeight
-          ? "h-full flex flex-col"
-          : "h-full flex flex-col overflow-y-auto"
-      }`}
-    >
+    <div className={isFullHeight || isFullPage ? "flex-1 min-h-0" : ""}>
       <div
-        className={`min-w-[600px] sm:min-w-0 space-y-4 ${
+        className={`space-y-4 overflow-x-auto ${
           isFullHeight
-            ? "flex flex-col h-full"
-            : "flex flex-col h-full overflow-y-auto"
+            ? "h-full flex flex-col"
+            : "h-full flex flex-col overflow-y-auto"
         }`}
       >
-        <TimeLabels />
-
-        {/* Timeline grid with task rows */}
         <div
-          className={`relative ${
+          className={`min-w-[600px] sm:min-w-0 space-y-4 ${
             isFullHeight
-              ? "flex-1 min-h-0"
-              : "flex-1 min-h-0 overflow-y-auto"
+              ? "flex flex-col h-full"
+              : "flex flex-col h-full overflow-y-auto"
           }`}
         >
-          <GridLines />
+          <TimeLabels />
 
-          {/* Task rows - scrollable when in full height mode */}
+          {/* Timeline grid with task rows */}
           <div
-            className={`space-y-1 ${
+            className={`relative ${
               isFullHeight
-                ? "overflow-y-auto h-full pr-2"
-                : "overflow-y-auto h-full pr-2"
+                ? "flex-1 min-h-0"
+                : "flex-1 min-h-0 overflow-y-auto"
             }`}
           >
-            {taskGroups.map((taskGroup) => (
-              <TaskRow key={taskGroup.taskId} taskGroup={taskGroup} />
-            ))}
+            <GridLines />
 
-            {/* Add some bottom padding when scrollable */}
-            {isFullHeight && <div className="h-4" />}
+            {/* Task rows - scrollable when in full height mode */}
+            <div
+              className={`space-y-1 ${
+                isFullHeight
+                  ? "overflow-y-auto h-full pr-2"
+                  : "overflow-y-auto h-full pr-2"
+              }`}
+            >
+              {sessionsDataByTask.map((task) => (
+                <TaskRow key={task.taskId} taskWithSessions={task} />
+              ))}
+
+              {/* Add some bottom padding when scrollable */}
+              {isFullHeight && <div className="h-4" />}
+            </div>
           </div>
         </div>
       </div>
@@ -59,25 +71,24 @@ export default function TimelineGrid() {
 }
 
 interface TaskRowProps {
-  taskGroup: TaskGroup;
+  taskWithSessions: TaskWithSessions;
 }
 
-function TaskRow({ taskGroup }: TaskRowProps) {
-  console.log("TASK GROUP", taskGroup);
+function TaskRow({ taskWithSessions }: TaskRowProps) {
   return (
     <div className="space-y-0.5">
       <div className="relative">
         <div
           className={`text-xs text-[var(--secondary)] font-medium px-1}`}
         >
-          {taskGroup.taskName}
+          {taskWithSessions.taskName}
         </div>
       </div>
 
       {/* Sessions row */}
       <div className="relative h-12 sm:h-12 bg-[var(--card-bg)] rounded border border-[var(--border)]">
         {/* Sessions */}
-        {taskGroup.sessions.map((session: TimelineSession) => (
+        {taskWithSessions.sessions.map((session) => (
           <SessionBar key={session.sessionId} session={session} />
         ))}
       </div>
@@ -90,30 +101,46 @@ interface SessionBarProps {
 }
 
 function SessionBar({ session }: SessionBarProps) {
+  const isMobile = useMobile();
+
+  const { dateRange, view } = useTimelineDate();
   const {
-    timeRange,
-    viewMode,
-    isMobile,
     clickedSession,
     handleSessionHover,
     handleSessionLeave,
     handleSessionClick,
-    currentTime,
-  } = useTimeline();
-  // For active sessions (no endedAt), use currentTime as the end time
-  const effectiveSession = session.endedAt
-    ? session
-    : { ...session, endedAt: currentTime };
+  } = useSessionTooltip();
 
-  const position = getSessionPosition(
-    effectiveSession,
-    timeRange,
-    viewMode,
+  const isActive = !session.endedAt;
+
+  const [position, setPosition] = useState(
+    getSessionPosition(session, dateRange, view),
   );
+  const [isHydrated, setIsHydrated] = useState(false);
+
+  useEffect(() => {
+    setPosition(getSessionPosition(session, dateRange, view));
+  }, [session, dateRange, view]);
+
+  useEffect(() => {
+    setIsHydrated(true);
+
+    if (!isActive) {
+      return;
+    }
+
+    const interval = setInterval(() => {
+      setPosition(getSessionPosition(session, dateRange, view));
+    }, 60000);
+
+    return () => clearInterval(interval);
+  }, [session, dateRange, view, isActive]);
+
   const statusColor = getStatusColor(session.taskStatus);
 
-  // Add pulsing animation for active sessions
-  const isActive = !session.endedAt;
+  if (isActive && !isHydrated) {
+    return null;
+  }
 
   return (
     <div
@@ -141,90 +168,133 @@ function SessionBar({ session }: SessionBarProps) {
           handleSessionClick(session, rect);
         }
       }}
-    >
-      {/* Session content - only show text if wide enough */}
-      <div className="h-full flex items-center justify-center text-xs font-medium text-white px-1 sm:px-2 overflow-hidden">
-        {position.width && parseFloat(position.width) > 8 && (
-          <span className="truncate">
-            {formatDuration(
-              session.startedAt,
-              session.endedAt || currentTime,
-            )}
-          </span>
-        )}
-      </div>
-    </div>
+    ></div>
   );
 }
 
 function TimeLabels() {
-  const { viewMode, timeRange, isFullHeight } = useTimeline();
-  if (viewMode === "day") {
+  const { view, dateRange } = useTimelineDate();
+  const { isFullHeight } = useTimelineView();
+  const [sundayLabels, setSundayLabels] = useState<{ position: number; sunday: Date; weekEnd: Date; weekNumber: number }[]>([]);
+
+  useEffect(() => {
+    // THIS FUNCTION IS WRITTEN BY AI (DO NOT TRUST) but it works
+    if (view === "month") {
+      const firstDay = new Date(dateRange.startDate.getFullYear(), dateRange.startDate.getMonth(), 1);
+      const lastDay = new Date(dateRange.startDate.getFullYear(), dateRange.startDate.getMonth() + 1, 0);
+      
+      const firstWeekStart = new Date(firstDay);
+      firstWeekStart.setDate(firstDay.getDate() - firstDay.getDay());
+      
+      const labels: { position: number; sunday: Date; weekEnd: Date; weekNumber: number }[] = [];
+      const currentDate = new Date(firstDay);
+      const rangeStart = dateRange.startDate.getTime();
+      const rangeEnd = dateRange.endDate.getTime();
+      
+      while (currentDate <= lastDay) {
+        if (currentDate.getDay() === 0) {
+          const sunday = new Date(currentDate);
+          const sundayMidnight = new Date(currentDate);
+          sundayMidnight.setHours(0, 0, 0, 0);
+          
+          const weekEnd = new Date(sunday);
+          weekEnd.setDate(sunday.getDate() + 6);
+          if (weekEnd > lastDay) {
+            weekEnd.setTime(lastDay.getTime());
+          }
+          
+          const weeksDiff = Math.floor((sunday.getTime() - firstWeekStart.getTime()) / (7 * 24 * 60 * 60 * 1000));
+          const weekNumber = weeksDiff + 1;
+          
+          const position = ((sundayMidnight.getTime() - rangeStart) / (rangeEnd - rangeStart)) * 100;
+          labels.push({
+            position: Math.round(position * 100) / 100,
+            sunday,
+            weekEnd,
+            weekNumber
+          });
+        }
+        currentDate.setDate(currentDate.getDate() + 1);
+      }
+      
+      setSundayLabels(labels);
+    }
+  }, [view, dateRange]);
+
+  if (view === "day") {
     return (
       <div className={isFullHeight ? "flex-shrink-0" : ""}>
         <div className="flex text-xs text-[var(--secondary)] mb-2">
-          {timeRange.hours?.map((hour, index) => (
-            <div key={hour} className="flex-1">
+          {Array.from({ length: 24 }, (_, index) => (
+            <div key={index} className="flex-1">
               <span
-                className={`${index % 2 === 0 ? "block" : "hidden md:block"}`}
+                className={`${index % 2 === 0 ? "block" : "hidden sm:hidden md:hidden lg:block"}`}
               >
-                {hour === 0
+                {index === 0
                   ? "12AM"
-                  : hour < 12
-                    ? `${hour}AM`
-                    : hour === 12
+                  : index < 12
+                    ? `${index}AM`
+                    : index === 12
                       ? "12PM"
-                      : `${hour - 12}PM`}
+                      : `${index - 12}PM`}
               </span>
             </div>
           ))}
         </div>
       </div>
     );
-  } else if (viewMode === "week") {
+  } else if (view === "week") {
     return (
       <div className={isFullHeight ? "flex-shrink-0" : ""}>
         <div className="flex text-xs text-[var(--secondary)] mb-2">
-          {timeRange.days?.map((day) => (
-            <div
-              key={day.toISOString()}
-              className="flex-1 text-center px-1"
-            >
-              <div className="hidden sm:block">
-                {day.toLocaleDateString("en-US", {
-                  weekday: "short",
-                  month: "numeric",
-                  day: "numeric",
-                })}
+          {Array.from({ length: 7 }, (_, index) => {
+            const day = new Date(dateRange.startDate);
+            day.setDate(dateRange.startDate.getDate() + index);
+            return (
+              <div
+                key={day.toISOString()}
+                className="flex-1 text-center px-1"
+              >
+                <div className="hidden sm:block">
+                  {day.toLocaleDateString("en-US", {
+                    weekday: "short",
+                    month: "numeric",
+                    day: "numeric",
+                  })}
+                </div>
+                <div className="sm:hidden">
+                  {day.toLocaleDateString("en-US", { weekday: "short" })}
+                </div>
               </div>
-              <div className="sm:hidden">
-                {day.toLocaleDateString("en-US", { weekday: "short" })}
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     );
   } else {
-    const weeks: number[] = [];
-    if (timeRange.days) {
-      for (
-        let week = 0;
-        week < Math.ceil(timeRange.days.length / 7);
-        week++
-      ) {
-        weeks.push(week);
-      }
-    }
     return (
       <div className={isFullHeight ? "flex-shrink-0" : ""}>
-        <div className="flex text-xs text-[var(--secondary)] mb-2">
-          {weeks.map((week) => (
-            <div key={week} className="flex-1 text-center">
-              <div className="hidden sm:block">Week {week + 1}</div>
-              <div className="sm:hidden">W{week + 1}</div>
-            </div>
-          ))}
+        <div className="relative text-xs text-[var(--secondary)] mb-2 h-4">
+          {sundayLabels.map((label, index) => {
+            let alignmentClass = "text-center transform -translate-x-1/2";
+            if (label.position < 10) {
+              alignmentClass = "text-left";
+            } else if (label.position > 90) {
+              alignmentClass = "text-right transform -translate-x-full";
+            }
+            
+            return (
+              <div
+                key={label.sunday.toISOString()}
+                className={`absolute ${alignmentClass}`}
+                style={{ left: `${label.position}%` }}
+              >
+                <div className="whitespace-nowrap">
+                  Week {label.weekNumber}
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
     );
@@ -232,20 +302,68 @@ function TimeLabels() {
 }
 
 function GridLines() {
-  const { viewMode, timeRange } = useTimeline();
-  return (
-    <div className="absolute inset-0 flex">
-      {(viewMode === "day"
-        ? timeRange.hours
-        : viewMode === "week"
-          ? timeRange.days
-          : Array.from({ length: 4 }, (_, i) => i)
-      )?.map((_, index) => (
-        <div
-          key={index}
-          className="flex-1 border-l border-[var(--border)] first:border-l-0"
-        />
-      ))}
-    </div>
-  );
+  const { view, dateRange } = useTimelineDate();
+  const [sundayPositions, setSundayPositions] = useState<number[]>([]);
+  
+  useEffect(() => {
+    // THIS FUNCTION IS WRITTEN BY AI (DO NOT TRUST) but it works
+    if (view === "month") {
+      const firstDay = new Date(dateRange.startDate.getFullYear(), dateRange.startDate.getMonth(), 1);
+      const lastDay = new Date(dateRange.startDate.getFullYear(), dateRange.startDate.getMonth() + 1, 0);
+      
+      const positions: number[] = [];
+      const currentDate = new Date(firstDay);
+      const rangeStart = dateRange.startDate.getTime();
+      const rangeEnd = dateRange.endDate.getTime();
+      
+      while (currentDate <= lastDay) {
+        if (currentDate.getDay() === 0) {
+          const sundayMidnight = new Date(currentDate);
+          sundayMidnight.setHours(0, 0, 0, 0);
+          const position = ((sundayMidnight.getTime() - rangeStart) / (rangeEnd - rangeStart)) * 100;
+          positions.push(Math.round(position * 100) / 100);
+        }
+        currentDate.setDate(currentDate.getDate() + 1);
+      }
+      
+      setSundayPositions(positions);
+    }
+  }, [view, dateRange]);
+  
+  if (view === "day") {
+    return (
+      <div className="absolute inset-0 flex">
+        {Array.from({ length: 24 }, (_, index) => (
+          <div
+            key={index}
+            className="flex-1 border-l border-[var(--border)] first:border-l-0"
+          />
+        ))}
+      </div>
+    );
+  } else if (view === "week") {
+    return (
+      <div className="absolute inset-0 flex">
+        {Array.from({ length: 7 }, (_, index) => (
+          <div
+            key={index}
+            className="flex-1 border-l border-[var(--border)] first:border-l-0"
+          />
+        ))}
+      </div>
+    );
+  } else {
+    // render using client calc
+    return (
+      <div className="absolute inset-0">
+        {sundayPositions.map((position, index) => (
+          <div
+            key={index}
+            className="absolute top-0 bottom-0 border-l border-[var(--border)]"
+            style={{ left: `${position}%` }}
+          />
+        ))}
+      </div>
+    );
+  }
 }

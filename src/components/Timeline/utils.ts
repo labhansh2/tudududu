@@ -1,121 +1,15 @@
-import { TimelineSession } from "./actions";
+import { format, fromZonedTime } from "date-fns-tz";
+import {
+  type TimelineSession,
+  type TaskWithSessions,
+  View,
+  Direction,
+} from "./types";
 
-export function parseLocalDate(dateString: string): Date {
-  const [year, month, day] = dateString.split("-").map(Number);
-  return new Date(year, month - 1, day);
-}
-
-export function formatLocalDate(date: Date): string {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-}
-
-export interface TimeRange {
-  start: Date;
-  end: Date;
-  hours?: number[];
-  days?: Date[];
-}
-
-export interface TaskGroup {
-  taskId: string;
-  taskName: string;
-  sessions: TimelineSession[];
-  lastActivity: Date;
-}
-
-export function getTimeRange(
-  currentDate: Date,
-  viewMode: "day" | "week" | "month",
-): TimeRange {
-  const baseDate = new Date(
-    currentDate.getFullYear(),
-    currentDate.getMonth(),
-    currentDate.getDate(),
-  );
-
-  switch (viewMode) {
-    case "day":
-      return {
-        start: baseDate,
-        end: new Date(baseDate.getTime() + 24 * 60 * 60 * 1000),
-        hours: Array.from({ length: 24 }, (_, i) => i),
-      };
-    case "week":
-      const weekStart = new Date(baseDate);
-      weekStart.setDate(baseDate.getDate() - baseDate.getDay());
-      return {
-        start: weekStart,
-        end: new Date(weekStart.getTime() + 7 * 24 * 60 * 60 * 1000),
-        days: Array.from({ length: 7 }, (_, i) => {
-          const day = new Date(weekStart);
-          day.setDate(weekStart.getDate() + i);
-          return day;
-        }),
-      };
-    case "month":
-      const monthStart = new Date(
-        baseDate.getFullYear(),
-        baseDate.getMonth(),
-        1,
-      );
-      const monthEnd = new Date(
-        baseDate.getFullYear(),
-        baseDate.getMonth() + 1,
-        0,
-      );
-      return {
-        start: monthStart,
-        end: new Date(
-          monthStart.getTime() + monthEnd.getDate() * 24 * 60 * 60 * 1000,
-        ),
-        days: Array.from({ length: monthEnd.getDate() }, (_, i) => {
-          const day = new Date(monthStart);
-          day.setDate(i + 1);
-          return day;
-        }),
-      };
-    default:
-      return { start: baseDate, end: baseDate };
-  }
-}
-
-export function getDateRangeLabel(
-  currentDate: Date,
-  viewMode: "day" | "week" | "month",
-): string {
-  const range = getTimeRange(currentDate, viewMode);
-
-  switch (viewMode) {
-    case "day":
-      return currentDate.toLocaleDateString("en-US", {
-        weekday: "long",
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      });
-    case "week":
-      const weekEnd = new Date(range.end.getTime() - 24 * 60 * 60 * 1000);
-      return `${range.start.toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-      })} - ${weekEnd.toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-      })}`;
-    case "month":
-      return currentDate.toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "long",
-      });
-    default:
-      return "";
-  }
-}
-
+/*
+ * formats the duration of a session
+ * used in session tooltip
+ */
 export function formatDuration(start: Date, end: Date): string {
   const duration = (end.getTime() - start.getTime()) / (1000 * 60);
   const hours = Math.floor(duration / 60);
@@ -126,43 +20,45 @@ export function formatDuration(start: Date, end: Date): string {
   return `${minutes}m`;
 }
 
-export function getStatusColor(
-  status: TimelineSession["taskStatus"],
-): string {
-  switch (status) {
-    case "completed":
-      return "bg-[var(--secondary)]"; // Gray for completed
-    case "active":
-      return "bg-[var(--accent)]"; // Main accent color for active
-    case "not_active":
-      return "bg-[var(--success)]"; // Green for not active
-    default:
-      return "bg-[var(--secondary)]";
-  }
+/*
+ * gets label to display in date navigation according to view and range
+ */
+export function getDateRangeLabel(
+  dateRange: { startDate: Date; endDate: Date },
+  dateView: View,
+) {
+  return dateView === View.DAY
+    ? format(dateRange.startDate, "d MMMM yyyy")
+    : dateView === View.WEEK
+      ? `${format(dateRange.startDate, "d MMMM yyyy")} - ${format(dateRange.endDate, "d MMMM yyyy")}`
+      : format(dateRange.startDate, "MMMM yyyy");
 }
 
+/*
+ * gets position styles for session bard based on date range 
+ * of the session
+ */
 export function getSessionPosition(
   session: TimelineSession,
-  timeRange: TimeRange,
-  viewMode: "day" | "week" | "month",
+  dateRange: { startDate: Date; endDate: Date },
+  dateView: View,
 ): { left: string; width: string } {
-  const rangeStart = timeRange.start.getTime();
-  const rangeEnd = timeRange.end.getTime();
+  const rangeStart = dateRange.startDate.getTime();
+  const rangeEnd = dateRange.endDate.getTime();
   const sessionStart = session.startedAt.getTime();
   const sessionEnd = session.endedAt
     ? session.endedAt.getTime()
-    : new Date().getTime(); // use current time for active sessions
+    : new Date().getTime();
 
   // clip session to visible time range
   const visibleStart = Math.max(sessionStart, rangeStart);
   const visibleEnd = Math.min(sessionEnd, rangeEnd);
 
-  if (viewMode === "day") {
+  if (dateView == View.DAY) {
     const left =
       ((visibleStart - rangeStart) / (24 * 60 * 60 * 1000)) * 100;
     const width =
       ((visibleEnd - visibleStart) / (24 * 60 * 60 * 1000)) * 100;
-    // round to 2 decimal places for consistent server/client rendering
     return {
       left: `${Math.round(left * 100) / 100}%`,
       width: `${Math.round(Math.max(width, 0.5) * 100) / 100}%`,
@@ -172,7 +68,6 @@ export function getSessionPosition(
       ((visibleStart - rangeStart) / (rangeEnd - rangeStart)) * 100;
     const width =
       ((visibleEnd - visibleStart) / (rangeEnd - rangeStart)) * 100;
-    // round to 2 decimal places for consistent server/client rendering
     return {
       left: `${Math.round(left * 100) / 100}%`,
       width: `${Math.round(Math.max(width, 0.5) * 100) / 100}%`,
@@ -180,35 +75,41 @@ export function getSessionPosition(
   }
 }
 
+/*
+ * handles date navigation by returning new date with
+ * increased or decreased days in referenceDate according to
+ * the view and direction
+ */
 export function navigateDate(
-  currentDate: Date,
-  direction: "next" | "prev",
-  viewMode: "day" | "week" | "month",
-): Date {
-  const newDate = new Date(currentDate);
+  referenceDate: string,
+  direction: Direction,
+  viewMode: View,
+): string {
+  const [year, month, day] = referenceDate.split("-").map(Number);
+  const currentDate = new Date(year, month - 1, day);
+  const newDate = new Date(year, month - 1, day);
 
   switch (viewMode) {
-    case "day":
-      newDate.setDate(
-        currentDate.getDate() + (direction === "next" ? 1 : -1),
-      );
+    case View.DAY:
+      newDate.setDate(currentDate.getDate() + direction);
       break;
-    case "week":
-      newDate.setDate(
-        currentDate.getDate() + (direction === "next" ? 7 : -7),
-      );
+    case View.WEEK:
+      newDate.setDate(currentDate.getDate() + direction * 7);
       break;
-    case "month":
-      newDate.setMonth(
-        currentDate.getMonth() + (direction === "next" ? 1 : -1),
-      );
+    case View.MONTH:
+      newDate.setMonth(currentDate.getMonth() + direction);
       break;
   }
 
-  return newDate;
+  return format(newDate, "yyyy-MM-dd");
 }
 
-export function groupSessionsByTask(sessions: TimelineSession[]) {
+/*
+ * transforms sessions into tasks with sessions
+ */
+export function groupSessionsByTask(
+  sessions: TimelineSession[],
+): TaskWithSessions[] {
   const groups: Record<
     string,
     {
@@ -241,47 +142,76 @@ export function groupSessionsByTask(sessions: TimelineSession[]) {
 }
 
 /**
- * gets reange in user tz
- * i.e midnight to midnight in user tz
+ * gets range in utc for a given view
+ * i.e midnight user tz yyyy-mm-dd to midnight utc
  */
 export function getDateRangeForView(
-  currentDate: Date,
-  viewMode: "day" | "week" | "month",
+  referenceDate: string,
+  timezone: string,
+  view: View,
 ): { startDate: Date; endDate: Date } {
-  const baseDate = new Date(
-    currentDate.getFullYear(),
-    currentDate.getMonth(),
-    currentDate.getDate(),
-  );
+  const start = fromZonedTime(`${referenceDate}T00:00:00`, timezone);
+  const end = fromZonedTime(`${referenceDate}T00:00:00`, timezone);
 
-  switch (viewMode) {
-    case "day":
-      const dayStart = baseDate;
-      const dayEnd = new Date(baseDate.getTime() + 24 * 60 * 60 * 1000);
-      return { startDate: dayStart, endDate: dayEnd };
+  switch (view) {
+    case View.DAY:
+      end.setDate(start.getDate() + 1);
 
-    case "week":
-      const weekStart = new Date(baseDate);
-      weekStart.setDate(baseDate.getDate() - baseDate.getDay());
-      const weekEnd = new Date(
-        weekStart.getTime() + 7 * 24 * 60 * 60 * 1000,
-      );
-      return { startDate: weekStart, endDate: weekEnd };
+      return { startDate: start, endDate: end };
 
-    case "month":
-      const monthStart = new Date(
-        baseDate.getFullYear(),
-        baseDate.getMonth(),
-        1,
-      );
-      const monthEnd = new Date(
-        baseDate.getFullYear(),
-        baseDate.getMonth() + 1,
-        1,
-      );
-      return { startDate: monthStart, endDate: monthEnd };
+    case View.WEEK:
+      const dayOfWeek = start.getDay();
+
+      start.setDate(start.getDate() - dayOfWeek);
+      end.setDate(end.getDate() + (7 - dayOfWeek));
+
+      return { startDate: start, endDate: end };
+
+    case View.MONTH:
+      start.setDate(1);
+      end.setDate(1);
+      end.setMonth(start.getMonth() + 1);
+
+      return { startDate: start, endDate: end };
 
     default:
-      return { startDate: baseDate, endDate: baseDate };
+      return { startDate: start, endDate: end };
   }
+}
+
+// -------------------------------------------------
+// Conditional styles
+// -------------------------------------------------
+
+export function getStatusColor(
+  status: TimelineSession["taskStatus"],
+): string {
+  switch (status) {
+    case "completed":
+      return "bg-[var(--secondary)]"; // Gray for completed
+    case "active":
+      return "bg-[var(--accent)]"; // Main accent color for active
+    case "not_active":
+      return "bg-[var(--success)]"; // Green for not active
+    default:
+      return "bg-[var(--secondary)]";
+  }
+}
+
+export function getTimeLineLayoutStyles(
+  isFullPage: boolean,
+  isFullHeight: boolean,
+) {
+  let classes = "w-full bg-[var(--card-bg)] text-[var(--foreground)]";
+
+  if (isFullPage) {
+    classes += " h-full flex flex-col p-4";
+  } else {
+    classes += " p-4 sm:p-6 rounded-lg border border-[var(--border)]";
+    if (isFullHeight) {
+      classes += " h-full flex flex-col";
+    }
+  }
+
+  return classes;
 }
