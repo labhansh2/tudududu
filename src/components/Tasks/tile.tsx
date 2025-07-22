@@ -165,7 +165,6 @@ interface SparklineProps {
 }
 
 function Sparkline({ sparklineData }: SparklineProps) {
-  // console.log(sparklineData);
   return (
     <>
       <div className="w-20 h-8">

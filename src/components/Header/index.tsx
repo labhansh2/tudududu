@@ -2,6 +2,8 @@ import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { UserButton } from "@clerk/nextjs";
 import { auth } from "@clerk/nextjs/server";
+import { Edit } from "lucide-react";
+import Link from "next/link";
 
 import TimeZoneSetter from "@/components/TimeZoneSetter";
 
@@ -35,13 +37,23 @@ export default async function Header() {
 
   return (
     <header className="border-b border-[var(--border)] bg-[var(--card-bg)]">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6">
+      <div className="mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between h-16">
+        <div className="flex items-center gap-1">
           <Countdown
             secondsLeft={
               (userDeadline.getTime() - new Date().getTime()) / 1000
             }
           />
+
+          <Link
+            href="/deadline"
+            className="px-3 py-1.5 text-sm font-medium text-[var(--secondary)] hover:text-[var(--foreground)] transition-colors"
+          >
+            <Edit className="w-4 h-4" />
+          </Link>
+        </div>
+          
 
           <div className="flex items-center gap-3">
             <TotalTimeSpentToday
