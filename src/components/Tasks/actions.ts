@@ -3,17 +3,19 @@ import { auth } from "@clerk/nextjs/server";
 import { eq, and, isNull, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
+import { format, fromZonedTime, toZonedTime } from "date-fns-tz";
 
 import { type Task, type Session } from "@/types";
 
 import { db } from "@/drizzle";
 import { sessions, tasks, workTime } from "@/drizzle/schema";
 
+import { fillMissingDays } from "./utils";
+
 export interface TaskStats {
-  taskId: number;
   total_time_spent: number;
   longest_session: number;
-  // think about whant kinda stats are needed
+  // think about what more stats can be added here
 }
 
 export interface SparklineData {
@@ -87,15 +89,11 @@ export async function getTasksWithStatsAndSparkline(): Promise<
       sql`30 - FLOOR(EXTRACT(EPOCH FROM (NOW() - ${sessions.startedAt})) / 86400)`,
     );
 
-  // console.log(sparklineResults);
-  // Combine the results
   return tasksWithStats.map((task) => {
     const taskSparklineData = sparklineResults.filter(
       (s) => s.taskId === task.id,
     );
-    // console.log("TASK SPARKLINE DATA", taskSparklineData);
     const sparklineData = fillMissingDays(taskSparklineData, task.id);
-    console.log("SPARKLINE DATA for task", task.name, sparklineData);
     return {
       id: task.id,
       name: task.name,
@@ -104,28 +102,10 @@ export async function getTasksWithStatsAndSparkline(): Promise<
       createdAt: task.createdAt,
       userId: task.userId,
       taskStats: {
-        taskId: task.id,
         total_time_spent: task.total_time_spent,
         longest_session: task.longest_session,
       },
       sparklineData,
-    };
-  });
-}
-
-function fillMissingDays(
-  sparklineData: SparklineData[],
-  taskId: number,
-): SparklineData[] {
-  const days = Array.from({ length: 30 }, (_, i) => i + 1);
-
-  return days.map((day) => {
-    const dayData = sparklineData.find((d) => d.day == day);
-    // console.log("DAY DATA", dayData);
-    return {
-      taskId,
-      day: Number(dayData?.day || day),
-      hours: Number(dayData?.hours || 0),
     };
   });
 }
@@ -197,7 +177,7 @@ export async function deleteTask(task: Task) {
       const result = await db
         .update(sessions)
         .set({
-          endedAt: new Date(),
+          endedAt: new Date(), // already in utc
         })
         .where(and(eq(sessions.taskId, task.id), isNull(sessions.endedAt)))
         .returning();
@@ -373,11 +353,8 @@ export async function completeTask(task: Task) {
   }
 }
 
-// this is not working on server because of the timezone issue
-// it works in dev because the server is running in the same timezone as the client
-// TODO: fix this
 export async function addClosedSessionTime(closedActiveSession: Session) {
-  console.log(closedActiveSession);
+  console.log("CLOSED ACTIVE SESSION:", closedActiveSession);
   const { userId } = await auth();
 
   if (!userId) {
@@ -390,84 +367,80 @@ export async function addClosedSessionTime(closedActiveSession: Session) {
   if (!timezone) {
     throw new Error("Timezone not found");
   }
-  const userDay = new Date().toLocaleDateString("en-CA", {
-    timeZone: timezone,
-  });
 
-  const sessionStartedAtDayLocal = new Date(
-    closedActiveSession.startedAt,
-  ).toLocaleDateString("en-CA", {
-    timeZone: timezone,
-  });
+  const userDateToday = format(
+    toZonedTime(new Date(), timezone),
+    "yyyy-MM-dd",
+  );
 
-  const dailyTimeMap: Record<string, number> = {};
+  console.log("USER DATE TODAY:", userDateToday);
 
-  const startDate = new Date(closedActiveSession.startedAt);
-  const endDate = new Date(closedActiveSession.endedAt);
+  const record: {
+    userId: string;
+    date: string;
+    total_seconds: number;
+  }[] = [];
 
-  const startDateLocal = new Date(startDate).toLocaleDateString("en-CA", {
-    timeZone: timezone,
-  });
-  const endDateLocal = new Date(endDate).toLocaleDateString("en-CA", {
-    timeZone: timezone,
-  });
+  let startedAtUTC = closedActiveSession.startedAt;
+  let startedAtDateUserTz = format(
+    toZonedTime(startedAtUTC, timezone),
+    "yyyy-MM-dd",
+  );
 
-  let currentDate = new Date(startDateLocal + "T00:00:00");
-  const finalDate = new Date(endDateLocal + "T00:00:00");
+  console.log("STARTED AT DATE USER TZ:", startedAtDateUserTz);
+  console.log("STARTED AT UTC:", startedAtUTC);
 
-  while (currentDate <= finalDate) {
-    const currentDateStr = currentDate.toLocaleDateString("en-CA");
+  while (startedAtDateUserTz !== userDateToday) {
+    const nextDayDateUserTz = new Date(startedAtDateUserTz + "T00:00:00");
+    nextDayDateUserTz.setDate(nextDayDateUserTz.getDate() + 1);
 
-    let dayStartTime: Date;
-    let dayEndTime: Date;
+    const nextDayMidnightUTC = fromZonedTime(nextDayDateUserTz, timezone);
 
-    if (
-      currentDateStr === startDateLocal &&
-      currentDateStr === endDateLocal
-    ) {
-      dayStartTime = startDate;
-      dayEndTime = endDate;
-    } else if (currentDateStr === startDateLocal) {
-      dayStartTime = startDate;
-      dayEndTime = new Date(currentDateStr + "T23:59:59.999");
-    } else if (currentDateStr === endDateLocal) {
-      dayStartTime = new Date(currentDateStr + "T00:00:00.000");
-      dayEndTime = endDate;
-    } else {
-      dayStartTime = new Date(currentDateStr + "T00:00:00.000");
-      dayEndTime = new Date(currentDateStr + "T23:59:59.999");
-    }
+    console.log("NEXT DAY MIDNIGHT UTC:", nextDayMidnightUTC);
 
-    const dayDurationSeconds = Math.floor(
-      (dayEndTime.getTime() - dayStartTime.getTime()) / 1000,
+    const differenceInSeconds = Math.floor(
+      (nextDayMidnightUTC.getTime() - startedAtUTC.getTime()) / 1000,
     );
 
-    if (dayDurationSeconds > 0) {
-      dailyTimeMap[currentDateStr] = dayDurationSeconds;
-    }
+    record.push({
+      userId,
+      date: startedAtDateUserTz,
+      total_seconds: differenceInSeconds,
+    });
 
-    currentDate.setDate(currentDate.getDate() + 1);
+    startedAtDateUserTz = format(
+      toZonedTime(nextDayMidnightUTC, timezone),
+      "yyyy-MM-dd",
+    );
+    startedAtUTC = nextDayMidnightUTC;
+
+    console.log("STARTED AT DATE USER TZ:", startedAtDateUserTz);
+    console.log("STARTED AT UTC:", startedAtUTC);
   }
 
-  console.log("Daily time distribution:", dailyTimeMap);
+  console.log("STARTED AT DATE USER TZ:", startedAtDateUserTz);
+  console.log("STARTED AT UTC:", startedAtUTC);
 
-  const records = Object.entries(dailyTimeMap).map(([date, seconds]) => ({
+  const lastDifferenceInSeconds = Math.floor(
+    (closedActiveSession.endedAt.getTime() - startedAtUTC.getTime()) /
+      1000,
+  );
+
+  record.push({
     userId,
-    date,
-    total_seconds: seconds,
-  }));
+    date: startedAtDateUserTz,
+    total_seconds: lastDifferenceInSeconds,
+  });
 
-  if (records.length === 0) {
-    return;
-  }
+  console.log("RECORD:", record);
 
   await db
     .insert(workTime)
-    .values(records)
+    .values(record)
     .onConflictDoUpdate({
       target: [workTime.userId, workTime.date],
       set: {
-        total_seconds: sql`work_time.total_seconds + excluded.total_seconds`,
+        total_seconds: sql`${workTime.total_seconds} + excluded.total_seconds`,
       },
     });
 }

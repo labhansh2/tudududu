@@ -1,6 +1,7 @@
 "use client";
 
 import { useFormStatus } from "react-dom";
+import { format } from "date-fns-tz";
 
 export default function DeadlineFormInput({
   defaultValue,
@@ -8,13 +9,6 @@ export default function DeadlineFormInput({
   defaultValue: Date;
 }) {
   const { pending } = useFormStatus();
-
-  const localDate = new Date(
-    defaultValue.getTime() - defaultValue.getTimezoneOffset() * 60000,
-  )
-    .toISOString()
-    .slice(0, 16);
-
   return (
     <div className="relative">
       <input
@@ -23,7 +17,7 @@ export default function DeadlineFormInput({
         name="deadline"
         required
         className="w-full border border-[var(--input-border)] rounded-[var(--border-radius)] px-4 py-3.5 text-sm sm:text-base bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--input-focus)] focus:border-transparent transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed [&::-webkit-calendar-picker-indicator]:opacity-100 [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:p-1 [&::-webkit-calendar-picker-indicator]:rounded [&::-webkit-calendar-picker-indicator]:hover:bg-gray-100 [&::-webkit-calendar-picker-indicator]:dark:hover:bg-gray-700"
-        defaultValue={localDate}
+        defaultValue={format(defaultValue, "yyyy-MM-dd'T'HH:mm")}
         disabled={pending}
         style={{
           colorScheme: "light dark",

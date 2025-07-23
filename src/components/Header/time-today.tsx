@@ -4,40 +4,31 @@ import { useState, useEffect } from "react";
 import { convertSecondsToTime } from "./utils";
 
 export default function TotalTimeSpentToday({
-  totalSeconds,
-  activeSessionStartedAt,
+  initialTotalSeconds,
+  sessionIsActive,
 }: {
-  totalSeconds: number;
-  activeSessionStartedAt: Date | null;
+  initialTotalSeconds: number;
+  sessionIsActive: boolean;
 }) {
-  const [mounted, setMounted] = useState(false);
-  const [currentTime, setCurrentTime] = useState(Date.now());
+  const [totalSeconds, setTotalSeconds] = useState(initialTotalSeconds);
 
   useEffect(() => {
-    setMounted(true);
+    if (!sessionIsActive) {
+      setTotalSeconds(initialTotalSeconds);
+      return;
+    }
+
     const interval = setInterval(() => {
-      setCurrentTime(Date.now());
+      setTotalSeconds((prev) => prev + 1);
     }, 1000);
 
     return () => clearInterval(interval);
-  }, []);
-
-  if (!mounted) return null;
-
-  // Pure calculation based on state
-  const totalSecondsCalc =
-    totalSeconds +
-    (activeSessionStartedAt
-      ? Math.floor(
-          (currentTime - new Date(activeSessionStartedAt).getTime()) /
-            1000,
-        )
-      : 0);
+  }, [sessionIsActive, initialTotalSeconds]);
 
   return (
     <div className="flex flex-col items-center justify-center text-sm sm:text-base py-1">
       <span className="font-semibold">
-        {convertSecondsToTime(totalSecondsCalc)}
+        {convertSecondsToTime(totalSeconds)}
       </span>
     </div>
   );

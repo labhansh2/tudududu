@@ -1,8 +1,10 @@
 import { auth } from "@clerk/nextjs/server";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { format, toZonedTime } from "date-fns-tz";
 
 import Timeline from "@/components/Timeline";
+import { View } from "@/components/Timeline/types";
 
 export default async function Page({
   searchParams,
@@ -21,23 +23,24 @@ export default async function Page({
   const cookieStore = await cookies();
   const timezone = cookieStore.get("timezone")?.value;
 
-  const currentDate = new Date().toLocaleString("en-CA", {
-    timeZone: timezone,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }); // en-CA already returns YYYY-MM-DD format
+  if (!timezone) {
+    redirect("/");
+  }
+
+  const todayUserTz = toZonedTime(new Date(), timezone);
 
   const params = await searchParams;
-  const timelineView = (params.view as "day" | "week" | "month") || "day";
-  const timelineDate = params.date || currentDate;
+  const timelineView = (params.view as View) || View.DAY;
+  const timelineDate = params.date || format(todayUserTz, "yyyy-MM-dd");
 
   return (
-    <div className="h-[calc(100vh-4rem)] px-2 sm:px-4 py-2">
+    <div className="h-[calc(100vh-4rem)]">
       <Timeline
-        viewMode={timelineView}
-        currentDate={timelineDate}
         isFullHeight={true}
+        isFullPage={true}
+        viewMode={timelineView}
+        paramsDateUserTz={timelineDate}
+        timezone={timezone}
       />
     </div>
   );

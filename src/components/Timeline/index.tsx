@@ -1,37 +1,72 @@
+import { getDateRangeForView, getTimeLineLayoutStyles } from "./utils";
 import { getTimelineSessions, getTimelineStats } from "./actions";
-import { getDateRangeForView, parseLocalDate } from "./utils";
+import {
+  TimelineDataProvider,
+  TimelineDateProvider,
+  TimelineViewProvider,
+  SessionTooltipProvider,
+} from "./context";
+import { View } from "./types";
 
-import SessionTimeline from "./timeline";
+import TimelineHeader from "./header";
+import TimelineGrid from "./grid";
+import SessionTooltip from "./session-tooltip";
 
 interface TimelineProps {
-  viewMode: "day" | "week" | "month";
-  currentDate: string;
-  isFullHeight?: boolean;
-  isFullPage?: boolean;
+  isFullHeight: boolean;
+  isFullPage: boolean;
+  viewMode: View;
+  paramsDateUserTz: string;
+  timezone: string;
 }
 
 export default async function Timeline({
-  viewMode = "week",
-  currentDate,
-  isFullHeight = false,
-  isFullPage = true,
+  isFullHeight,
+  isFullPage,
+  viewMode,
+  paramsDateUserTz,
+  timezone,
 }: TimelineProps) {
-  const parsedDate = parseLocalDate(currentDate);
+  const { startDate, endDate } = getDateRangeForView(
+    paramsDateUserTz,
+    timezone,
+    viewMode,
+  );
 
-  const { startDate, endDate } = getDateRangeForView(parsedDate, viewMode);
+  console.log("START from index :", startDate);
+  console.log("END from index :", endDate);
+
+  console.log("ReferenceDate: ", paramsDateUserTz);
+  console.log("View: ", viewMode);
 
   const sessionsData = await getTimelineSessions(startDate, endDate);
-
   const stats = await getTimelineStats(startDate, endDate);
 
+  console.log("Data: ", sessionsData);
+
   return (
-    <SessionTimeline
-      sessionsData={sessionsData}
-      stats={stats}
-      initialViewMode={viewMode}
-      initialCurrentDate={currentDate}
-      isFullHeight={isFullHeight}
-      isFullPage={isFullPage}
-    />
+    <TimelineDataProvider sessionsData={sessionsData} statsData={stats}>
+      <TimelineDateProvider
+        referenceDate={paramsDateUserTz}
+        timezone={timezone}
+        dateRange={{ startDate, endDate }}
+        view={viewMode}
+      >
+        <SessionTooltipProvider>
+          <TimelineViewProvider
+            isFullHeight={isFullHeight}
+            isFullPage={isFullPage}
+          >
+            <div
+              className={getTimeLineLayoutStyles(isFullPage, isFullHeight)}
+            >
+              <TimelineHeader />
+              <TimelineGrid />
+              <SessionTooltip />
+            </div>
+          </TimelineViewProvider>
+        </SessionTooltipProvider>
+      </TimelineDateProvider>
+    </TimelineDataProvider>
   );
 }
