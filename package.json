@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "dev:tb": "next dev --turbopack",
-    "build": "npm run db:migrate && next build",
+    "build": "pnpm run db:migrate && next build",
     "build:without-db": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -15,28 +15,28 @@
     "db:migrate": "drizzle-kit migrate"
   },
   "dependencies": {
-    "@clerk/nextjs": "^6.23.0",
-    "@neondatabase/serverless": "^1.0.1",
+    "@clerk/nextjs": "^6.33.3",
+    "@neondatabase/serverless": "^1.0.2",
     "date-fns-tz": "^3.2.0",
-    "dotenv": "^16.5.0",
-    "drizzle-orm": "^0.44.2",
-    "lucide-react": "^0.525.0",
-    "next": "15.3.4",
-    "react": "^19.0.0",
-    "react-activity-calendar": "^2.7.12",
-    "react-dom": "^19.0.0",
-    "recharts": "^3.1.0"
+    "dotenv": "^17.2.3",
+    "drizzle-orm": "^0.44.6",
+    "lucide-react": "^0.545.0",
+    "next": "15.5.4",
+    "react": "^19.2.0",
+    "react-activity-calendar": "^2.7.15",
+    "react-dom": "^19.2.0",
+    "recharts": "^3.2.1"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3",
-    "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "drizzle-kit": "^0.31.2",
-    "eslint": "^9",
-    "eslint-config-next": "15.3.4",
-    "tailwindcss": "^4",
-    "typescript": "^5"
+    "@eslint/eslintrc": "^3.3.1",
+    "@tailwindcss/postcss": "^4.1.14",
+    "@types/node": "^24.7.0",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.1",
+    "drizzle-kit": "^0.31.5",
+    "eslint": "^9.37.0",
+    "eslint-config-next": "15.5.4",
+    "tailwindcss": "^4.1.14",
+    "typescript": "^5.9.3"
   }
 }
