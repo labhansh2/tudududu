@@ -6,7 +6,7 @@ import { Check, Ellipsis } from "lucide-react";
 import { useMobile } from "@/hooks/useMobile";
 
 import { type TaskWithStatsAndSparkline } from "./actions";
-import { getTaskStyles } from "./utils";
+import { getTaskStyles, getDeadlineBorderClasses } from "./utils";
 
 import {
   completeTask,
@@ -15,6 +15,9 @@ import {
   toggleTaskStatus,
   type SparklineData,
 } from "./actions";
+
+import TaskCountdown from "./task-countdown";
+import TaskDeadlineEditor from "./deadline-editor";
 
 interface Props {
   task: TaskWithStatsAndSparkline;
@@ -34,6 +37,7 @@ export default function TaskTile({
   const isMobile = useMobile();
 
   const [isEditing, setIsEditing] = useState(false);
+  const [showDeadlineEditor, setShowDeadlineEditor] = useState(false);
 
   const handleUpdateTaskName = async (editName: string) => {
     startEditTransition(async () => {
@@ -57,9 +61,16 @@ export default function TaskTile({
     });
   };
 
+  const deadlineClasses = getDeadlineBorderClasses(
+    task.status,
+    task.deadline,
+    task.updatedAt,
+  );
+  const canAddDeadline = task.status !== "completed" && !task.deadline;
+
   return (
     <div
-      className={`p-3 rounded-lg border transition-all ${getTaskStyles(task.status)}`}
+      className={`p-3 rounded-lg border transition-all ${getTaskStyles(task.status)} ${deadlineClasses}`}
     >
       <div className="flex items-center gap-3">
         {/* Working status checkbox */}
@@ -86,6 +97,17 @@ export default function TaskTile({
           onEdit={handleUpdateTaskName}
         />
 
+        {/* Deadline countdown / status */}
+        {task.deadline && (
+          <div className="flex-shrink-0">
+            <TaskCountdown
+              deadline={task.deadline}
+              status={task.status}
+              updatedAt={task.updatedAt}
+            />
+          </div>
+        )}
+
         {!isMobile && !isDetailedView && (
           <Sparkline sparklineData={task.sparklineData} />
         )}
@@ -109,6 +131,8 @@ export default function TaskTile({
           onEditClick={() => {
             setIsEditing(true);
           }}
+          canAddDeadline={canAddDeadline}
+          onAddDeadlineClick={() => setShowDeadlineEditor(true)}
           onDeleteClick={handleDeleteTask}
         />
       </div>
@@ -125,6 +149,16 @@ export default function TaskTile({
               <Sparkline sparklineData={task.sparklineData} />
             </div>
           </div>
+        </div>
+      )}
+
+      {showDeadlineEditor && task.status !== "completed" && !task.deadline && (
+        <div className="mt-2">
+          <TaskDeadlineEditor
+            taskId={task.id}
+            defaultValue={task.deadline ?? new Date()}
+            onClose={() => setShowDeadlineEditor(false)}
+          />
         </div>
       )}
     </div>
@@ -325,11 +359,13 @@ function CompleteBtn({
 
 interface MenuProps {
   isCompleted: boolean;
+  canAddDeadline: boolean;
   onEditClick: () => void;
+  onAddDeadlineClick: () => void;
   onDeleteClick: () => void;
 }
 
-function Menu({ isCompleted, onEditClick, onDeleteClick }: MenuProps) {
+function Menu({ isCompleted, canAddDeadline, onEditClick, onAddDeadlineClick, onDeleteClick }: MenuProps) {
   const [showMenu, setShowMenu] = useState(false);
   return (
     <>
@@ -348,17 +384,30 @@ function Menu({ isCompleted, onEditClick, onDeleteClick }: MenuProps) {
               className="fixed inset-0 z-10"
               onClick={() => setShowMenu(false)}
             />
-            <div className="absolute right-0 top-6 z-20 bg-[var(--card-bg)] border border-[var(--border)] rounded-lg shadow-lg py-1 min-w-[100px]">
+            <div className="absolute right-0 top-6 z-20 bg-[var(--card-bg)] border border-[var(--border)] rounded-lg shadow-lg py-1 min-w-[160px]">
               {!isCompleted && (
-                <button
-                  onClick={() => {
-                    setShowMenu(false);
-                    onEditClick();
-                  }}
-                  className="w-full px-3 py-1.5 text-left text-sm text-[var(--foreground)] hover:bg-[var(--active-task)] transition-colors"
-                >
-                  Edit
-                </button>
+                <>
+                  <button
+                    onClick={() => {
+                      setShowMenu(false);
+                      onEditClick();
+                    }}
+                    className="w-full px-3 py-1.5 text-left text-sm text-[var(--foreground)] hover:bg-[var(--active-task)] transition-colors"
+                  >
+                    Edit
+                  </button>
+                  {canAddDeadline && (
+                    <button
+                      onClick={() => {
+                        setShowMenu(false);
+                        onAddDeadlineClick();
+                      }}
+                      className="w-full px-3 py-1.5 text-left text-sm text-[var(--foreground)] hover:bg-[var(--active-task)] transition-colors"
+                    >
+                      Add deadline
+                    </button>
+                  )}
+                </>
               )}
               <button
                 onClick={() => {

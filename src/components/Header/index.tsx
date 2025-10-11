@@ -39,21 +39,20 @@ export default async function Header() {
     <header className="border-b border-[var(--border)] bg-[var(--card-bg)]">
       <div className="mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between h-16">
-        <div className="flex items-center gap-1">
-          <Countdown
-            secondsLeft={
-              (userDeadline.getTime() - new Date().getTime()) / 1000
-            }
-          />
+          <div className="flex items-center gap-1">
+            <Countdown
+              secondsLeft={
+                (userDeadline.getTime() - new Date().getTime()) / 1000
+              }
+            />
 
-          <Link
-            href="/deadline"
-            className="px-3 py-1.5 text-sm font-medium text-[var(--secondary)] hover:text-[var(--foreground)] transition-colors"
-          >
-            <Edit className="w-4 h-4" />
-          </Link>
-        </div>
-          
+            <Link
+              href="/deadline"
+              className="px-3 py-1.5 text-sm font-medium text-[var(--secondary)] hover:text-[var(--foreground)] transition-colors"
+            >
+              <Edit className="w-4 h-4" />
+            </Link>
+          </div>
 
           <div className="flex items-center gap-3">
             <TotalTimeSpentToday

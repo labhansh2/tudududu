@@ -49,6 +49,10 @@ export const tasks = pgTable(
       .defaultNow()
       .$onUpdate(() => new Date()),
     status: taskStatusEnum("status").notNull(),
+    deadline: timestamp("deadline", {
+      mode: "date",
+      withTimezone: true,
+    }),
   },
   (table) => [index("task_user_id_idx").on(table.userId)],
 );
