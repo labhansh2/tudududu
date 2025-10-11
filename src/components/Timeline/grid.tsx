@@ -11,10 +11,7 @@ import {
   useSessionTooltip,
 } from "./context";
 import { type TimelineSession, type TaskWithSessions } from "./types";
-import {
-  getSessionPosition,
-  getStatusColor,
-} from "./utils";
+import { getSessionPosition, getStatusColor } from "./utils";
 
 export default function TimelineGrid() {
   const { isFullHeight, isFullPage } = useTimelineView();
@@ -175,48 +172,69 @@ function SessionBar({ session }: SessionBarProps) {
 function TimeLabels() {
   const { view, dateRange } = useTimelineDate();
   const { isFullHeight } = useTimelineView();
-  const [sundayLabels, setSundayLabels] = useState<{ position: number; sunday: Date; weekEnd: Date; weekNumber: number }[]>([]);
+  const [sundayLabels, setSundayLabels] = useState<
+    { position: number; sunday: Date; weekEnd: Date; weekNumber: number }[]
+  >([]);
 
   useEffect(() => {
     // THIS FUNCTION IS WRITTEN BY AI (DO NOT TRUST) but it works
     if (view === "month") {
-      const firstDay = new Date(dateRange.startDate.getFullYear(), dateRange.startDate.getMonth(), 1);
-      const lastDay = new Date(dateRange.startDate.getFullYear(), dateRange.startDate.getMonth() + 1, 0);
-      
+      const firstDay = new Date(
+        dateRange.startDate.getFullYear(),
+        dateRange.startDate.getMonth(),
+        1,
+      );
+      const lastDay = new Date(
+        dateRange.startDate.getFullYear(),
+        dateRange.startDate.getMonth() + 1,
+        0,
+      );
+
       const firstWeekStart = new Date(firstDay);
       firstWeekStart.setDate(firstDay.getDate() - firstDay.getDay());
-      
-      const labels: { position: number; sunday: Date; weekEnd: Date; weekNumber: number }[] = [];
+
+      const labels: {
+        position: number;
+        sunday: Date;
+        weekEnd: Date;
+        weekNumber: number;
+      }[] = [];
       const currentDate = new Date(firstDay);
       const rangeStart = dateRange.startDate.getTime();
       const rangeEnd = dateRange.endDate.getTime();
-      
+
       while (currentDate <= lastDay) {
         if (currentDate.getDay() === 0) {
           const sunday = new Date(currentDate);
           const sundayMidnight = new Date(currentDate);
           sundayMidnight.setHours(0, 0, 0, 0);
-          
+
           const weekEnd = new Date(sunday);
           weekEnd.setDate(sunday.getDate() + 6);
           if (weekEnd > lastDay) {
             weekEnd.setTime(lastDay.getTime());
           }
-          
-          const weeksDiff = Math.floor((sunday.getTime() - firstWeekStart.getTime()) / (7 * 24 * 60 * 60 * 1000));
+
+          const weeksDiff = Math.floor(
+            (sunday.getTime() - firstWeekStart.getTime()) /
+              (7 * 24 * 60 * 60 * 1000),
+          );
           const weekNumber = weeksDiff + 1;
-          
-          const position = ((sundayMidnight.getTime() - rangeStart) / (rangeEnd - rangeStart)) * 100;
+
+          const position =
+            ((sundayMidnight.getTime() - rangeStart) /
+              (rangeEnd - rangeStart)) *
+            100;
           labels.push({
             position: Math.round(position * 100) / 100,
             sunday,
             weekEnd,
-            weekNumber
+            weekNumber,
           });
         }
         currentDate.setDate(currentDate.getDate() + 1);
       }
-      
+
       setSundayLabels(labels);
     }
   }, [view, dateRange]);
@@ -282,7 +300,7 @@ function TimeLabels() {
             } else if (label.position > 90) {
               alignmentClass = "text-right transform -translate-x-full";
             }
-            
+
             return (
               <div
                 key={label.sunday.toISOString()}
@@ -304,32 +322,43 @@ function TimeLabels() {
 function GridLines() {
   const { view, dateRange } = useTimelineDate();
   const [sundayPositions, setSundayPositions] = useState<number[]>([]);
-  
+
   useEffect(() => {
     // THIS FUNCTION IS WRITTEN BY AI (DO NOT TRUST) but it works
     if (view === "month") {
-      const firstDay = new Date(dateRange.startDate.getFullYear(), dateRange.startDate.getMonth(), 1);
-      const lastDay = new Date(dateRange.startDate.getFullYear(), dateRange.startDate.getMonth() + 1, 0);
-      
+      const firstDay = new Date(
+        dateRange.startDate.getFullYear(),
+        dateRange.startDate.getMonth(),
+        1,
+      );
+      const lastDay = new Date(
+        dateRange.startDate.getFullYear(),
+        dateRange.startDate.getMonth() + 1,
+        0,
+      );
+
       const positions: number[] = [];
       const currentDate = new Date(firstDay);
       const rangeStart = dateRange.startDate.getTime();
       const rangeEnd = dateRange.endDate.getTime();
-      
+
       while (currentDate <= lastDay) {
         if (currentDate.getDay() === 0) {
           const sundayMidnight = new Date(currentDate);
           sundayMidnight.setHours(0, 0, 0, 0);
-          const position = ((sundayMidnight.getTime() - rangeStart) / (rangeEnd - rangeStart)) * 100;
+          const position =
+            ((sundayMidnight.getTime() - rangeStart) /
+              (rangeEnd - rangeStart)) *
+            100;
           positions.push(Math.round(position * 100) / 100);
         }
         currentDate.setDate(currentDate.getDate() + 1);
       }
-      
+
       setSundayPositions(positions);
     }
   }, [view, dateRange]);
-  
+
   if (view === "day") {
     return (
       <div className="absolute inset-0 flex">

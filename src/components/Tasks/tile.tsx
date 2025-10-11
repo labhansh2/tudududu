@@ -6,7 +6,7 @@ import { Check, Ellipsis } from "lucide-react";
 import { useMobile } from "@/hooks/useMobile";
 
 import { type TaskWithStatsAndSparkline } from "./actions";
-import { getTaskStyles } from "./utils";
+import { getTaskStyles, getDeadlineBorderClasses } from "./utils";
 
 import {
   completeTask,
@@ -15,6 +15,8 @@ import {
   toggleTaskStatus,
   type SparklineData,
 } from "./actions";
+
+import TaskCountdown from "./task-countdown";
 
 interface Props {
   task: TaskWithStatsAndSparkline;
@@ -57,9 +59,15 @@ export default function TaskTile({
     });
   };
 
+  const deadlineClasses = getDeadlineBorderClasses(
+    task.status,
+    task.deadline,
+    task.updatedAt,
+  );
+
   return (
     <div
-      className={`p-3 rounded-lg border transition-all ${getTaskStyles(task.status)}`}
+      className={`p-3 rounded-lg border transition-all ${getTaskStyles(task.status)} ${deadlineClasses}`}
     >
       <div className="flex items-center gap-3">
         {/* Working status checkbox */}
@@ -85,6 +93,17 @@ export default function TaskTile({
           setIsEditing={setIsEditing}
           onEdit={handleUpdateTaskName}
         />
+
+        {/* Deadline countdown / status */}
+        {task.deadline && (
+          <div className="flex-shrink-0">
+            <TaskCountdown
+              deadline={task.deadline}
+              status={task.status}
+              updatedAt={task.updatedAt}
+            />
+          </div>
+        )}
 
         {!isMobile && !isDetailedView && (
           <Sparkline sparklineData={task.sparklineData} />

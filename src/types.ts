@@ -5,6 +5,7 @@ export interface Task {
   updatedAt: Date;
   createdAt: Date;
   userId: string;
+  deadline?: Date | null;
 }
 
 export interface Session {

@@ -35,7 +35,7 @@ export function getDateRangeLabel(
 }
 
 /*
- * gets position styles for session bard based on date range 
+ * gets position styles for session bard based on date range
  * of the session
  */
 export function getSessionPosition(

@@ -18,7 +18,7 @@ export default async function DeadlineForm({
         </h1>
         <p className="text-[var(--secondary)] text-sm sm:text-base leading-relaxed">
           Choose a goal you have coming up. This can be an important exam
-          that's coming up, a big project, or just a deadline you wanna
+          that is coming up, a big project, or just a deadline you wanna
           mark as your milestone date.
         </p>
       </div>

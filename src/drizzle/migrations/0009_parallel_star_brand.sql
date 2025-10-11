@@ -1,0 +1,1 @@
+ALTER TABLE "tasks" ADD COLUMN "deadline" timestamp with time zone;

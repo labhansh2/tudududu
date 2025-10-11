@@ -31,6 +31,7 @@ export interface TaskWithStatsAndSparkline {
   updatedAt: Date;
   createdAt: Date;
   userId: string;
+  deadline: Date | null;
   taskStats: TaskStats;
   sparklineData: SparklineData[];
 }
@@ -52,6 +53,7 @@ export async function getTasksWithStatsAndSparkline(): Promise<
       updatedAt: tasks.updatedAt,
       createdAt: tasks.createdAt,
       userId: tasks.userId,
+      deadline: tasks.deadline,
       total_time_spent: sql<number>`COALESCE(SUM(EXTRACT(EPOCH FROM (${sessions.endedAt} - ${sessions.startedAt}))), 0)`,
       longest_session: sql<number>`COALESCE(MAX(EXTRACT(EPOCH FROM (${sessions.endedAt} - ${sessions.startedAt}))), 0)`,
     })
@@ -65,6 +67,7 @@ export async function getTasksWithStatsAndSparkline(): Promise<
       tasks.updatedAt,
       tasks.createdAt,
       tasks.userId,
+      tasks.deadline,
     )
     .orderBy(tasks.updatedAt);
 
@@ -101,6 +104,7 @@ export async function getTasksWithStatsAndSparkline(): Promise<
       updatedAt: task.updatedAt,
       createdAt: task.createdAt,
       userId: task.userId,
+      deadline: task.deadline,
       taskStats: {
         total_time_spent: task.total_time_spent,
         longest_session: task.longest_session,
@@ -110,7 +114,10 @@ export async function getTasksWithStatsAndSparkline(): Promise<
   });
 }
 
-export async function createTask(name: string) {
+export async function createTask(
+  name: string,
+  deadlineInput?: string | null,
+) {
   const { userId } = await auth();
 
   if (!userId) {
@@ -122,10 +129,29 @@ export async function createTask(name: string) {
   }
 
   try {
+    let deadlineUTC: Date | null = null;
+
+    if (deadlineInput && deadlineInput.trim() !== "") {
+      const cookieStore = await cookies();
+      const timezone = cookieStore.get("timezone")?.value;
+
+      if (!timezone) {
+        throw new Error("Timezone not found");
+      }
+
+      deadlineUTC = fromZonedTime(deadlineInput, timezone);
+
+      const now = new Date();
+      if (deadlineUTC <= now) {
+        throw new Error("Deadline must be in the future");
+      }
+    }
+
     await db.insert(tasks).values({
       userId,
       name: name.trim(),
       status: "not_active",
+      deadline: deadlineUTC,
     });
 
     revalidatePath("/");
