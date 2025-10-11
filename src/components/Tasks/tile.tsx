@@ -17,6 +17,7 @@ import {
 } from "./actions";
 
 import TaskCountdown from "./task-countdown";
+import TaskDeadlineEditor from "./deadline-editor";
 
 interface Props {
   task: TaskWithStatsAndSparkline;
@@ -36,6 +37,7 @@ export default function TaskTile({
   const isMobile = useMobile();
 
   const [isEditing, setIsEditing] = useState(false);
+  const [showDeadlineEditor, setShowDeadlineEditor] = useState(false);
 
   const handleUpdateTaskName = async (editName: string) => {
     startEditTransition(async () => {
@@ -64,6 +66,7 @@ export default function TaskTile({
     task.deadline,
     task.updatedAt,
   );
+  const canAddDeadline = task.status !== "completed" && !task.deadline;
 
   return (
     <div
@@ -128,6 +131,8 @@ export default function TaskTile({
           onEditClick={() => {
             setIsEditing(true);
           }}
+          canAddDeadline={canAddDeadline}
+          onAddDeadlineClick={() => setShowDeadlineEditor(true)}
           onDeleteClick={handleDeleteTask}
         />
       </div>
@@ -144,6 +149,16 @@ export default function TaskTile({
               <Sparkline sparklineData={task.sparklineData} />
             </div>
           </div>
+        </div>
+      )}
+
+      {showDeadlineEditor && task.status !== "completed" && !task.deadline && (
+        <div className="mt-2">
+          <TaskDeadlineEditor
+            taskId={task.id}
+            defaultValue={task.deadline ?? new Date()}
+            onClose={() => setShowDeadlineEditor(false)}
+          />
         </div>
       )}
     </div>
@@ -344,11 +359,13 @@ function CompleteBtn({
 
 interface MenuProps {
   isCompleted: boolean;
+  canAddDeadline: boolean;
   onEditClick: () => void;
+  onAddDeadlineClick: () => void;
   onDeleteClick: () => void;
 }
 
-function Menu({ isCompleted, onEditClick, onDeleteClick }: MenuProps) {
+function Menu({ isCompleted, canAddDeadline, onEditClick, onAddDeadlineClick, onDeleteClick }: MenuProps) {
   const [showMenu, setShowMenu] = useState(false);
   return (
     <>
@@ -367,17 +384,30 @@ function Menu({ isCompleted, onEditClick, onDeleteClick }: MenuProps) {
               className="fixed inset-0 z-10"
               onClick={() => setShowMenu(false)}
             />
-            <div className="absolute right-0 top-6 z-20 bg-[var(--card-bg)] border border-[var(--border)] rounded-lg shadow-lg py-1 min-w-[100px]">
+            <div className="absolute right-0 top-6 z-20 bg-[var(--card-bg)] border border-[var(--border)] rounded-lg shadow-lg py-1 min-w-[160px]">
               {!isCompleted && (
-                <button
-                  onClick={() => {
-                    setShowMenu(false);
-                    onEditClick();
-                  }}
-                  className="w-full px-3 py-1.5 text-left text-sm text-[var(--foreground)] hover:bg-[var(--active-task)] transition-colors"
-                >
-                  Edit
-                </button>
+                <>
+                  <button
+                    onClick={() => {
+                      setShowMenu(false);
+                      onEditClick();
+                    }}
+                    className="w-full px-3 py-1.5 text-left text-sm text-[var(--foreground)] hover:bg-[var(--active-task)] transition-colors"
+                  >
+                    Edit
+                  </button>
+                  {canAddDeadline && (
+                    <button
+                      onClick={() => {
+                        setShowMenu(false);
+                        onAddDeadlineClick();
+                      }}
+                      className="w-full px-3 py-1.5 text-left text-sm text-[var(--foreground)] hover:bg-[var(--active-task)] transition-colors"
+                    >
+                      Add deadline
+                    </button>
+                  )}
+                </>
               )}
               <button
                 onClick={() => {

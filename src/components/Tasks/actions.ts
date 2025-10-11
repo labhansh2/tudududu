@@ -162,6 +162,44 @@ export async function createTask(
   }
 }
 
+export async function setTaskDeadline(taskId: number, deadlineInput: string) {
+  const { userId } = await auth();
+
+  if (!userId) {
+    throw new Error("User not authenticated");
+  }
+
+  if (!deadlineInput || !deadlineInput.trim()) {
+    throw new Error("Deadline is required");
+  }
+
+  try {
+    const cookieStore = await cookies();
+    const timezone = cookieStore.get("timezone")?.value;
+
+    if (!timezone) {
+      throw new Error("Timezone not found");
+    }
+
+    const deadlineUTC = fromZonedTime(deadlineInput, timezone);
+    const now = new Date();
+    if (deadlineUTC <= now) {
+      throw new Error("Deadline must be in the future");
+    }
+
+    await db
+      .update(tasks)
+      .set({ deadline: deadlineUTC })
+      .where(and(eq(tasks.id, taskId), eq(tasks.userId, userId)));
+
+    revalidatePath("/");
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to set task deadline:", error);
+    throw new Error("Failed to set task deadline");
+  }
+}
+
 export async function updateTaskName(taskId: number, newName: string) {
   const { userId } = await auth();
 
