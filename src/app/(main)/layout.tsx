@@ -6,9 +6,9 @@ export default async function MainLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-[var(--background)]">
+    <div className="h-screen bg-[var(--bg-darkest)] flex flex-col overflow-hidden">
       <Header />
-      <main>{children}</main>
+      <main className="flex-1 overflow-hidden">{children}</main>
     </div>
   );
 }

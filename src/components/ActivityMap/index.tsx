@@ -92,24 +92,29 @@ function YearSelection({
   };
 
   return (
-    <div className="mt-2 border border-[var(--input-border)] rounded-[var(--border-radius)] shadow-sm p-2.5 bg-[var(--card-bg)]">
+    <div 
+      className="mt-2 rounded-lg p-3 bg-[var(--card-bg)]"
+      style={{ 
+        boxShadow: 'var(--shadow-sm)'
+      }}
+    >
       <div className="flex items-center justify-between">
-        <span
-          className="text-sm font-medium text-[var(--foreground)]"
-          style={{ marginLeft: 8 }}
-        >
+        <span className="text-sm font-semibold text-[var(--foreground)]">
           {totalHours}h in last {totalDays} days
         </span>
-        <div className="flex gap-1 ">
+        <div className="flex gap-1.5">
           {years.map((year) => (
             <Link
               key={year}
               href={buildYearUrl(year)}
-              className={`px-3 py-1.5 text-sm border transition-all rounded-[var(--border-radius)] ${
+              className={`px-3 py-1.5 text-sm font-semibold transition-all rounded-md ${
                 selectedYear === year
-                  ? "bg-[var(--accent)] text-white border-[var(--accent)] shadow-sm"
-                  : "bg-[var(--card-bg)] text-[var(--foreground)] border-[var(--border)] hover:border-[var(--accent)] hover:bg-[var(--active-task)]"
+                  ? "bg-[var(--accent)] text-white"
+                  : "bg-[var(--bg-lighter)] text-[var(--foreground)] hover:bg-[var(--bg-base)]"
               }`}
+              style={selectedYear === year ? {
+                boxShadow: '0 1px 3px rgba(0, 0, 0, 0.2)',
+              } : {}}
             >
               {year}
             </Link>

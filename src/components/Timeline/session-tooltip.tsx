@@ -62,14 +62,15 @@ export default function SessionTooltip() {
 
   return (
     <div
-      className="fixed z-50 bg-[var(--card-bg)] border border-[var(--border)] rounded-lg p-3 shadow-lg pointer-events-none w-72 max-w-[calc(100vw-2rem)]"
+      className="fixed z-50 bg-[var(--bg-lightest)] rounded-[var(--border-radius)] p-4 pointer-events-none w-72 max-w-[calc(100vw-2rem)]"
       style={{
         left: `${hoveredPosition.x}px`,
         top: `${Math.max(16, hoveredPosition.y - 10)}px`,
         transform: getTooltipTransform(),
+        boxShadow: 'var(--shadow-lg)'
       }}
     >
-      <div className="text-xs text-[var(--secondary)] space-y-1">
+      <div className="text-xs text-[var(--secondary)] space-y-2 font-medium">
         <div className="break-words">
           {hoveredSession.startedAt.toLocaleDateString()} •{" "}
           {hoveredSession.startedAt.toLocaleTimeString([], {
@@ -86,14 +87,19 @@ export default function SessionTooltip() {
         </div>
         <div>
           Duration:{" "}
-          {formatDuration(
-            hoveredSession.startedAt,
-            hoveredSession.endedAt || new Date(),
-          )}
+          <span className="font-bold text-[var(--foreground)]">
+            {formatDuration(
+              hoveredSession.startedAt,
+              hoveredSession.endedAt || new Date(),
+            )}
+          </span>
         </div>
         <div className="capitalize">
           <span
-            className={`px-2 py-1 rounded text-xs text-white ${getStatusColorClass()}`}
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold text-white ${getStatusColorClass()} relative overflow-hidden inline-block`}
+            style={{
+              boxShadow: 'var(--shadow-sm)'
+            }}
           >
             {getStatusDisplay()}
           </span>

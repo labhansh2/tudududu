@@ -1,5 +1,5 @@
-![ss1](./public/ss1.png)
-![ss2](./public/ss2.png)
+![ss1](./public/ss1-new.png)
+![ss2](./public/ss2-new.png)
 
 ### Concept
 

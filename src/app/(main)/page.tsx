@@ -15,7 +15,7 @@ export default async function Page() {
   const tasksWithStatsAndSparkline = await getTasksWithStatsAndSparkline();
 
   return (
-    <div className="pb-8">
+    <div className="h-full overflow-y-auto">
       <TaskList initialTasks={tasksWithStatsAndSparkline} />
     </div>
   );

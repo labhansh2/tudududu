@@ -23,11 +23,11 @@ export default function Countdown({
 
   return (
     <>
-      <div className="flex items-center gap-3">
-        <div className="font-mono text-lg sm:text-xl font-semibold text-[var(--foreground)]">
+      <div className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1.5 sm:py-2 rounded-[var(--border-radius)] bg-[var(--bg-lighter)] min-w-0" style={{ boxShadow: 'var(--shadow-sm)' }}>
+        <div className="font-mono text-sm sm:text-base font-bold text-[var(--foreground)] truncate">
           {convertSecondsToTimeWithDays(timeLeft, !isMobile)}
         </div>
-        <span className="hidden sm:block text-[var(--secondary)] text-sm">
+        <span className="hidden sm:block text-[var(--secondary)] text-xs sm:text-sm font-semibold whitespace-nowrap">
           to go
         </span>
       </div>
