@@ -68,11 +68,23 @@ export default function TaskTile({
   );
   const canAddDeadline = task.status !== "completed" && !task.deadline;
 
+  const getBackgroundColor = () => {
+    if (activeTask?.id === task.id) return 'var(--active-task)';
+    if (task.status === 'completed') return 'var(--completed-task)';
+    return 'var(--bg-lighter)'; // Incomplete tasks - darker than completed
+  };
+
   return (
     <div
-      className={`p-3 rounded-lg border transition-all ${getTaskStyles(task.status)} ${deadlineClasses}`}
+      className={`p-2.5 sm:p-3 rounded-[var(--border-radius)] transition-shadow ${getTaskStyles(task.status)} ${deadlineClasses} ${
+        activeTask?.id === task.id ? 'ring-2 ring-[var(--accent)] ring-opacity-50' : ''
+      }`}
+      style={{ 
+        boxShadow: 'var(--shadow-sm)',
+        background: getBackgroundColor()
+      }}
     >
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2 sm:gap-2.5">
         {/* Working status checkbox */}
         {task.status !== "completed" && (
           <Checkbox
@@ -139,8 +151,11 @@ export default function TaskTile({
 
       {/* Detailed view */}
       {isDetailedView && (
-        <div className="mt-2 pt-2 border-t border-[var(--border)]/50">
-          <div className="flex items-center justify-between gap-3">
+        <div 
+          className="mt-2 pt-2 rounded-lg bg-[var(--bg-lighter)] p-2 sm:p-2.5"
+          style={{ boxShadow: 'var(--shadow-inset)' }}
+        >
+          <div className="flex items-center justify-between gap-2 sm:gap-2.5">
             <Stats
               totalTime={task.taskStats.total_time_spent}
               longestSession={task.taskStats.longest_session}
@@ -172,21 +187,21 @@ interface StatsProps {
 
 function Stats({ totalTime, longestSession }: StatsProps) {
   return (
-    <div className="flex items-center gap-4">
+    <div className="flex items-center gap-2 sm:gap-3">
       <div className="text-center">
-        <div className="text-base font-bold text-[var(--foreground)] leading-none">
+        <div className="text-lg font-bold text-[var(--foreground)] leading-none">
           {(totalTime / 3600).toFixed(1)}h
         </div>
-        <div className="text-[9px] text-[var(--secondary)] uppercase tracking-wider mt-0.5">
+        <div className="text-[10px] text-[var(--secondary)] uppercase tracking-wider mt-1 font-semibold">
           Total
         </div>
       </div>
-      <div className="w-px h-6 bg-[var(--border)]"></div>
+      <div className="w-px h-8 bg-[var(--border)]"></div>
       <div className="text-center">
-        <div className="text-base font-bold text-[var(--success)] leading-none">
+        <div className="text-lg font-bold text-[var(--success)] leading-none">
           {(longestSession / 3600).toFixed(1)}h
         </div>
-        <div className="text-[9px] text-[var(--secondary)] uppercase tracking-wider mt-0.5">
+        <div className="text-[10px] text-[var(--secondary)] uppercase tracking-wider mt-1 font-semibold">
           Best
         </div>
       </div>
@@ -236,20 +251,28 @@ function Checkbox({
   return (
     <>
       {toggleIsPending ? (
-        <div className="w-5 h-5 rounded border-2 flex items-center justify-center transition-all">
-          <div className="w-3 h-3 rounded bg-white animate-ping"></div>
+        <div 
+          className="w-5 h-5 rounded flex items-center justify-center transition-all bg-[var(--accent)]"
+          style={{ boxShadow: 'var(--shadow-sm)' }}
+        >
+          <div className="w-2.5 h-2.5 rounded-sm bg-white animate-ping"></div>
         </div>
       ) : (
         <button
           onClick={() => handleToggleTaskStatus()}
           disabled={disabled}
-          className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all ${
+          className={`w-5 h-5 rounded flex items-center justify-center transition-all relative ${
             checked
-              ? "bg-[var(--accent)] border-[var(--accent)]"
-              : "border-[var(--border)] hover:border-[var(--accent)]"
+              ? "bg-[var(--accent)]"
+              : "bg-[var(--bg-base)] hover:bg-[var(--bg-lighter)]"
           }`}
+          style={checked ? {
+            boxShadow: 'var(--shadow-sm)',
+          } : {
+            boxShadow: 'var(--shadow-inset)'
+          }}
         >
-          {checked && <Check className="w-3 h-3 text-white" />}
+          {checked && <Check className="w-3.5 h-3.5 text-white stroke-[3]" />}
         </button>
       )}
     </>
@@ -337,20 +360,28 @@ function CompleteBtn({
   return (
     <>
       {completeIsPending ? (
-        <div className="w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all border-[var(--success)]">
-          <div className="w-3 h-3 rounded-full bg-[var(--success)] animate-ping"></div>
+        <div 
+          className="w-6 h-6 rounded-full flex items-center justify-center transition-all bg-[var(--success)]"
+          style={{ boxShadow: 'var(--shadow-sm)' }}
+        >
+          <div className="w-3 h-3 rounded-full bg-white animate-ping"></div>
         </div>
       ) : (
         <button
           onClick={() => handleCompleteTask()}
           disabled={disabled}
-          className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
+          className={`w-6 h-6 rounded-full flex items-center justify-center transition-all ${
             completed
-              ? "bg-[var(--success)] border-[var(--success)]"
-              : "border-[var(--border)] hover:border-[var(--success)] hover:bg-[var(--success)]"
-          } ${completed ? "cursor-default" : "cursor-pointer"}`}
+              ? "bg-[var(--success)] cursor-default"
+              : "bg-[var(--bg-base)] hover:bg-[var(--success)] cursor-pointer"
+          }`}
+          style={completed ? {
+            boxShadow: 'var(--shadow-sm)',
+          } : {
+            boxShadow: 'var(--shadow-inset)'
+          }}
         >
-          {completed && <Check className="w-3 h-3 text-white" />}
+          {completed && <Check className="w-4 h-4 text-white stroke-[3]" />}
         </button>
       )}
     </>
@@ -367,42 +398,69 @@ interface MenuProps {
 
 function Menu({ isCompleted, canAddDeadline, onEditClick, onAddDeadlineClick, onDeleteClick }: MenuProps) {
   const [showMenu, setShowMenu] = useState(false);
+  
   return (
     <>
       <div className="relative">
         <button
-          onClick={() => setShowMenu(!showMenu)}
-          className="w-5 h-5 flex items-center justify-center text-[var(--secondary)] hover:text-[var(--foreground)] transition-colors"
-          // disabled={editIsPending}
+          onClick={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            setShowMenu(!showMenu);
+          }}
+          className={`w-8 h-8 flex items-center justify-center text-[var(--secondary)] hover:text-[var(--foreground)] transition-all rounded-lg flex-shrink-0 ${
+            showMenu ? 'bg-[var(--bg-lighter)]' : 'hover:bg-[var(--bg-lighter)]'
+          }`}
+          style={showMenu ? { 
+            boxShadow: 'var(--shadow-sm)'
+          } : {}}
+          type="button"
         >
-          <Ellipsis className="w-4 h-4 rotate-90" />
+          <Ellipsis className="w-5 h-5 rotate-90" />
         </button>
 
         {showMenu && (
           <>
             <div
-              className="fixed inset-0 z-10"
-              onClick={() => setShowMenu(false)}
+              className="fixed inset-0 z-[100]"
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                setShowMenu(false);
+              }}
             />
-            <div className="absolute right-0 top-6 z-20 bg-[var(--card-bg)] border border-[var(--border)] rounded-lg shadow-lg py-1 min-w-[160px]">
+            <div 
+              className="absolute right-0 top-10 z-[110] bg-[var(--bg-lightest)] rounded-[var(--border-radius)] py-1.5 min-w-[160px]"
+              style={{ boxShadow: 'var(--shadow-lg)' }}
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+              }}
+            >
               {!isCompleted && (
                 <>
                   <button
-                    onClick={() => {
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      e.preventDefault();
                       setShowMenu(false);
-                      onEditClick();
+                      setTimeout(() => onEditClick(), 0);
                     }}
-                    className="w-full px-3 py-1.5 text-left text-sm text-[var(--foreground)] hover:bg-[var(--active-task)] transition-colors"
+                    className="w-full px-4 py-2.5 text-left text-sm font-semibold text-[var(--foreground)] hover:bg-[var(--bg-lighter)] transition-colors"
                   >
                     Edit
                   </button>
                   {canAddDeadline && (
                     <button
-                      onClick={() => {
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
                         setShowMenu(false);
-                        onAddDeadlineClick();
+                        setTimeout(() => onAddDeadlineClick(), 0);
                       }}
-                      className="w-full px-3 py-1.5 text-left text-sm text-[var(--foreground)] hover:bg-[var(--active-task)] transition-colors"
+                      className="w-full px-4 py-2.5 text-left text-sm font-semibold text-[var(--foreground)] hover:bg-[var(--bg-lighter)] transition-colors"
                     >
                       Add deadline
                     </button>
@@ -410,11 +468,14 @@ function Menu({ isCompleted, canAddDeadline, onEditClick, onAddDeadlineClick, on
                 </>
               )}
               <button
-                onClick={() => {
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
                   setShowMenu(false);
-                  onDeleteClick();
+                  setTimeout(() => onDeleteClick(), 0);
                 }}
-                className="w-full px-3 py-1.5 text-left text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors"
+                className="w-full px-4 py-2.5 text-left text-sm font-semibold text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors"
               >
                 Delete
               </button>

@@ -21,7 +21,7 @@ export default async function Page() {
     .then((res) => res[0]?.deadline || new Date());
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-neutral-900">
+    <div className="min-h-screen flex items-center justify-center bg-[var(--bg-darkest)]">
       <DeadlineForm defaultValue={deadline} />
     </div>
   );

@@ -14,10 +14,13 @@ export default function Controls({
   setDetailedView,
 }: Props) {
   return (
-    <div className="mb-3">
-      <div className="flex justify-between items-center gap-3">
+    <div className="mb-4">
+      <div className="flex justify-between items-center gap-2">
         {/* Filter buttons */}
-        <div className="flex items-center gap-1 p-1 bg-[var(--background)] rounded-lg border border-[var(--border)]">
+        <div 
+          className="flex items-center gap-1 sm:gap-1.5 p-1 sm:p-1.5 bg-[var(--bg-lighter)] rounded-[var(--border-radius)] flex-shrink-0"
+          style={{ boxShadow: 'var(--shadow-sm)' }}
+        >
           <FilterButton
             sort="all"
             selected={sort === "all"}
@@ -36,8 +39,11 @@ export default function Controls({
         </div>
 
         {/* View toggle */}
-        <div className="flex items-center gap-2 flex-shrink-0">
-          <span className="text-xs sm:text-sm font-medium text-[var(--foreground)]">
+        <div 
+          className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0 px-2 sm:px-3 py-1.5 sm:py-2 bg-[var(--bg-lighter)] rounded-[var(--border-radius)]"
+          style={{ boxShadow: 'var(--shadow-sm)' }}
+        >
+          <span className="text-[10px] sm:text-xs font-medium text-[var(--foreground)] whitespace-nowrap">
             Detailed
           </span>
           <ToggleSwitch
@@ -59,14 +65,29 @@ interface FilterButtonProps {
 function FilterButton({ sort, selected, setSort }: FilterButtonProps) {
   return (
     <button
-      className={`px-2 py-1 text-xs font-medium rounded-md transition-all ${
+      className={`px-2 sm:px-3 py-1 sm:py-1.5 text-[10px] sm:text-xs font-semibold rounded-lg transition-all ${
         selected
-          ? "bg-[var(--accent)] text-white shadow-sm"
-          : "text-[var(--secondary)] hover:text-[var(--foreground)] hover:bg-[var(--card-bg)]"
+          ? "bg-[var(--accent)] text-white relative overflow-hidden"
+          : "text-[var(--secondary)] hover:text-[var(--foreground)] hover:bg-[var(--bg-lightest)]"
       }`}
+      style={selected ? {
+        boxShadow: 'var(--shadow-md)',
+        background: 'linear-gradient(to bottom, var(--accent) 0%, color-mix(in srgb, var(--accent) 85%, black) 100%)',
+      } : {}}
       onClick={() => setSort(sort)}
     >
-      {sort.charAt(0).toUpperCase() + sort.slice(1)}
+      {selected && (
+        <span 
+          className="absolute inset-x-0 top-0 h-1/2 pointer-events-none"
+          style={{ 
+            background: 'var(--gradient-button)',
+            opacity: 0.6
+          }}
+        />
+      )}
+      <span className="relative z-10">
+        {sort.charAt(0).toUpperCase() + sort.slice(1)}
+      </span>
     </button>
   );
 }
@@ -80,14 +101,23 @@ function ToggleSwitch({ checked, onChange }: ToggleSwitchProps) {
   return (
     <button
       onClick={() => onChange(!checked)}
-      className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none focus:ring-1 focus:ring-[var(--accent)] focus:ring-offset-1 focus:ring-offset-[var(--background)] ${
-        checked ? "bg-[var(--accent)]" : "bg-[var(--border)]"
+      className={`relative inline-flex h-5 w-9 sm:h-6 sm:w-11 items-center rounded-full transition-all focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:ring-offset-2 focus:ring-offset-[var(--bg-lighter)] ${
+        checked ? "bg-[var(--accent)]" : "bg-[var(--bg-base)]"
       }`}
+      style={checked ? { 
+        boxShadow: 'var(--shadow-inset)',
+        background: 'linear-gradient(to bottom, var(--accent) 0%, color-mix(in srgb, var(--accent) 85%, black) 100%)'
+      } : {
+        boxShadow: 'var(--shadow-inset)'
+      }}
     >
       <span
-        className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${
-          checked ? "translate-x-5" : "translate-x-1"
+        className={`inline-block h-3.5 w-3.5 sm:h-4 sm:w-4 transform rounded-full bg-white transition-transform ${
+          checked ? "translate-x-[1.125rem] sm:translate-x-6" : "translate-x-0.5 sm:translate-x-1"
         }`}
+        style={{
+          boxShadow: 'var(--shadow-sm)'
+        }}
       />
     </button>
   );

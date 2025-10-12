@@ -42,8 +42,8 @@ export default function TaskCountdown({
     const deadlineDate = new Date(deadline);
     const lateBy = calculateLateBy(deadlineDate, completedAt);
     const label = lateBy
-      ? `Late by ${lateBy}`
-      : `Completed — ${calculateEarlyBy(deadlineDate, completedAt)} early`;
+      ? `${lateBy} late`
+      : `${calculateEarlyBy(deadlineDate, completedAt)} early`;
 
     // Yellow if late within 1 day, otherwise orange; green if early/on time
     let classes = "bg-green-500/10 text-green-500";
@@ -59,7 +59,8 @@ export default function TaskCountdown({
 
     return (
       <div
-        className={`text-[10px] font-medium px-2 py-1 rounded ${classes}`}
+        className={`text-[10px] font-bold px-2.5 py-1.5 rounded-lg ${classes}`}
+        style={{ boxShadow: 'var(--shadow-sm)' }}
       >
         {label}
       </div>
@@ -80,7 +81,7 @@ export default function TaskCountdown({
 
   return (
     <div
-      className={`text-xs font-medium px-2 py-1 rounded ${
+      className={`text-xs font-bold px-2.5 py-1.5 rounded-lg ${
         isOverdue
           ? overdueWithinSixHours
             ? "bg-orange-500/10 text-orange-500" // overdue < 6h → orange
@@ -89,6 +90,7 @@ export default function TaskCountdown({
             ? "bg-yellow-500/10 text-yellow-500" // near due < 6h → yellow
             : "bg-green-500/10 text-green-500"
       }`}
+      style={{ boxShadow: 'var(--shadow-sm)' }}
     >
       {label}
     </div>

@@ -20,14 +20,14 @@ export default function TimelineGrid() {
   return (
     <div className={isFullHeight || isFullPage ? "flex-1 min-h-0" : ""}>
       <div
-        className={`space-y-4 overflow-x-auto ${
+        className={`space-y-3 overflow-x-auto ${
           isFullHeight
             ? "h-full flex flex-col"
             : "h-full flex flex-col overflow-y-auto"
         }`}
       >
         <div
-          className={`min-w-[600px] sm:min-w-0 space-y-4 ${
+          className={`min-w-[600px] sm:min-w-0 ${
             isFullHeight
               ? "flex flex-col h-full"
               : "flex flex-col h-full overflow-y-auto"
@@ -37,28 +37,23 @@ export default function TimelineGrid() {
 
           {/* Timeline grid with task rows */}
           <div
-            className={`relative ${
-              isFullHeight
-                ? "flex-1 min-h-0"
-                : "flex-1 min-h-0 overflow-y-auto"
+            className={`relative flex-1 min-h-0 ${
+              isFullHeight ? "" : ""
             }`}
           >
             <GridLines />
 
             {/* Task rows - scrollable when in full height mode */}
             <div
-              className={`space-y-1 ${
+              className={`space-y-3 ${
                 isFullHeight
                   ? "overflow-y-auto h-full pr-2"
-                  : "overflow-y-auto h-full pr-2"
+                  : "h-full"
               }`}
             >
               {sessionsDataByTask.map((task) => (
                 <TaskRow key={task.taskId} taskWithSessions={task} />
               ))}
-
-              {/* Add some bottom padding when scrollable */}
-              {isFullHeight && <div className="h-4" />}
             </div>
           </div>
         </div>
@@ -73,17 +68,20 @@ interface TaskRowProps {
 
 function TaskRow({ taskWithSessions }: TaskRowProps) {
   return (
-    <div className="space-y-0.5">
+    <div className="space-y-1.5">
       <div className="relative">
-        <div
-          className={`text-xs text-[var(--secondary)] font-medium px-1}`}
-        >
+        <div className="text-xs text-[var(--foreground)] font-medium">
           {taskWithSessions.taskName}
         </div>
       </div>
 
       {/* Sessions row */}
-      <div className="relative h-12 sm:h-12 bg-[var(--card-bg)] rounded border border-[var(--border)]">
+      <div 
+        className="relative h-10 rounded-md overflow-hidden bg-[var(--input-bg-inset)]"
+        style={{ 
+          boxShadow: 'var(--shadow-inset)'
+        }}
+      >
         {/* Sessions */}
         {taskWithSessions.sessions.map((session) => (
           <SessionBar key={session.sessionId} session={session} />
@@ -141,21 +139,32 @@ function SessionBar({ session }: SessionBarProps) {
 
   return (
     <div
-      className={`absolute top-1 bottom-1 ${statusColor} rounded cursor-pointer transition-all hover:brightness-110 z-20 min-w-[8px] ${
+      className={`absolute top-1.5 bottom-1.5 ${statusColor} rounded cursor-pointer transition-all z-20 min-w-[4px] ${
         isMobile && clickedSession?.sessionId === session.sessionId
-          ? "ring-2 ring-[var(--accent)] ring-opacity-50"
+          ? "ring-1 ring-[var(--accent)]"
           : ""
-      } ${isActive ? "shadow-lg animate-pulse" : ""}`}
-      style={position}
+      } ${isActive ? "animate-pulse" : ""}`}
+      style={{
+        ...position,
+        boxShadow: isActive 
+          ? 'inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 2px 4px rgba(5, 150, 105, 0.4)' 
+          : 'inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.15)'
+      }}
       onMouseEnter={(e) => {
         if (!isMobile) {
           const rect = e.currentTarget.getBoundingClientRect();
           handleSessionHover(session, rect);
+          if (!isActive) {
+            e.currentTarget.style.boxShadow = 'inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 2px 4px rgba(0, 0, 0, 0.2)';
+          }
         }
       }}
-      onMouseLeave={() => {
+      onMouseLeave={(e) => {
         if (!isMobile) {
           handleSessionLeave();
+          if (!isActive) {
+            e.currentTarget.style.boxShadow = 'inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.15)';
+          }
         }
       }}
       onClick={(e) => {
@@ -241,10 +250,10 @@ function TimeLabels() {
 
   if (view === "day") {
     return (
-      <div className={isFullHeight ? "flex-shrink-0" : ""}>
-        <div className="flex text-xs text-[var(--secondary)] mb-2">
+      <div className={`${isFullHeight ? "flex-shrink-0" : ""} mb-3`}>
+        <div className="flex text-xs text-[var(--secondary)] font-medium relative">
           {Array.from({ length: 24 }, (_, index) => (
-            <div key={index} className="flex-1">
+            <div key={index} className="flex-1 text-left pl-0.5">
               <span
                 className={`${index % 2 === 0 ? "block" : "hidden sm:hidden md:hidden lg:block"}`}
               >
@@ -263,15 +272,15 @@ function TimeLabels() {
     );
   } else if (view === "week") {
     return (
-      <div className={isFullHeight ? "flex-shrink-0" : ""}>
-        <div className="flex text-xs text-[var(--secondary)] mb-2">
+      <div className={`${isFullHeight ? "flex-shrink-0" : ""} mb-3`}>
+        <div className="flex text-xs text-[var(--secondary)] font-medium relative">
           {Array.from({ length: 7 }, (_, index) => {
             const day = new Date(dateRange.startDate);
             day.setDate(dateRange.startDate.getDate() + index);
             return (
               <div
                 key={day.toISOString()}
-                className="flex-1 text-center px-1"
+                className="flex-1 text-left pl-0.5"
               >
                 <div className="hidden sm:block">
                   {day.toLocaleDateString("en-US", {
@@ -291,8 +300,8 @@ function TimeLabels() {
     );
   } else {
     return (
-      <div className={isFullHeight ? "flex-shrink-0" : ""}>
-        <div className="relative text-xs text-[var(--secondary)] mb-2 h-4">
+      <div className={`${isFullHeight ? "flex-shrink-0" : ""} mb-3`}>
+        <div className="relative text-xs text-[var(--secondary)] font-medium h-6">
           {sundayLabels.map((label, index) => {
             let alignmentClass = "text-center transform -translate-x-1/2";
             if (label.position < 10) {
@@ -361,7 +370,7 @@ function GridLines() {
 
   if (view === "day") {
     return (
-      <div className="absolute inset-0 flex">
+      <div className="absolute inset-0 flex opacity-40">
         {Array.from({ length: 24 }, (_, index) => (
           <div
             key={index}
@@ -372,7 +381,7 @@ function GridLines() {
     );
   } else if (view === "week") {
     return (
-      <div className="absolute inset-0 flex">
+      <div className="absolute inset-0 flex opacity-40">
         {Array.from({ length: 7 }, (_, index) => (
           <div
             key={index}
@@ -384,7 +393,7 @@ function GridLines() {
   } else {
     // render using client calc
     return (
-      <div className="absolute inset-0">
+      <div className="absolute inset-0 opacity-40">
         {sundayPositions.map((position, index) => (
           <div
             key={index}

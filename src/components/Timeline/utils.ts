@@ -26,12 +26,28 @@ export function formatDuration(start: Date, end: Date): string {
 export function getDateRangeLabel(
   dateRange: { startDate: Date; endDate: Date },
   dateView: View,
+  isMobile: boolean = false,
 ) {
-  return dateView === View.DAY
-    ? format(dateRange.startDate, "d MMMM yyyy")
-    : dateView === View.WEEK
-      ? `${format(dateRange.startDate, "d MMMM yyyy")} - ${format(dateRange.endDate, "d MMMM yyyy")}`
-      : format(dateRange.startDate, "MMMM yyyy");
+  if (dateView === View.DAY) {
+    return format(dateRange.startDate, "d MMMM yyyy");
+  } else if (dateView === View.WEEK) {
+    // For mobile, use shorter format
+    if (isMobile) {
+      return `${format(dateRange.startDate, "d MMM")} - ${format(dateRange.endDate, "d MMM")}`;
+    }
+    // For desktop, check if same month
+    const startMonth = format(dateRange.startDate, "MMMM");
+    const endMonth = format(dateRange.endDate, "MMMM");
+    const startYear = format(dateRange.startDate, "yyyy");
+    const endYear = format(dateRange.endDate, "yyyy");
+    
+    if (startMonth === endMonth && startYear === endYear) {
+      return `${format(dateRange.startDate, "d")} - ${format(dateRange.endDate, "d")} ${startMonth} ${startYear}`;
+    }
+    return `${format(dateRange.startDate, "d MMM")} - ${format(dateRange.endDate, "d MMM yyyy")}`;
+  } else {
+    return format(dateRange.startDate, "MMMM yyyy");
+  }
 }
 
 /*
@@ -207,7 +223,8 @@ export function getTimeLineLayoutStyles(
   if (isFullPage) {
     classes += " h-full flex flex-col p-4";
   } else {
-    classes += " p-4 sm:p-6 rounded-lg border border-[var(--border)]";
+    // Add shadow like activity map
+    classes += " p-4 sm:p-6 rounded-lg shadow-[var(--shadow-sm)]";
     if (isFullHeight) {
       classes += " h-full flex flex-col";
     }

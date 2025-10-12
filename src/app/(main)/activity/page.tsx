@@ -43,8 +43,8 @@ export default async function Page({
   const timelineDate = params.date || format(todayUserTz, "yyyy-MM-dd");
 
   return (
-    <div className="mx-auto px-2 sm:px-4 py-2 h-[calc(100vh-4rem)]">
-      <div className="flex flex-col h-full gap-2">
+    <div className="h-full overflow-hidden">
+      <div className="flex flex-col h-full gap-2 px-3 py-2">
         <div className="flex-shrink-0">
           <Activity
             selectedYear={selectedYear}
@@ -53,7 +53,7 @@ export default async function Page({
           />
         </div>
 
-        <div className="flex-1 min-h-0 sm:flex-1 sm:min-h-0">
+        <div className="flex-1 min-h-0">
           <Timeline
             isFullHeight={true}
             isFullPage={false}

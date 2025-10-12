@@ -34,7 +34,7 @@ export default async function Page({
   const timelineDate = params.date || format(todayUserTz, "yyyy-MM-dd");
 
   return (
-    <div className="h-[calc(100vh-4rem)]">
+    <div className="h-full">
       <Timeline
         isFullHeight={true}
         isFullPage={true}

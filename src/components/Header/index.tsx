@@ -36,10 +36,16 @@ export default async function Header() {
     await getTotalSecondsToday();
 
   return (
-    <header className="border-b border-[var(--border)] bg-[var(--card-bg)]">
-      <div className="mx-auto px-4 sm:px-6">
-        <div className="flex items-center justify-between h-16">
-          <div className="flex items-center gap-1">
+    <header 
+      className="bg-[var(--bg-lightest)] relative" 
+      style={{ 
+        boxShadow: 'var(--shadow-sm)',
+        borderBottom: '1px solid var(--border-light)'
+      }}
+    >
+      <div className="mx-auto px-3 sm:px-6">
+        <div className="flex items-center justify-between h-16 gap-2">
+          <div className="flex items-center gap-1 sm:gap-2 min-w-0 flex-1">
             <Countdown
               secondsLeft={
                 (userDeadline.getTime() - new Date().getTime()) / 1000
@@ -48,13 +54,13 @@ export default async function Header() {
 
             <Link
               href="/deadline"
-              className="px-3 py-1.5 text-sm font-medium text-[var(--secondary)] hover:text-[var(--foreground)] transition-colors"
+              className="px-2 sm:px-3 py-1.5 text-sm font-medium text-[var(--secondary)] hover:text-[var(--foreground)] transition-all rounded-lg hover:bg-[var(--bg-lighter)] flex-shrink-0"
             >
               <Edit className="w-4 h-4" />
             </Link>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
             <TotalTimeSpentToday
               initialTotalSeconds={totalSecondsToday}
               sessionIsActive={sessionIsActive}

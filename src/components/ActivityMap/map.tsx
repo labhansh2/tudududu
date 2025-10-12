@@ -59,10 +59,11 @@ export default function ActivityMap({
     <div className="relative">
       <div
         ref={calendarRef}
-        className="border border-[var(--input-border)] rounded-[var(--border-radius)] shadow-sm p-4 bg-[var(--card-bg)] overflow-x-auto"
+        className="rounded-lg p-4 bg-[var(--card-bg)] overflow-x-auto"
         style={{
           // Disable smooth scrolling initially to allow instant positioning
           scrollBehavior: "auto",
+          boxShadow: 'var(--shadow-sm)'
         }}
       >
         <div className="flex justify-center">
@@ -73,10 +74,10 @@ export default function ActivityMap({
             style={{
               color: "var(--foreground)",
             }}
-            blockSize={15}
-            blockMargin={2.9}
+            blockSize={13}
+            blockMargin={3}
             blockRadius={3}
-            fontSize={12}
+            fontSize={11}
             hideTotalCount={true}
           />
         </div>

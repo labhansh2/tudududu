@@ -44,3 +44,16 @@
   - [x] absolute min-max
 - [ ] try adding optimistic updates
 - [ ] try theme gen on this one
+
+- [x] hard-deadlines
+- [ ] ui-update
+  - [x] timeline
+  - [x] not responsive 
+  - [x] check boxes
+  - [x] font not consistent
+  - [x] glitchy menu
+  - [x] week mode time label
+  - [ ] sticky task label over task rows on small screens?
+  - [x] decrease width of task tiles
+  - [x] better completed lables - remove "completed -" and "late"
+- [ ] remove manage account option
