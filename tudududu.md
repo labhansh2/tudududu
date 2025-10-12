@@ -53,7 +53,7 @@
   - [x] font not consistent
   - [x] glitchy menu
   - [x] week mode time label
-  - [ ] sticky task label over task rows on small screens?
+  - ~~sticky task label over task rows on small screens?~~
   - [x] decrease width of task tiles
   - [x] better completed lables - remove "completed -" and "late"
 - [ ] remove manage account option
