@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { format, toZonedTime } from "date-fns-tz";
 
 import Activity from "@/components/ActivityMap";
+import HourlyActivityGraph from "@/components/AverageGraph";
 import Timeline from "@/components/Timeline";
 import { View } from "@/components/Timeline/types";
 
@@ -14,6 +15,8 @@ export default async function Page({
     year?: string;
     view?: string;
     date?: string;
+    range?: string;
+    viewMode?: string;
   }>;
 }) {
   const { userId } = await auth();
@@ -43,26 +46,67 @@ export default async function Page({
   const timelineDate = params.date || format(todayUserTz, "yyyy-MM-dd");
 
   return (
-    <div className="h-full overflow-hidden">
-      <div className="flex flex-col h-full gap-2 px-3 py-2">
-        <div className="flex-shrink-0">
+    <>
+      {/* Desktop: Fixed height layout */}
+      <div className="hidden lg:flex h-full overflow-hidden">
+        <div className="flex flex-col h-full gap-2 px-3 py-2 w-full">
+          {/* Top section: Activity Map and Hourly Graph */}
+          <div className="flex-shrink-0 flex gap-2 min-h-0">
+            {/* Activity Map */}
+            <div className="flex-1">
+              <Activity
+                selectedYear={selectedYear}
+                currentYear={parseInt(format(todayUserTz, "yyyy"))}
+                searchParams={params}
+              />
+            </div>
+
+            {/* Hourly Activity Graph */}
+            <div className="flex-1 h-auto">
+              <HourlyActivityGraph searchParams={params} />
+            </div>
+          </div>
+
+          {/* Bottom section: Timeline */}
+          <div className="flex-1 min-h-0">
+            <Timeline
+              isFullHeight={true}
+              isFullPage={false}
+              viewMode={timelineView}
+              paramsDateUserTz={timelineDate}
+              timezone={timezone}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile: Scrollable layout */}
+      <div className="lg:hidden h-full overflow-y-scroll">
+        <div className="flex flex-col gap-2 px-3 py-2 pb-4">
+          {/* Activity Map */}
           <Activity
             selectedYear={selectedYear}
             currentYear={parseInt(format(todayUserTz, "yyyy"))}
             searchParams={params}
           />
-        </div>
 
-        <div className="flex-1 min-h-0">
-          <Timeline
-            isFullHeight={true}
-            isFullPage={false}
-            viewMode={timelineView}
-            paramsDateUserTz={timelineDate}
-            timezone={timezone}
-          />
+          {/* Hourly Activity Graph */}
+          <div className="h-[320px]">
+            <HourlyActivityGraph searchParams={params} />
+          </div>
+
+          {/* Timeline */}
+          <div style={{ height: '600px' }}>
+            <Timeline
+              isFullHeight={true}
+              isFullPage={false}
+              viewMode={timelineView}
+              paramsDateUserTz={timelineDate}
+              timezone={timezone}
+            />
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
