@@ -57,9 +57,9 @@ function TimelineStats() {
   };
 
   return (
-    <div 
+    <div
       className="inline-flex items-center gap-2 bg-[var(--bg-lightest)] rounded-lg px-4 py-2.5 text-sm flex-shrink-0"
-      style={{ boxShadow: 'var(--shadow-sm)' }}
+      style={{ boxShadow: "var(--shadow-sm)" }}
     >
       <Clock size={16} className="text-[var(--accent)] flex-shrink-0" />
       <div className="flex items-baseline gap-1">
@@ -67,7 +67,9 @@ function TimelineStats() {
           {formatHours(statsData.total_hours)}
         </span>
         {!isMobile && (
-          <span className="text-[var(--secondary)] text-xs font-medium">worked</span>
+          <span className="text-[var(--secondary)] text-xs font-medium">
+            worked
+          </span>
         )}
       </div>
     </div>
@@ -87,7 +89,7 @@ function DateNavigation() {
       <button
         onClick={() => handleNavigateTime(Direction.PREV)}
         className="p-2.5 bg-[var(--bg-lightest)] rounded-lg hover:bg-[var(--bg-lighter)] transition-all flex-shrink-0"
-        style={{ boxShadow: 'var(--shadow-sm)' }}
+        style={{ boxShadow: "var(--shadow-sm)" }}
       >
         <ChevronLeft size={16} />
       </button>
@@ -103,7 +105,7 @@ function DateNavigation() {
       <button
         onClick={() => handleNavigateTime(Direction.NEXT)}
         className="p-2.5 bg-[var(--bg-lightest)] rounded-lg hover:bg-[var(--bg-lighter)] transition-all flex-shrink-0"
-        style={{ boxShadow: 'var(--shadow-sm)' }}
+        style={{ boxShadow: "var(--shadow-sm)" }}
       >
         <ChevronRight size={16} />
       </button>
@@ -123,7 +125,7 @@ function ViewModeSelector() {
         className={`flex items-center justify-between gap-2 bg-[var(--bg-lightest)] rounded-lg px-4 py-2.5 text-sm font-semibold hover:bg-[var(--bg-lighter)] transition-all min-w-[80px] ${
           isMobile ? "w-full" : ""
         }`}
-        style={{ boxShadow: 'var(--shadow-sm)' }}
+        style={{ boxShadow: "var(--shadow-sm)" }}
       >
         <span className="capitalize">{view}</span>
         <ChevronDown size={16} />
@@ -135,9 +137,9 @@ function ViewModeSelector() {
             className="fixed inset-0 z-30"
             onClick={() => setShowDropdown(false)}
           />
-          <div 
+          <div
             className="absolute right-0 top-full mt-2 z-40 bg-[var(--bg-lightest)] rounded-lg py-1.5 min-w-[100px]"
-            style={{ boxShadow: 'var(--shadow-lg)' }}
+            style={{ boxShadow: "var(--shadow-lg)" }}
           >
             {Object.values(View).map((mode: View) => (
               <button
@@ -172,7 +174,7 @@ function ActionButton() {
       <Link
         href={`/activity/timeline?view=${view}&date=${referenceDate}`}
         className="flex items-center gap-2 bg-[var(--bg-lightest)] rounded-lg px-4 py-2.5 text-sm font-semibold hover:bg-[var(--bg-lighter)] transition-all"
-        style={{ boxShadow: 'var(--shadow-sm)' }}
+        style={{ boxShadow: "var(--shadow-sm)" }}
         title="View in full screen"
       >
         <Maximize2 size={16} />
@@ -185,7 +187,7 @@ function ActionButton() {
     <Link
       href={`/activity?view=${view}&date=${referenceDate}`}
       className="flex items-center gap-2 bg-[var(--bg-lightest)] rounded-lg px-4 py-2.5 text-sm font-semibold hover:bg-[var(--bg-lighter)] transition-all"
-      style={{ boxShadow: 'var(--shadow-sm)' }}
+      style={{ boxShadow: "var(--shadow-sm)" }}
       title="Back to Activity"
     >
       <ArrowLeft size={16} />

@@ -60,7 +60,7 @@ export default function TaskCountdown({
     return (
       <div
         className={`text-[10px] font-bold px-2.5 py-1.5 rounded-lg ${classes}`}
-        style={{ boxShadow: 'var(--shadow-sm)' }}
+        style={{ boxShadow: "var(--shadow-sm)" }}
       >
         {label}
       </div>
@@ -90,7 +90,7 @@ export default function TaskCountdown({
             ? "bg-yellow-500/10 text-yellow-500" // near due < 6h → yellow
             : "bg-green-500/10 text-green-500"
       }`}
-      style={{ boxShadow: 'var(--shadow-sm)' }}
+      style={{ boxShadow: "var(--shadow-sm)" }}
     >
       {label}
     </div>

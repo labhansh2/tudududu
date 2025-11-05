@@ -67,7 +67,7 @@ export default function SessionTooltip() {
         left: `${hoveredPosition.x}px`,
         top: `${Math.max(16, hoveredPosition.y - 10)}px`,
         transform: getTooltipTransform(),
-        boxShadow: 'var(--shadow-lg)'
+        boxShadow: "var(--shadow-lg)",
       }}
     >
       <div className="text-xs text-[var(--secondary)] space-y-2 font-medium">
@@ -98,7 +98,7 @@ export default function SessionTooltip() {
           <span
             className={`px-3 py-1.5 rounded-lg text-xs font-bold text-white ${getStatusColorClass()} relative overflow-hidden inline-block`}
             style={{
-              boxShadow: 'var(--shadow-sm)'
+              boxShadow: "var(--shadow-sm)",
             }}
           >
             {getStatusDisplay()}

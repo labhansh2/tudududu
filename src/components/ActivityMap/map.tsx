@@ -56,17 +56,18 @@ export default function ActivityMap({
   }, [activityData, autoScrollToRecent]);
 
   return (
-    <div className="relative">
+    <div className="relative flex-1 min-h-0">
       <div
         ref={calendarRef}
-        className="rounded-lg px-4 py-6 bg-[var(--card-bg)] overflow-x-auto"
+        className="rounded-t-lg rounded-b-none px-4 py-2 bg-[var(--card-bg)] overflow-x-auto h-full flex items-center"
         style={{
           // Disable smooth scrolling initially to allow instant positioning
           scrollBehavior: "auto",
-          boxShadow: 'var(--shadow-sm)'
+          boxShadow: "var(--shadow-sm)",
+          // Seamless merge with year selection below - no bottom border
         }}
       >
-        <div className="flex justify-center">
+        <div className="flex justify-center w-full">
           <ActivityCalendar
             data={activityData}
             maxLevel={7}

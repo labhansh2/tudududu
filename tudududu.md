@@ -48,7 +48,7 @@
 - [x] hard-deadlines
 - [ ] ui-update
   - [x] timeline
-  - [x] not responsive 
+  - [x] not responsive
   - [x] check boxes
   - [x] font not consistent
   - [x] glitchy menu

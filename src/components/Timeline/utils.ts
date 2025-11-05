@@ -40,7 +40,7 @@ export function getDateRangeLabel(
     const endMonth = format(dateRange.endDate, "MMMM");
     const startYear = format(dateRange.startDate, "yyyy");
     const endYear = format(dateRange.endDate, "yyyy");
-    
+
     if (startMonth === endMonth && startYear === endYear) {
       return `${format(dateRange.startDate, "d")} - ${format(dateRange.endDate, "d")} ${startMonth} ${startYear}`;
     }

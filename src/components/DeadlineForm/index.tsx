@@ -26,7 +26,7 @@ export default async function DeadlineForm({
       <Form
         action={submitDeadline}
         className="bg-[var(--bg-lightest)] rounded-[var(--border-radius)] p-6 sm:p-8 space-y-6"
-        style={{ boxShadow: 'var(--shadow-lg)' }}
+        style={{ boxShadow: "var(--shadow-lg)" }}
       >
         <DeadlineFormInput defaultValue={defaultValue} />
         <DeadlineFormSubmit />
