@@ -24,7 +24,7 @@ export async function getHourlyActivityData(
   const timezone = cookieStore.get("timezone")?.value || "America/Toronto";
 
   const daysInRange = Math.ceil(
-    (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)
+    (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24),
   );
 
   if (viewMode === ViewMode.WEEK) {
@@ -49,8 +49,12 @@ export async function getHourlyActivityData(
           sql`${sessions.endedAt} IS NOT NULL`,
         ),
       )
-      .groupBy(sql`EXTRACT(DOW FROM ${sessions.startedAt} AT TIME ZONE ${sql.raw(`'${timezone}'`)})`)
-      .orderBy(sql`EXTRACT(DOW FROM ${sessions.startedAt} AT TIME ZONE ${sql.raw(`'${timezone}'`)})`);
+      .groupBy(
+        sql`EXTRACT(DOW FROM ${sessions.startedAt} AT TIME ZONE ${sql.raw(`'${timezone}'`)})`,
+      )
+      .orderBy(
+        sql`EXTRACT(DOW FROM ${sessions.startedAt} AT TIME ZONE ${sql.raw(`'${timezone}'`)})`,
+      );
 
     // Create an array for all 7 days (0 = Sunday to 6 = Saturday)
     const weekData: HourlyData[] = Array.from({ length: 7 }, (_, day) => ({
@@ -100,15 +104,22 @@ export async function getHourlyActivityData(
           sql`${sessions.endedAt} IS NOT NULL`,
         ),
       )
-      .groupBy(sql`EXTRACT(HOUR FROM ${sessions.startedAt} AT TIME ZONE ${sql.raw(`'${timezone}'`)})`)
-      .orderBy(sql`EXTRACT(HOUR FROM ${sessions.startedAt} AT TIME ZONE ${sql.raw(`'${timezone}'`)})`);
+      .groupBy(
+        sql`EXTRACT(HOUR FROM ${sessions.startedAt} AT TIME ZONE ${sql.raw(`'${timezone}'`)})`,
+      )
+      .orderBy(
+        sql`EXTRACT(HOUR FROM ${sessions.startedAt} AT TIME ZONE ${sql.raw(`'${timezone}'`)})`,
+      );
 
     // Create an array for all 24 hours
-    const hourlyData: HourlyData[] = Array.from({ length: 24 }, (_, hour) => ({
-      hour,
-      avgMinutes: 0,
-      totalSessions: 0,
-    }));
+    const hourlyData: HourlyData[] = Array.from(
+      { length: 24 },
+      (_, hour) => ({
+        hour,
+        avgMinutes: 0,
+        totalSessions: 0,
+      }),
+    );
 
     // Fill in the actual data
     data.forEach((row) => {
@@ -147,7 +158,7 @@ export async function getHourlyActivityStats(
   }
 
   const daysInRange = Math.ceil(
-    (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)
+    (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24),
   );
 
   const data = await db
@@ -170,12 +181,18 @@ export async function getHourlyActivityStats(
       ),
     );
 
-  const totalHours = Math.round(((data[0]?.totalSeconds || 0) / 3600) * 10) / 10;
+  const totalHours =
+    Math.round(((data[0]?.totalSeconds || 0) / 3600) * 10) / 10;
   const avgDailyHours = Math.round((totalHours / daysInRange) * 10) / 10;
-  const avgWeeklyHours = Math.round((totalHours / (daysInRange / 7)) * 10) / 10;
+  const avgWeeklyHours =
+    Math.round((totalHours / (daysInRange / 7)) * 10) / 10;
 
   // Get peak hour/day based on view mode
-  const activityData = await getHourlyActivityData(startDate, endDate, viewMode);
+  const activityData = await getHourlyActivityData(
+    startDate,
+    endDate,
+    viewMode,
+  );
   const peak = activityData.reduce(
     (peak, curr) => (curr.avgMinutes > peak.avgMinutes ? curr : peak),
     activityData[0],
@@ -183,7 +200,15 @@ export async function getHourlyActivityStats(
 
   let peakLabel: string;
   if (viewMode === ViewMode.WEEK) {
-    const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    const days = [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+    ];
     peakLabel = days[peak.hour] || "";
   } else {
     if (peak.hour === 0) peakLabel = "12am";
@@ -219,4 +244,3 @@ export async function getEarliestSessionDate(): Promise<Date | null> {
 
   return result.length > 0 ? result[0].startedAt : null;
 }
-

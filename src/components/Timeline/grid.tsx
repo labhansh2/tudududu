@@ -37,18 +37,14 @@ export default function TimelineGrid() {
 
           {/* Timeline grid with task rows */}
           <div
-            className={`relative flex-1 min-h-0 ${
-              isFullHeight ? "" : ""
-            }`}
+            className={`relative flex-1 min-h-0 ${isFullHeight ? "" : ""}`}
           >
             <GridLines />
 
             {/* Task rows - scrollable when in full height mode */}
             <div
               className={`space-y-3 ${
-                isFullHeight
-                  ? "overflow-y-auto h-full pr-2"
-                  : "h-full"
+                isFullHeight ? "overflow-y-auto h-full pr-2" : "h-full"
               }`}
             >
               {sessionsDataByTask.map((task) => (
@@ -76,10 +72,10 @@ function TaskRow({ taskWithSessions }: TaskRowProps) {
       </div>
 
       {/* Sessions row */}
-      <div 
+      <div
         className="relative h-10 rounded-md overflow-hidden bg-[var(--input-bg-inset)]"
-        style={{ 
-          boxShadow: 'var(--shadow-inset)'
+        style={{
+          boxShadow: "var(--shadow-inset)",
         }}
       >
         {/* Sessions */}
@@ -146,16 +142,17 @@ function SessionBar({ session }: SessionBarProps) {
       } ${isActive ? "animate-pulse" : ""}`}
       style={{
         ...position,
-        boxShadow: isActive 
-          ? 'inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 2px 4px rgba(5, 150, 105, 0.4)' 
-          : 'inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.15)'
+        boxShadow: isActive
+          ? "inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 2px 4px rgba(5, 150, 105, 0.4)"
+          : "inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.15)",
       }}
       onMouseEnter={(e) => {
         if (!isMobile) {
           const rect = e.currentTarget.getBoundingClientRect();
           handleSessionHover(session, rect);
           if (!isActive) {
-            e.currentTarget.style.boxShadow = 'inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 2px 4px rgba(0, 0, 0, 0.2)';
+            e.currentTarget.style.boxShadow =
+              "inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 2px 4px rgba(0, 0, 0, 0.2)";
           }
         }
       }}
@@ -163,7 +160,8 @@ function SessionBar({ session }: SessionBarProps) {
         if (!isMobile) {
           handleSessionLeave();
           if (!isActive) {
-            e.currentTarget.style.boxShadow = 'inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.15)';
+            e.currentTarget.style.boxShadow =
+              "inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.15)";
           }
         }
       }}

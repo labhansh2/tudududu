@@ -26,9 +26,9 @@ export default function TotalTimeSpentToday({
   }, [sessionIsActive, initialTotalSeconds]);
 
   return (
-    <div 
+    <div
       className="flex flex-col items-center justify-center text-xs sm:text-sm px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-[var(--border-radius)] bg-[var(--bg-lighter)]"
-      style={{ boxShadow: 'var(--shadow-sm)' }}
+      style={{ boxShadow: "var(--shadow-sm)" }}
     >
       <span className="font-mono font-bold text-[var(--success)] whitespace-nowrap">
         {convertSecondsToTime(totalSeconds)}

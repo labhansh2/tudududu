@@ -18,13 +18,13 @@ export default function Nav() {
       href={isActivity ? "/" : "/activity"}
       className="px-3 py-2 text-sm font-medium text-[var(--secondary)] hover:text-[var(--foreground)] transition-all rounded-lg hover:bg-[var(--bg-lighter)] flex items-center justify-center"
       style={{
-        boxShadow: 'none'
+        boxShadow: "none",
       }}
       onMouseEnter={(e) => {
-        e.currentTarget.style.boxShadow = 'var(--shadow-sm)';
+        e.currentTarget.style.boxShadow = "var(--shadow-sm)";
       }}
       onMouseLeave={(e) => {
-        e.currentTarget.style.boxShadow = 'none';
+        e.currentTarget.style.boxShadow = "none";
       }}
     >
       {text}

@@ -11,7 +11,7 @@ export default function DeadlineFormInput({
   const { pending } = useFormStatus();
   return (
     <div className="relative">
-      <label 
+      <label
         htmlFor="deadline"
         className="block text-sm font-semibold text-[var(--foreground)] mb-2"
       >
@@ -27,7 +27,7 @@ export default function DeadlineFormInput({
         disabled={pending}
         style={{
           colorScheme: "light dark",
-          boxShadow: 'var(--shadow-inset)'
+          boxShadow: "var(--shadow-inset)",
         }}
       />
       {pending && (

@@ -28,4 +28,3 @@ export interface DateRangeParams {
   startDate: Date;
   endDate: Date;
 }
-

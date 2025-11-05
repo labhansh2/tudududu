@@ -36,11 +36,11 @@ export default async function Header() {
     await getTotalSecondsToday();
 
   return (
-    <header 
-      className="bg-[var(--bg-lightest)] relative" 
-      style={{ 
-        boxShadow: 'var(--shadow-sm)',
-        borderBottom: '1px solid var(--border-light)'
+    <header
+      className="bg-[var(--bg-lightest)] relative"
+      style={{
+        boxShadow: "var(--shadow-sm)",
+        borderBottom: "1px solid var(--border-light)",
       }}
     >
       <div className="mx-auto px-3 sm:px-6">

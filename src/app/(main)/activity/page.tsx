@@ -51,9 +51,9 @@ export default async function Page({
       <div className="hidden lg:flex h-full overflow-hidden">
         <div className="flex flex-col h-full gap-2 px-3 py-2 w-full">
           {/* Top section: Activity Map and Hourly Graph */}
-          <div className="flex-shrink-0 flex gap-2 min-h-0">
+          <div className="flex-shrink-0 flex gap-2 h-[260px] min-w-0">
             {/* Activity Map */}
-            <div className="flex-1">
+            <div className="flex-1 min-w-0 h-full">
               <Activity
                 selectedYear={selectedYear}
                 currentYear={parseInt(format(todayUserTz, "yyyy"))}
@@ -62,7 +62,7 @@ export default async function Page({
             </div>
 
             {/* Hourly Activity Graph */}
-            <div className="flex-1 h-auto">
+            <div className="flex-1 min-w-0 h-full">
               <HourlyActivityGraph searchParams={params} />
             </div>
           </div>
@@ -96,7 +96,7 @@ export default async function Page({
           </div>
 
           {/* Timeline */}
-          <div style={{ height: '600px' }}>
+          <div style={{ height: "600px" }}>
             <Timeline
               isFullHeight={true}
               isFullPage={false}

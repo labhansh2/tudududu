@@ -52,7 +52,7 @@ export default function TaskInput({
             }}
             placeholder="Add a task or search..."
             className="w-full px-4 py-3 bg-[var(--input-bg)] rounded-[var(--border-radius)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)] transition-all text-[var(--foreground)] placeholder-[var(--secondary)]"
-            style={{ boxShadow: 'var(--shadow-inset)' }}
+            style={{ boxShadow: "var(--shadow-inset)" }}
             disabled={isPending}
           />
         </div>
@@ -66,19 +66,24 @@ export default function TaskInput({
               ? "bg-[var(--success)] text-white"
               : "bg-[var(--bg-lightest)] text-[var(--secondary)] hover:text-[var(--accent)]"
           } disabled:opacity-50 disabled:cursor-not-allowed`}
-          style={deadlineInput ? {
-            boxShadow: 'var(--shadow-md)',
-            background: 'linear-gradient(to bottom, var(--success) 0%, color-mix(in srgb, var(--success) 85%, black) 100%)'
-          } : {
-            boxShadow: 'var(--shadow-sm)'
-          }}
+          style={
+            deadlineInput
+              ? {
+                  boxShadow: "var(--shadow-md)",
+                  background:
+                    "linear-gradient(to bottom, var(--success) 0%, color-mix(in srgb, var(--success) 85%, black) 100%)",
+                }
+              : {
+                  boxShadow: "var(--shadow-sm)",
+                }
+          }
         >
           {deadlineInput && (
-            <span 
+            <span
               className="absolute inset-x-0 top-0 h-1/2 pointer-events-none"
-              style={{ 
-                background: 'var(--gradient-button)',
-                opacity: 0.6
+              style={{
+                background: "var(--gradient-button)",
+                opacity: 0.6,
               }}
             />
           )}
@@ -90,25 +95,26 @@ export default function TaskInput({
           disabled={!input.trim() || isPending}
           className="flex items-center justify-center w-12 h-12 bg-[var(--accent)] text-white rounded-[var(--border-radius)] disabled:opacity-50 disabled:cursor-not-allowed transition-all relative overflow-hidden"
           style={{
-            boxShadow: 'var(--shadow-md)',
-            background: 'linear-gradient(to bottom, var(--accent) 0%, color-mix(in srgb, var(--accent) 85%, black) 100%)'
+            boxShadow: "var(--shadow-md)",
+            background:
+              "linear-gradient(to bottom, var(--accent) 0%, color-mix(in srgb, var(--accent) 85%, black) 100%)",
           }}
           onMouseEnter={(e) => {
             if (!e.currentTarget.disabled) {
-              e.currentTarget.style.boxShadow = 'var(--shadow-lg)';
-              e.currentTarget.style.transform = 'translateY(-1px)';
+              e.currentTarget.style.boxShadow = "var(--shadow-lg)";
+              e.currentTarget.style.transform = "translateY(-1px)";
             }
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.boxShadow = 'var(--shadow-md)';
-            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = "var(--shadow-md)";
+            e.currentTarget.style.transform = "translateY(0)";
           }}
         >
-          <span 
+          <span
             className="absolute inset-x-0 top-0 h-1/2 pointer-events-none"
-            style={{ 
-              background: 'var(--gradient-button)',
-              opacity: 0.6
+            style={{
+              background: "var(--gradient-button)",
+              opacity: 0.6,
             }}
           />
           {isPending ? (
@@ -132,9 +138,9 @@ export default function TaskInput({
       </div>
 
       {showDeadlinePicker && (
-        <div 
+        <div
           className="mt-3 p-4 bg-[var(--bg-lightest)] rounded-[var(--border-radius)]"
-          style={{ boxShadow: 'var(--shadow-sm)' }}
+          style={{ boxShadow: "var(--shadow-sm)" }}
         >
           <div className="flex items-center justify-between mb-3">
             <label className="text-sm text-[var(--foreground)] font-semibold">
@@ -156,9 +162,9 @@ export default function TaskInput({
               value={deadlineInput}
               onChange={(e) => setDeadlineInput(e.target.value)}
               className="w-full rounded-[var(--border-radius)] px-4 py-3 text-sm sm:text-base bg-[var(--input-bg)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)] transition-all duration-200 [&::-webkit-calendar-picker-indicator]:opacity-100 [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:p-1 [&::-webkit-calendar-picker-indicator]:rounded"
-              style={{ 
+              style={{
                 colorScheme: "light dark",
-                boxShadow: 'var(--shadow-inset)'
+                boxShadow: "var(--shadow-inset)",
               }}
             />
           </div>

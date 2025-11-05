@@ -69,19 +69,21 @@ export default function TaskTile({
   const canAddDeadline = task.status !== "completed" && !task.deadline;
 
   const getBackgroundColor = () => {
-    if (activeTask?.id === task.id) return 'var(--active-task)';
-    if (task.status === 'completed') return 'var(--completed-task)';
-    return 'var(--bg-lighter)'; // Incomplete tasks - darker than completed
+    if (activeTask?.id === task.id) return "var(--active-task)";
+    if (task.status === "completed") return "var(--completed-task)";
+    return "var(--bg-lighter)"; // Incomplete tasks - darker than completed
   };
 
   return (
     <div
       className={`p-2.5 sm:p-3 rounded-[var(--border-radius)] transition-shadow ${getTaskStyles(task.status)} ${deadlineClasses} ${
-        activeTask?.id === task.id ? 'ring-2 ring-[var(--accent)] ring-opacity-50' : ''
+        activeTask?.id === task.id
+          ? "ring-2 ring-[var(--accent)] ring-opacity-50"
+          : ""
       }`}
-      style={{ 
-        boxShadow: 'var(--shadow-sm)',
-        background: getBackgroundColor()
+      style={{
+        boxShadow: "var(--shadow-sm)",
+        background: getBackgroundColor(),
       }}
     >
       <div className="flex items-center gap-2 sm:gap-2.5">
@@ -151,9 +153,9 @@ export default function TaskTile({
 
       {/* Detailed view */}
       {isDetailedView && (
-        <div 
+        <div
           className="mt-2 pt-2 rounded-lg bg-[var(--bg-lighter)] p-2 sm:p-2.5"
-          style={{ boxShadow: 'var(--shadow-inset)' }}
+          style={{ boxShadow: "var(--shadow-inset)" }}
         >
           <div className="flex items-center justify-between gap-2 sm:gap-2.5">
             <Stats
@@ -167,15 +169,17 @@ export default function TaskTile({
         </div>
       )}
 
-      {showDeadlineEditor && task.status !== "completed" && !task.deadline && (
-        <div className="mt-2">
-          <TaskDeadlineEditor
-            taskId={task.id}
-            defaultValue={task.deadline ?? new Date()}
-            onClose={() => setShowDeadlineEditor(false)}
-          />
-        </div>
-      )}
+      {showDeadlineEditor &&
+        task.status !== "completed" &&
+        !task.deadline && (
+          <div className="mt-2">
+            <TaskDeadlineEditor
+              taskId={task.id}
+              defaultValue={task.deadline ?? new Date()}
+              onClose={() => setShowDeadlineEditor(false)}
+            />
+          </div>
+        )}
     </div>
   );
 }
@@ -251,9 +255,9 @@ function Checkbox({
   return (
     <>
       {toggleIsPending ? (
-        <div 
+        <div
           className="w-5 h-5 rounded flex items-center justify-center transition-all bg-[var(--accent)]"
-          style={{ boxShadow: 'var(--shadow-sm)' }}
+          style={{ boxShadow: "var(--shadow-sm)" }}
         >
           <div className="w-2.5 h-2.5 rounded-sm bg-white animate-ping"></div>
         </div>
@@ -266,13 +270,19 @@ function Checkbox({
               ? "bg-[var(--accent)]"
               : "bg-[var(--bg-base)] hover:bg-[var(--bg-lighter)]"
           }`}
-          style={checked ? {
-            boxShadow: 'var(--shadow-sm)',
-          } : {
-            boxShadow: 'var(--shadow-inset)'
-          }}
+          style={
+            checked
+              ? {
+                  boxShadow: "var(--shadow-sm)",
+                }
+              : {
+                  boxShadow: "var(--shadow-inset)",
+                }
+          }
         >
-          {checked && <Check className="w-3.5 h-3.5 text-white stroke-[3]" />}
+          {checked && (
+            <Check className="w-3.5 h-3.5 text-white stroke-[3]" />
+          )}
         </button>
       )}
     </>
@@ -360,9 +370,9 @@ function CompleteBtn({
   return (
     <>
       {completeIsPending ? (
-        <div 
+        <div
           className="w-6 h-6 rounded-full flex items-center justify-center transition-all bg-[var(--success)]"
-          style={{ boxShadow: 'var(--shadow-sm)' }}
+          style={{ boxShadow: "var(--shadow-sm)" }}
         >
           <div className="w-3 h-3 rounded-full bg-white animate-ping"></div>
         </div>
@@ -375,13 +385,19 @@ function CompleteBtn({
               ? "bg-[var(--success)] cursor-default"
               : "bg-[var(--bg-base)] hover:bg-[var(--success)] cursor-pointer"
           }`}
-          style={completed ? {
-            boxShadow: 'var(--shadow-sm)',
-          } : {
-            boxShadow: 'var(--shadow-inset)'
-          }}
+          style={
+            completed
+              ? {
+                  boxShadow: "var(--shadow-sm)",
+                }
+              : {
+                  boxShadow: "var(--shadow-inset)",
+                }
+          }
         >
-          {completed && <Check className="w-4 h-4 text-white stroke-[3]" />}
+          {completed && (
+            <Check className="w-4 h-4 text-white stroke-[3]" />
+          )}
         </button>
       )}
     </>
@@ -396,9 +412,15 @@ interface MenuProps {
   onDeleteClick: () => void;
 }
 
-function Menu({ isCompleted, canAddDeadline, onEditClick, onAddDeadlineClick, onDeleteClick }: MenuProps) {
+function Menu({
+  isCompleted,
+  canAddDeadline,
+  onEditClick,
+  onAddDeadlineClick,
+  onDeleteClick,
+}: MenuProps) {
   const [showMenu, setShowMenu] = useState(false);
-  
+
   return (
     <>
       <div className="relative">
@@ -409,11 +431,17 @@ function Menu({ isCompleted, canAddDeadline, onEditClick, onAddDeadlineClick, on
             setShowMenu(!showMenu);
           }}
           className={`w-8 h-8 flex items-center justify-center text-[var(--secondary)] hover:text-[var(--foreground)] transition-all rounded-lg flex-shrink-0 ${
-            showMenu ? 'bg-[var(--bg-lighter)]' : 'hover:bg-[var(--bg-lighter)]'
+            showMenu
+              ? "bg-[var(--bg-lighter)]"
+              : "hover:bg-[var(--bg-lighter)]"
           }`}
-          style={showMenu ? { 
-            boxShadow: 'var(--shadow-sm)'
-          } : {}}
+          style={
+            showMenu
+              ? {
+                  boxShadow: "var(--shadow-sm)",
+                }
+              : {}
+          }
           type="button"
         >
           <Ellipsis className="w-5 h-5 rotate-90" />
@@ -429,9 +457,9 @@ function Menu({ isCompleted, canAddDeadline, onEditClick, onAddDeadlineClick, on
                 setShowMenu(false);
               }}
             />
-            <div 
+            <div
               className="absolute right-0 top-10 z-[110] bg-[var(--bg-lightest)] rounded-[var(--border-radius)] py-1.5 min-w-[160px]"
-              style={{ boxShadow: 'var(--shadow-lg)' }}
+              style={{ boxShadow: "var(--shadow-lg)" }}
               onClick={(e) => {
                 e.stopPropagation();
                 e.preventDefault();

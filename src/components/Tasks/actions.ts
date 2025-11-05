@@ -162,7 +162,10 @@ export async function createTask(
   }
 }
 
-export async function setTaskDeadline(taskId: number, deadlineInput: string) {
+export async function setTaskDeadline(
+  taskId: number,
+  deadlineInput: string,
+) {
   const { userId } = await auth();
 
   if (!userId) {
