@@ -57,3 +57,7 @@
   - [x] decrease width of task tiles
   - [x] better completed lables - remove "completed -" and "late"
 - [ ] remove manage account option
+
+Other Ideas
+- [ ] leaderboard and friends
+- [ ] starting timed sessions - you can start sessions of desired time

@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { UserButton } from "@clerk/nextjs";
 import { auth } from "@clerk/nextjs/server";
-import { Edit } from "lucide-react";
+import { CalendarPlus, Edit } from "lucide-react";
 import Link from "next/link";
 
 import TimeZoneSetter from "@/components/TimeZoneSetter";
@@ -27,10 +27,8 @@ export default async function Header() {
   }
 
   const userDeadline = await getDeadline();
-
-  if (!userDeadline) {
-    redirect("/deadline");
-  }
+  const hasValidDeadline =
+    userDeadline && userDeadline.getTime() > Date.now();
 
   const { totalSecondsToday, sessionIsActive } =
     await getTotalSecondsToday();
@@ -46,18 +44,29 @@ export default async function Header() {
       <div className="mx-auto px-3 sm:px-6">
         <div className="flex items-center justify-between h-16 gap-2">
           <div className="flex items-center gap-1 sm:gap-2 min-w-0 flex-1">
-            <Countdown
-              secondsLeft={
-                (userDeadline.getTime() - new Date().getTime()) / 1000
-              }
-            />
-
-            <Link
-              href="/deadline"
-              className="px-2 sm:px-3 py-1.5 text-sm font-medium text-[var(--secondary)] hover:text-[var(--foreground)] transition-all rounded-lg hover:bg-[var(--bg-lighter)] flex-shrink-0"
-            >
-              <Edit className="w-4 h-4" />
-            </Link>
+            {hasValidDeadline ? (
+              <>
+                <Countdown
+                  secondsLeft={
+                    (userDeadline.getTime() - new Date().getTime()) / 1000
+                  }
+                />
+                <Link
+                  href="/deadline"
+                  className="px-2 sm:px-3 py-1.5 text-sm font-medium text-[var(--secondary)] hover:text-[var(--foreground)] transition-all rounded-lg hover:bg-[var(--bg-lighter)] flex-shrink-0"
+                >
+                  <Edit className="w-4 h-4" />
+                </Link>
+              </>
+            ) : (
+              <Link
+                href="/deadline"
+                className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-[var(--secondary)] hover:text-[var(--foreground)] transition-all rounded-lg hover:bg-[var(--bg-lighter)]"
+              >
+                <CalendarPlus className="w-5 h-5" />
+                <span className="hidden sm:inline">Set Milestone</span>
+              </Link>
+            )}
           </div>
 
           <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
