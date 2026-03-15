@@ -5,11 +5,11 @@ export const getTaskStyles = (
 ) => {
   switch (taskStatus) {
     case "completed":
-      return "bg-[var(--completed-task)] border-[var(--border)]";
+      return "bg-(--completed-task) border-(--border)";
     case "active":
-      return "bg-[var(--active-task)] border-[var(--accent)]";
+      return "bg-(--active-task) border-(--accent)";
     default:
-      return "bg-[var(--card-bg)] border-[var(--border)] hover:border-[var(--accent)]/50";
+      return "bg-(--card-bg) border-(--border) hover:border-(--accent)/50";
   }
 };
 

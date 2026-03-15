@@ -16,7 +16,7 @@ export default function Nav() {
   return (
     <Link
       href={isActivity ? "/" : "/activity"}
-      className="px-3 py-2 text-sm font-medium text-[var(--secondary)] hover:text-[var(--foreground)] transition-all rounded-lg hover:bg-[var(--bg-lighter)] flex items-center justify-center"
+      className="px-3 py-2 text-sm font-medium text-(--secondary) hover:text-foreground transition-all rounded-lg hover:bg-(--bg-lighter) flex items-center justify-center"
       style={{
         boxShadow: "none",
       }}

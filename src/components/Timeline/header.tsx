@@ -58,16 +58,16 @@ function TimelineStats() {
 
   return (
     <div
-      className="inline-flex items-center gap-2 bg-[var(--bg-lightest)] rounded-lg px-4 py-2.5 text-sm flex-shrink-0"
+      className="inline-flex items-center gap-2 bg-(--bg-lightest) rounded-lg px-4 py-2.5 text-sm flex-shrink-0"
       style={{ boxShadow: "var(--shadow-sm)" }}
     >
-      <Clock size={16} className="text-[var(--accent)] flex-shrink-0" />
+      <Clock size={16} className="text-(--accent) flex-shrink-0" />
       <div className="flex items-baseline gap-1">
-        <span className="font-bold text-[var(--foreground)]">
+        <span className="font-bold text-foreground">
           {formatHours(statsData.total_hours)}
         </span>
         {!isMobile && (
-          <span className="text-[var(--secondary)] text-xs font-medium">
+          <span className="text-(--secondary) text-xs font-medium">
             worked
           </span>
         )}
@@ -88,7 +88,7 @@ function DateNavigation() {
     <div className="flex items-center gap-2 flex-1 justify-end">
       <button
         onClick={() => handleNavigateTime(Direction.PREV)}
-        className="p-2.5 bg-[var(--bg-lightest)] rounded-lg hover:bg-[var(--bg-lighter)] transition-all flex-shrink-0"
+        className="p-2.5 bg-(--bg-lightest) rounded-lg hover:bg-(--bg-lighter) transition-all flex-shrink-0"
         style={{ boxShadow: "var(--shadow-sm)" }}
       >
         <ChevronLeft size={16} />
@@ -104,7 +104,7 @@ function DateNavigation() {
 
       <button
         onClick={() => handleNavigateTime(Direction.NEXT)}
-        className="p-2.5 bg-[var(--bg-lightest)] rounded-lg hover:bg-[var(--bg-lighter)] transition-all flex-shrink-0"
+        className="p-2.5 bg-(--bg-lightest) rounded-lg hover:bg-(--bg-lighter) transition-all flex-shrink-0"
         style={{ boxShadow: "var(--shadow-sm)" }}
       >
         <ChevronRight size={16} />
@@ -122,7 +122,7 @@ function ViewModeSelector() {
     <div className={`relative ${isMobile ? "flex-1" : ""}`}>
       <button
         onClick={() => setShowDropdown(!showDropdown)}
-        className={`flex items-center justify-between gap-2 bg-[var(--bg-lightest)] rounded-lg px-4 py-2.5 text-sm font-semibold hover:bg-[var(--bg-lighter)] transition-all min-w-[80px] ${
+        className={`flex items-center justify-between gap-2 bg-(--bg-lightest) rounded-lg px-4 py-2.5 text-sm font-semibold hover:bg-(--bg-lighter) transition-all min-w-[80px] ${
           isMobile ? "w-full" : ""
         }`}
         style={{ boxShadow: "var(--shadow-sm)" }}
@@ -138,7 +138,7 @@ function ViewModeSelector() {
             onClick={() => setShowDropdown(false)}
           />
           <div
-            className="absolute right-0 top-full mt-2 z-40 bg-[var(--bg-lightest)] rounded-lg py-1.5 min-w-[100px]"
+            className="absolute right-0 top-full mt-2 z-40 bg-(--bg-lightest) rounded-lg py-1.5 min-w-[100px]"
             style={{ boxShadow: "var(--shadow-lg)" }}
           >
             {Object.values(View).map((mode: View) => (
@@ -148,10 +148,10 @@ function ViewModeSelector() {
                   setView(mode);
                   setShowDropdown(false);
                 }}
-                className={`w-full px-4 py-2.5 text-left text-sm font-semibold hover:bg-[var(--bg-lighter)] transition-colors capitalize ${
+                className={`w-full px-4 py-2.5 text-left text-sm font-semibold hover:bg-(--bg-lighter) transition-colors capitalize ${
                   view === mode
-                    ? "text-[var(--accent)] bg-[var(--bg-lighter)]"
-                    : "text-[var(--foreground)]"
+                    ? "text-(--accent) bg-(--bg-lighter)"
+                    : "text-foreground"
                 }`}
               >
                 {mode}
@@ -173,7 +173,7 @@ function ActionButton() {
     return (
       <Link
         href={`/activity/timeline?view=${view}&date=${referenceDate}`}
-        className="flex items-center gap-2 bg-[var(--bg-lightest)] rounded-lg px-4 py-2.5 text-sm font-semibold hover:bg-[var(--bg-lighter)] transition-all"
+        className="flex items-center gap-2 bg-(--bg-lightest) rounded-lg px-4 py-2.5 text-sm font-semibold hover:bg-(--bg-lighter) transition-all"
         style={{ boxShadow: "var(--shadow-sm)" }}
         title="View in full screen"
       >
@@ -186,7 +186,7 @@ function ActionButton() {
   return (
     <Link
       href={`/activity?view=${view}&date=${referenceDate}`}
-      className="flex items-center gap-2 bg-[var(--bg-lightest)] rounded-lg px-4 py-2.5 text-sm font-semibold hover:bg-[var(--bg-lighter)] transition-all"
+      className="flex items-center gap-2 bg-(--bg-lightest) rounded-lg px-4 py-2.5 text-sm font-semibold hover:bg-(--bg-lighter) transition-all"
       style={{ boxShadow: "var(--shadow-sm)" }}
       title="Back to Activity"
     >

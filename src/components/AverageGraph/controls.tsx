@@ -67,21 +67,21 @@ export default function Controls({
             disabled={!canGoBack}
             className={`p-1.5 transition-all ${
               canGoBack
-                ? "bg-[var(--bg-lightest)] hover:bg-[var(--bg-base)] text-[var(--foreground)]"
-                : "bg-[var(--bg-lighter)] text-[var(--secondary)] opacity-50 cursor-not-allowed"
+                ? "bg-(--bg-lightest) hover:bg-(--bg-base) text-foreground"
+                : "bg-(--bg-lighter) text-(--secondary) opacity-50 cursor-not-allowed"
             }`}
             title="Previous period"
           >
             <ChevronLeft size={14} />
           </button>
-          <div className="w-px bg-[var(--border)]" />
+          <div className="w-px bg-(--border)" />
           <button
             onClick={() => navigate("forward")}
             disabled={!canGoForward}
             className={`p-1.5 transition-all ${
               canGoForward
-                ? "bg-[var(--bg-lightest)] hover:bg-[var(--bg-base)] text-[var(--foreground)]"
-                : "bg-[var(--bg-lighter)] text-[var(--secondary)] opacity-50 cursor-not-allowed"
+                ? "bg-(--bg-lightest) hover:bg-(--bg-base) text-foreground"
+                : "bg-(--bg-lighter) text-(--secondary) opacity-50 cursor-not-allowed"
             }`}
             title="Next period"
           >
@@ -96,7 +96,7 @@ export default function Controls({
         >
           {dateRangeOptions.map((option, index) => (
             <div key={option.value} className="flex">
-              {index > 0 && <div className="w-px bg-[var(--border)]" />}
+              {index > 0 && <div className="w-px bg-(--border)" />}
               <button
                 onClick={() =>
                   updateParams({
@@ -106,8 +106,8 @@ export default function Controls({
                 }
                 className={`px-2 py-1.5 text-xs font-semibold transition-all whitespace-nowrap ${
                   currentDateRange === option.value
-                    ? "bg-[var(--accent)] text-white"
-                    : "bg-[var(--bg-lightest)] text-[var(--foreground)] hover:bg-[var(--bg-base)]"
+                    ? "bg-(--accent) text-white"
+                    : "bg-(--bg-lightest) text-foreground hover:bg-(--bg-base)"
                 }`}
               >
                 {option.label}
@@ -124,13 +124,13 @@ export default function Controls({
       >
         {viewModeOptions.map((option, index) => (
           <div key={option.value} className="flex">
-            {index > 0 && <div className="w-px bg-[var(--border)]" />}
+            {index > 0 && <div className="w-px bg-(--border)" />}
             <button
               onClick={() => updateParams({ viewMode: option.value })}
               className={`px-2 py-1.5 text-xs font-semibold transition-all whitespace-nowrap ${
                 currentViewMode === option.value
-                  ? "bg-[var(--accent)] text-white"
-                  : "bg-[var(--bg-lightest)] text-[var(--foreground)] hover:bg-[var(--bg-base)]"
+                  ? "bg-(--accent) text-white"
+                  : "bg-(--bg-lightest) text-foreground hover:bg-(--bg-base)"
               }`}
             >
               {option.label}

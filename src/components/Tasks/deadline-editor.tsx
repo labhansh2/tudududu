@@ -34,14 +34,14 @@ export default function TaskDeadlineEditor({
 
   return (
     <div
-      className="bg-[var(--bg-lightest)] rounded-[var(--border-radius)] p-4 flex flex-col sm:flex-row sm:items-center gap-3"
+      className="bg-(--bg-lightest) rounded-(--border-radius) p-4 flex flex-col sm:flex-row sm:items-center gap-3"
       style={{ boxShadow: "var(--shadow-sm)" }}
     >
       <input
         type="datetime-local"
         value={deadlineInput}
         onChange={(e) => setDeadlineInput(e.target.value)}
-        className="w-full sm:flex-1 rounded-[var(--border-radius)] px-3 py-2.5 text-sm bg-[var(--input-bg)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)] transition-all"
+        className="w-full sm:flex-1 rounded-(--border-radius) px-3 py-2.5 text-sm bg-(--input-bg) text-foreground focus:outline-none focus:ring-2 focus:ring-(--accent) transition-all"
         style={{
           colorScheme: "light dark",
           boxShadow: "var(--shadow-inset)",
@@ -52,7 +52,7 @@ export default function TaskDeadlineEditor({
         <button
           onClick={handleSave}
           disabled={!deadlineInput || isPending}
-          className="w-full sm:w-auto px-4 py-2.5 text-sm font-semibold rounded-[var(--border-radius)] bg-[var(--accent)] text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all relative overflow-hidden"
+          className="w-full sm:w-auto px-4 py-2.5 text-sm font-semibold rounded-(--border-radius) bg-(--accent) text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all relative overflow-hidden"
           style={{
             boxShadow: "var(--shadow-md)",
             background:
@@ -71,7 +71,7 @@ export default function TaskDeadlineEditor({
         <button
           onClick={onClose}
           disabled={isPending}
-          className="w-full sm:w-auto px-4 py-2.5 text-sm font-semibold rounded-[var(--border-radius)] bg-[var(--bg-lighter)] text-[var(--foreground)] hover:bg-[var(--bg-base)] disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+          className="w-full sm:w-auto px-4 py-2.5 text-sm font-semibold rounded-(--border-radius) bg-(--bg-lighter) text-foreground hover:bg-(--bg-base) disabled:opacity-50 disabled:cursor-not-allowed transition-all"
           style={{ boxShadow: "var(--shadow-sm)" }}
         >
           Cancel

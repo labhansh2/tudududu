@@ -51,7 +51,7 @@ export default function TaskInput({
               }
             }}
             placeholder="Add a task or search..."
-            className="w-full px-4 py-3 bg-[var(--input-bg)] rounded-[var(--border-radius)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)] transition-all text-[var(--foreground)] placeholder-[var(--secondary)]"
+            className="w-full px-4 py-3 bg-(--input-bg) rounded-(--border-radius) focus:outline-none focus:ring-2 focus:ring-(--accent) transition-all text-foreground placeholder-(--secondary)"
             style={{ boxShadow: "var(--shadow-inset)" }}
             disabled={isPending}
           />
@@ -61,10 +61,10 @@ export default function TaskInput({
           onClick={() => setShowDeadlinePicker(!showDeadlinePicker)}
           disabled={isPending}
           title={deadlineInput ? "Deadline set" : "Add deadline"}
-          className={`flex items-center justify-center w-12 h-12 rounded-[var(--border-radius)] transition-all relative overflow-hidden ${
+          className={`flex items-center justify-center w-12 h-12 rounded-(--border-radius) transition-all relative overflow-hidden ${
             deadlineInput
-              ? "bg-[var(--success)] text-white"
-              : "bg-[var(--bg-lightest)] text-[var(--secondary)] hover:text-[var(--accent)]"
+              ? "bg-(--success) text-white"
+              : "bg-(--bg-lightest) text-(--secondary) hover:text-(--accent)"
           } disabled:opacity-50 disabled:cursor-not-allowed`}
           style={
             deadlineInput
@@ -93,7 +93,7 @@ export default function TaskInput({
         <button
           onClick={handleAddTask}
           disabled={!input.trim() || isPending}
-          className="flex items-center justify-center w-12 h-12 bg-[var(--accent)] text-white rounded-[var(--border-radius)] disabled:opacity-50 disabled:cursor-not-allowed transition-all relative overflow-hidden"
+          className="flex items-center justify-center w-12 h-12 bg-(--accent) text-white rounded-(--border-radius) disabled:opacity-50 disabled:cursor-not-allowed transition-all relative overflow-hidden"
           style={{
             boxShadow: "var(--shadow-md)",
             background:
@@ -139,17 +139,17 @@ export default function TaskInput({
 
       {showDeadlinePicker && (
         <div
-          className="mt-3 p-4 bg-[var(--bg-lightest)] rounded-[var(--border-radius)]"
+          className="mt-3 p-4 bg-(--bg-lightest) rounded-(--border-radius)"
           style={{ boxShadow: "var(--shadow-sm)" }}
         >
           <div className="flex items-center justify-between mb-3">
-            <label className="text-sm text-[var(--foreground)] font-semibold">
+            <label className="text-sm text-foreground font-semibold">
               Set Deadline
             </label>
             {deadlineInput && (
               <button
                 onClick={() => setDeadlineInput("")}
-                className="text-xs text-[var(--secondary)] hover:text-red-500 transition-colors font-medium"
+                className="text-xs text-(--secondary) hover:text-red-500 transition-colors font-medium"
                 title="Clear deadline"
               >
                 Clear
@@ -161,7 +161,7 @@ export default function TaskInput({
               type="datetime-local"
               value={deadlineInput}
               onChange={(e) => setDeadlineInput(e.target.value)}
-              className="w-full rounded-[var(--border-radius)] px-4 py-3 text-sm sm:text-base bg-[var(--input-bg)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)] transition-all duration-200 [&::-webkit-calendar-picker-indicator]:opacity-100 [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:p-1 [&::-webkit-calendar-picker-indicator]:rounded"
+              className="w-full rounded-(--border-radius) px-4 py-3 text-sm sm:text-base bg-(--input-bg) text-foreground focus:outline-none focus:ring-2 focus:ring-(--accent) transition-all duration-200 [&::-webkit-calendar-picker-indicator]:opacity-100 [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:p-1 [&::-webkit-calendar-picker-indicator]:rounded"
               style={{
                 colorScheme: "light dark",
                 boxShadow: "var(--shadow-inset)",

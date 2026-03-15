@@ -18,7 +18,7 @@ export default function Controls({
       <div className="flex justify-between items-center gap-2">
         {/* Filter buttons */}
         <div
-          className="flex items-center gap-1 sm:gap-1.5 p-1 sm:p-1.5 bg-[var(--bg-lighter)] rounded-[var(--border-radius)] flex-shrink-0"
+          className="flex items-center gap-1 sm:gap-1.5 p-1 sm:p-1.5 bg-(--bg-lighter) rounded-(--border-radius) flex-shrink-0"
           style={{ boxShadow: "var(--shadow-sm)" }}
         >
           <FilterButton
@@ -40,10 +40,10 @@ export default function Controls({
 
         {/* View toggle */}
         <div
-          className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0 px-2 sm:px-3 py-1.5 sm:py-2 bg-[var(--bg-lighter)] rounded-[var(--border-radius)]"
+          className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0 px-2 sm:px-3 py-1.5 sm:py-2 bg-(--bg-lighter) rounded-(--border-radius)"
           style={{ boxShadow: "var(--shadow-sm)" }}
         >
-          <span className="text-[10px] sm:text-xs font-medium text-[var(--foreground)] whitespace-nowrap">
+          <span className="text-[10px] sm:text-xs font-medium text-foreground whitespace-nowrap">
             Detailed
           </span>
           <ToggleSwitch
@@ -67,8 +67,8 @@ function FilterButton({ sort, selected, setSort }: FilterButtonProps) {
     <button
       className={`px-2 sm:px-3 py-1 sm:py-1.5 text-[10px] sm:text-xs font-semibold rounded-lg transition-all ${
         selected
-          ? "bg-[var(--accent)] text-white relative overflow-hidden"
-          : "text-[var(--secondary)] hover:text-[var(--foreground)] hover:bg-[var(--bg-lightest)]"
+          ? "bg-(--accent) text-white relative overflow-hidden"
+          : "text-(--secondary) hover:text-foreground hover:bg-(--bg-lightest)"
       }`}
       style={
         selected
@@ -106,8 +106,8 @@ function ToggleSwitch({ checked, onChange }: ToggleSwitchProps) {
   return (
     <button
       onClick={() => onChange(!checked)}
-      className={`relative inline-flex h-5 w-9 sm:h-6 sm:w-11 items-center rounded-full transition-all focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:ring-offset-2 focus:ring-offset-[var(--bg-lighter)] ${
-        checked ? "bg-[var(--accent)]" : "bg-[var(--bg-base)]"
+      className={`relative inline-flex h-5 w-9 sm:h-6 sm:w-11 items-center rounded-full transition-all focus:outline-none focus:ring-2 focus:ring-(--accent) focus:ring-offset-2 focus:ring-offset-(--bg-lighter) ${
+        checked ? "bg-(--accent)" : "bg-(--bg-base)"
       }`}
       style={
         checked

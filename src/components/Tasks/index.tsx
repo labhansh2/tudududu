@@ -40,7 +40,7 @@ export default function TaskList({
       <div className="space-y-3">
         {filteredTasks.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-[var(--secondary)] text-sm">
+            <p className="text-(--secondary) text-sm">
               {searchQuery
                 ? `No tasks match "${searchQuery}"`
                 : sort === "completed"

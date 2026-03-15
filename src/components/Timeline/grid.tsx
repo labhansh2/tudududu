@@ -66,14 +66,14 @@ function TaskRow({ taskWithSessions }: TaskRowProps) {
   return (
     <div className="space-y-1.5">
       <div className="relative">
-        <div className="text-xs text-[var(--foreground)] font-medium">
+        <div className="text-xs text-foreground font-medium">
           {taskWithSessions.taskName}
         </div>
       </div>
 
       {/* Sessions row */}
       <div
-        className="relative h-10 rounded-md overflow-hidden bg-[var(--input-bg-inset)]"
+        className="relative h-10 rounded-md overflow-hidden bg-(--input-bg-inset)"
         style={{
           boxShadow: "var(--shadow-inset)",
         }}
@@ -137,7 +137,7 @@ function SessionBar({ session }: SessionBarProps) {
     <div
       className={`absolute top-1.5 bottom-1.5 ${statusColor} rounded cursor-pointer transition-all z-20 min-w-[4px] ${
         isMobile && clickedSession?.sessionId === session.sessionId
-          ? "ring-1 ring-[var(--accent)]"
+          ? "ring-1 ring-(--accent)"
           : ""
       } ${isActive ? "animate-pulse" : ""}`}
       style={{
@@ -249,7 +249,7 @@ function TimeLabels() {
   if (view === "day") {
     return (
       <div className={`${isFullHeight ? "flex-shrink-0" : ""} mb-3`}>
-        <div className="flex text-xs text-[var(--secondary)] font-medium relative">
+        <div className="flex text-xs text-(--secondary) font-medium relative">
           {Array.from({ length: 24 }, (_, index) => (
             <div key={index} className="flex-1 text-left pl-0.5">
               <span
@@ -271,7 +271,7 @@ function TimeLabels() {
   } else if (view === "week") {
     return (
       <div className={`${isFullHeight ? "flex-shrink-0" : ""} mb-3`}>
-        <div className="flex text-xs text-[var(--secondary)] font-medium relative">
+        <div className="flex text-xs text-(--secondary) font-medium relative">
           {Array.from({ length: 7 }, (_, index) => {
             const day = new Date(dateRange.startDate);
             day.setDate(dateRange.startDate.getDate() + index);
@@ -299,7 +299,7 @@ function TimeLabels() {
   } else {
     return (
       <div className={`${isFullHeight ? "flex-shrink-0" : ""} mb-3`}>
-        <div className="relative text-xs text-[var(--secondary)] font-medium h-6">
+        <div className="relative text-xs text-(--secondary) font-medium h-6">
           {sundayLabels.map((label, index) => {
             let alignmentClass = "text-center transform -translate-x-1/2";
             if (label.position < 10) {
@@ -372,7 +372,7 @@ function GridLines() {
         {Array.from({ length: 24 }, (_, index) => (
           <div
             key={index}
-            className="flex-1 border-l border-[var(--border)] first:border-l-0"
+            className="flex-1 border-l border-(--border) first:border-l-0"
           />
         ))}
       </div>
@@ -383,7 +383,7 @@ function GridLines() {
         {Array.from({ length: 7 }, (_, index) => (
           <div
             key={index}
-            className="flex-1 border-l border-[var(--border)] first:border-l-0"
+            className="flex-1 border-l border-(--border) first:border-l-0"
           />
         ))}
       </div>
@@ -395,7 +395,7 @@ function GridLines() {
         {sundayPositions.map((position, index) => (
           <div
             key={index}
-            className="absolute top-0 bottom-0 border-l border-[var(--border)]"
+            className="absolute top-0 bottom-0 border-l border-(--border)"
             style={{ left: `${position}%` }}
           />
         ))}

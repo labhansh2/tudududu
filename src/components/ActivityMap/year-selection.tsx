@@ -54,7 +54,7 @@ export default function YearSelection({
 
   return (
     <div
-      className="rounded-b-lg rounded-t-none px-4 py-2.5 bg-[var(--card-bg)] flex-shrink-0"
+      className="rounded-b-lg rounded-t-none px-4 py-2.5 bg-(--card-bg) flex-shrink-0"
       style={{
         // Seamless merge with map card above - no border, no shadow
         boxShadow: "none",
@@ -66,24 +66,24 @@ export default function YearSelection({
           {/* Hours and streak inline */}
           <div className="flex items-baseline gap-2">
             <div className="flex items-baseline gap-1">
-              <span className="text-base font-bold text-[var(--foreground)]">
+              <span className="text-base font-bold text-foreground">
                 {formatHours(totalHours)}h
               </span>
-              <span className="text-xs text-[var(--secondary)]">
+              <span className="text-xs text-(--secondary)">
                 total
               </span>
             </div>
-            <span className="text-xs text-[var(--secondary)]">.</span>
-            <span className="text-xs text-[var(--secondary)]">
-              <span className="text-[var(--accent)] font-semibold">
+            <span className="text-xs text-(--secondary)">.</span>
+            <span className="text-xs text-(--secondary)">
+              <span className="text-(--accent) font-semibold">
                 {streakData.currentStreak}
               </span>{" "}
               days 3h+
             </span>
             {streakData.longestStreak > streakData.currentStreak && (
               <>
-                <span className="text-xs text-[var(--secondary)]">·</span>
-                <span className="text-xs text-[var(--secondary)]">
+                <span className="text-xs text-(--secondary)">·</span>
+                <span className="text-xs text-(--secondary)">
                   best {streakData.longestStreak}
                 </span>
               </>
@@ -96,7 +96,7 @@ export default function YearSelection({
           <div className="relative">
             <button
               onClick={() => setShowDropdown(!showDropdown)}
-              className="flex items-center justify-between gap-2 bg-[var(--bg-lightest)] rounded-md px-3 py-1.5 text-sm font-semibold hover:bg-[var(--bg-base)] transition-all min-w-[80px]"
+              className="flex items-center justify-between gap-2 bg-(--bg-lightest) rounded-md px-3 py-1.5 text-sm font-semibold hover:bg-(--bg-base) transition-all min-w-[80px]"
               style={{ boxShadow: "var(--shadow-sm)" }}
             >
               <span>{selectedYear}</span>
@@ -110,7 +110,7 @@ export default function YearSelection({
                   onClick={() => setShowDropdown(false)}
                 />
                 <div
-                  className="absolute right-0 top-full mt-2 z-40 bg-[var(--bg-lightest)] rounded-lg py-1.5 min-w-[100px]"
+                  className="absolute right-0 top-full mt-2 z-40 bg-(--bg-lightest) rounded-lg py-1.5 min-w-[100px]"
                   style={{ boxShadow: "var(--shadow-lg)" }}
                 >
                   {years.map((year) => (
@@ -118,10 +118,10 @@ export default function YearSelection({
                       key={year}
                       href={buildYearUrl(year)}
                       onClick={() => setShowDropdown(false)}
-                      className={`block w-full px-4 py-2.5 text-left text-sm font-semibold hover:bg-[var(--bg-lighter)] transition-colors ${
+                      className={`block w-full px-4 py-2.5 text-left text-sm font-semibold hover:bg-(--bg-lighter) transition-colors ${
                         selectedYear === year
-                          ? "text-[var(--accent)] bg-[var(--bg-lighter)]"
-                          : "text-[var(--foreground)]"
+                          ? "text-(--accent) bg-(--bg-lighter)"
+                          : "text-foreground"
                       }`}
                     >
                       {year}

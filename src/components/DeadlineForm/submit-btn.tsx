@@ -8,7 +8,7 @@ export default function DeadlineFormSubmit() {
   return (
     <button
       type="submit"
-      className="flex-1 bg-[var(--accent)] text-white font-bold py-4 px-4 text-sm sm:text-base rounded-[var(--border-radius)] transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:ring-offset-2 focus:ring-offset-[var(--bg-lightest)] flex items-center justify-center gap-2 relative overflow-hidden"
+      className="flex-1 bg-(--accent) text-white font-bold py-4 px-4 text-sm sm:text-base rounded-(--border-radius) transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-(--accent) focus:ring-offset-2 focus:ring-offset-(--bg-lightest) flex items-center justify-center gap-2 relative overflow-hidden"
       disabled={pending}
       style={{
         boxShadow: "var(--shadow-md)",
