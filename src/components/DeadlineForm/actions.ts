@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { fromZonedTime } from "date-fns-tz";
+import { eq } from "drizzle-orm";
 
 import { db } from "@/drizzle";
 import { deadlines } from "@/drizzle/schema";
@@ -60,6 +61,24 @@ export async function submitDeadline(
   } catch (error) {
     console.error(error);
     return { error: "Failed to save deadline. Please try again." };
+  }
+
+  revalidatePath("/");
+  redirect("/");
+}
+
+export async function removeDeadline(): Promise<DeadlineFormState> {
+  const { userId } = await auth();
+
+  if (!userId) {
+    return { error: "You must be signed in to remove a deadline" };
+  }
+
+  try {
+    await db.delete(deadlines).where(eq(deadlines.userId, userId));
+  } catch (error) {
+    console.error(error);
+    return { error: "Failed to remove deadline. Please try again." };
   }
 
   revalidatePath("/");

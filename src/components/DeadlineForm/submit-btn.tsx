@@ -8,22 +8,12 @@ export default function DeadlineFormSubmit() {
   return (
     <button
       type="submit"
-      className="w-full bg-[var(--accent)] text-white font-bold py-4 px-4 text-sm sm:text-base rounded-[var(--border-radius)] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:ring-offset-2 focus:ring-offset-[var(--bg-lightest)] flex items-center justify-center gap-2 relative overflow-hidden"
+      className="flex-1 bg-[var(--accent)] text-white font-bold py-4 px-4 text-sm sm:text-base rounded-[var(--border-radius)] transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:ring-offset-2 focus:ring-offset-[var(--bg-lightest)] flex items-center justify-center gap-2 relative overflow-hidden"
       disabled={pending}
       style={{
         boxShadow: "var(--shadow-md)",
         background:
           "linear-gradient(to bottom, var(--accent) 0%, color-mix(in srgb, var(--accent) 85%, black) 100%)",
-      }}
-      onMouseEnter={(e) => {
-        if (!pending) {
-          e.currentTarget.style.boxShadow = "var(--shadow-lg)";
-          e.currentTarget.style.transform = "translateY(-2px)";
-        }
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.boxShadow = "var(--shadow-md)";
-        e.currentTarget.style.transform = "translateY(0)";
       }}
     >
       <span

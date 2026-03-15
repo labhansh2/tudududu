@@ -61,10 +61,13 @@ export default async function Header() {
             ) : (
               <Link
                 href="/deadline"
-                className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-[var(--secondary)] hover:text-[var(--foreground)] transition-all rounded-lg hover:bg-[var(--bg-lighter)]"
+                className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1.5 sm:py-2 rounded-[var(--border-radius)] bg-[var(--bg-lighter)] min-w-0 hover:bg-[var(--bg-base)] transition-colors"
+                style={{ boxShadow: "var(--shadow-sm)" }}
               >
-                <CalendarPlus className="w-5 h-5" />
-                <span className="hidden sm:inline">Set Milestone</span>
+                <CalendarPlus className="w-4 h-4 text-[var(--secondary)]" />
+                <span className="font-mono text-sm sm:text-base font-bold text-[var(--foreground)]">
+                  Set Milestone
+                </span>
               </Link>
             )}
           </div>

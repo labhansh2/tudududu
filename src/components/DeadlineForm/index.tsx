@@ -7,11 +7,14 @@ import { submitDeadline, type DeadlineFormState } from "./actions";
 
 import DeadlineFormInput from "./input";
 import DeadlineFormSubmit from "./submit-btn";
+import RemoveDeadlineButton from "./remove-btn";
 
 export default function DeadlineForm({
   defaultValue,
+  hasExisting,
 }: {
   defaultValue: Date;
+  hasExisting: boolean;
 }) {
   const [state, formAction] = useActionState<DeadlineFormState, FormData>(
     submitDeadline,
@@ -22,10 +25,11 @@ export default function DeadlineForm({
     <div className="max-w-md mx-auto px-4 sm:px-6 py-8">
       <div className="text-center mb-8">
         <h1 className="text-3xl sm:text-4xl font-bold text-[var(--foreground)] mb-4">
-          Set Your Milestone Date
+          Milestone Date
         </h1>
         <p className="text-[var(--secondary)] text-sm sm:text-base leading-relaxed font-medium">
-          Milestone Date
+          This deadline is not associated with any individual task. 
+          This deadline defines a vague phase in which you wanna complete certain things with a certain mentality or mindset.
         </p>
       </div>
 
@@ -38,19 +42,18 @@ export default function DeadlineForm({
 
         {state?.error && (
           <div
-            className="flex items-center gap-2 px-4 py-3 rounded-[var(--border-radius)] text-sm font-medium"
-            style={{
-              backgroundColor: "color-mix(in srgb, var(--danger) 10%, transparent)",
-              color: "var(--danger)",
-              border: "1px solid color-mix(in srgb, var(--danger) 25%, transparent)",
-            }}
+            className="flex items-center gap-2 px-4 py-3 rounded-[var(--border-radius)] bg-[var(--bg-lighter)] text-sm font-medium text-[var(--danger)]"
+            style={{ boxShadow: "var(--shadow-sm)" }}
           >
             <CircleAlert className="w-4 h-4 flex-shrink-0" />
             {state.error}
           </div>
         )}
 
-        <DeadlineFormSubmit />
+        <div className="flex items-center gap-3">
+          <DeadlineFormSubmit />
+          {hasExisting && <RemoveDeadlineButton />}
+        </div>
       </form>
     </div>
   );
