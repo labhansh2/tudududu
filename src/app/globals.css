@@ -9,6 +9,7 @@
   --secondary: #737373;
   --accent: #059669;
   --success: #10b981;
+  --danger: #dc2626;
 
   /* Layered background system - Light Mode */
   /* Creating depth: darkest (page) → middle (containers) → lightest (cards) */
@@ -94,6 +95,7 @@
     --secondary: #a3a3a3;
     --accent: #10b981;
     --success: #059669;
+    --danger: #ef4444;
 
     /* Layered background system - Dark Mode */
     /* Creating depth: darkest (page) → middle (containers) → lightest (cards) */

@@ -50,19 +50,19 @@ export default function SessionTooltip() {
   const getStatusColorClass = () => {
     switch (hoveredSession.taskStatus) {
       case "completed":
-        return "bg-[var(--secondary)]";
+        return "bg-(--secondary)";
       case "active":
-        return "bg-[var(--accent)]";
+        return "bg-(--accent)";
       case "not_active":
-        return "bg-[var(--success)]";
+        return "bg-(--success)";
       default:
-        return "bg-[var(--secondary)]";
+        return "bg-(--secondary)";
     }
   };
 
   return (
     <div
-      className="fixed z-50 bg-[var(--bg-lightest)] rounded-[var(--border-radius)] p-4 pointer-events-none w-72 max-w-[calc(100vw-2rem)]"
+      className="fixed z-50 bg-(--bg-lightest) rounded-(--border-radius) p-4 pointer-events-none w-72 max-w-[calc(100vw-2rem)]"
       style={{
         left: `${hoveredPosition.x}px`,
         top: `${Math.max(16, hoveredPosition.y - 10)}px`,
@@ -70,7 +70,7 @@ export default function SessionTooltip() {
         boxShadow: "var(--shadow-lg)",
       }}
     >
-      <div className="text-xs text-[var(--secondary)] space-y-2 font-medium">
+      <div className="text-xs text-(--secondary) space-y-2 font-medium">
         <div className="break-words">
           {hoveredSession.startedAt.toLocaleDateString()} •{" "}
           {hoveredSession.startedAt.toLocaleTimeString([], {
@@ -87,7 +87,7 @@ export default function SessionTooltip() {
         </div>
         <div>
           Duration:{" "}
-          <span className="font-bold text-[var(--foreground)]">
+          <span className="font-bold text-foreground">
             {formatDuration(
               hoveredSession.startedAt,
               hoveredSession.endedAt || new Date(),

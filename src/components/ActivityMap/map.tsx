@@ -59,7 +59,7 @@ export default function ActivityMap({
     <div className="relative flex-1 min-h-0">
       <div
         ref={calendarRef}
-        className="rounded-t-lg rounded-b-none px-4 py-2 bg-[var(--card-bg)] overflow-x-auto h-full flex items-center"
+        className="rounded-t-lg rounded-b-none px-4 py-2 bg-(--card-bg) overflow-x-auto h-full flex items-center"
         style={{
           // Disable smooth scrolling initially to allow instant positioning
           scrollBehavior: "auto",

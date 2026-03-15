@@ -58,7 +58,7 @@ export default async function HourlyActivityGraph({
 
   return (
     <div
-      className="rounded-lg px-3 py-2 bg-[var(--card-bg)] h-full flex flex-col min-w-0 overflow-hidden"
+      className="rounded-lg px-3 py-2 bg-(--card-bg) h-full flex flex-col min-w-0 overflow-hidden"
       style={{
         boxShadow: "var(--shadow-sm)",
       }}
@@ -80,10 +80,10 @@ export default async function HourlyActivityGraph({
         <div className="flex flex-col sm:flex-row sm:items-center gap-1.5 sm:flex-wrap min-w-0">
           {/* Date badge - full width on mobile, inline on desktop */}
           <div
-            className="px-2 py-1 rounded text-xs bg-[var(--bg-lighter)] w-fit shrink-0"
+            className="px-2 py-1 rounded text-xs bg-(--bg-lighter) w-fit shrink-0"
             style={{ border: "1px solid var(--border)" }}
           >
-            <span className="text-[var(--secondary)] whitespace-nowrap">
+            <span className="text-(--secondary) whitespace-nowrap">
               {dateRangeText}
             </span>
           </div>
@@ -91,37 +91,37 @@ export default async function HourlyActivityGraph({
           {/* Stats row - wraps on small screens */}
           <div className="flex items-center gap-2 flex-wrap min-w-0">
             <div
-              className="px-2 py-1 rounded text-xs bg-[var(--bg-lighter)] shrink-0"
+              className="px-2 py-1 rounded text-xs bg-(--bg-lighter) shrink-0"
               style={{ border: "1px solid var(--border)" }}
             >
-              <span className="text-[var(--foreground)] font-semibold whitespace-nowrap">
+              <span className="text-foreground font-semibold whitespace-nowrap">
                 {stats.peakLabel}
               </span>
-              <span className="text-[var(--secondary)] ml-1 whitespace-nowrap">
+              <span className="text-(--secondary) ml-1 whitespace-nowrap">
                 peak
               </span>
             </div>
             <div
-              className="px-2 py-1 rounded text-xs bg-[var(--bg-lighter)] shrink-0"
+              className="px-2 py-1 rounded text-xs bg-(--bg-lighter) shrink-0"
               style={{ border: "1px solid var(--border)" }}
             >
-              <span className="text-[var(--foreground)] font-semibold whitespace-nowrap">
+              <span className="text-foreground font-semibold whitespace-nowrap">
                 {stats.totalHours}h
               </span>
-              <span className="text-[var(--secondary)] ml-1 whitespace-nowrap">
+              <span className="text-(--secondary) ml-1 whitespace-nowrap">
                 total
               </span>
             </div>
             <div
-              className="px-2 py-1 rounded text-xs bg-[var(--bg-lighter)] shrink-0"
+              className="px-2 py-1 rounded text-xs bg-(--bg-lighter) shrink-0"
               style={{ border: "1px solid var(--border)" }}
             >
-              <span className="text-[var(--foreground)] font-semibold whitespace-nowrap">
+              <span className="text-foreground font-semibold whitespace-nowrap">
                 {viewMode === ViewMode.WEEK
                   ? `${stats.avgWeeklyHours}h`
                   : `${stats.avgDailyHours}h`}
               </span>
-              <span className="text-[var(--secondary)] ml-1 whitespace-nowrap">
+              <span className="text-(--secondary) ml-1 whitespace-nowrap">
                 {viewMode === ViewMode.WEEK ? "weekly" : "daily"}
               </span>
             </div>

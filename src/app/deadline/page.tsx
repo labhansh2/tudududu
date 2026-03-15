@@ -14,15 +14,18 @@ export default async function Page() {
     redirect("/");
   }
 
-  const deadline = await db
+  const result = await db
     .select()
     .from(deadlines)
     .where(eq(deadlines.userId, userId))
-    .then((res) => res[0]?.deadline || new Date());
+    .then((res) => res[0] || null);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[var(--bg-darkest)]">
-      <DeadlineForm defaultValue={deadline} />
+    <div className="min-h-screen flex items-center justify-center bg-(--bg-darkest)">
+      <DeadlineForm
+        defaultValue={result?.deadline || new Date()}
+        hasExisting={!!result}
+      />
     </div>
   );
 }

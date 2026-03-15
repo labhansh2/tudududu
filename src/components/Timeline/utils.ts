@@ -204,13 +204,13 @@ export function getStatusColor(
 ): string {
   switch (status) {
     case "completed":
-      return "bg-[var(--secondary)]"; // Gray for completed
+      return "bg-(--secondary)"; // Gray for completed
     case "active":
-      return "bg-[var(--accent)]"; // Main accent color for active
+      return "bg-(--accent)"; // Main accent color for active
     case "not_active":
-      return "bg-[var(--success)]"; // Green for not active
+      return "bg-(--success)"; // Green for not active
     default:
-      return "bg-[var(--secondary)]";
+      return "bg-(--secondary)";
   }
 }
 
@@ -218,13 +218,13 @@ export function getTimeLineLayoutStyles(
   isFullPage: boolean,
   isFullHeight: boolean,
 ) {
-  let classes = "w-full bg-[var(--card-bg)] text-[var(--foreground)]";
+  let classes = "w-full bg-(--card-bg) text-foreground";
 
   if (isFullPage) {
     classes += " h-full flex flex-col p-4";
   } else {
     // Add shadow like activity map
-    classes += " p-4 sm:p-6 rounded-lg shadow-[var(--shadow-sm)]";
+    classes += " p-4 sm:p-6 rounded-lg shadow-(--shadow-sm)";
     if (isFullHeight) {
       classes += " h-full flex flex-col";
     }

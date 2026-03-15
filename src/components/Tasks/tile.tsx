@@ -76,9 +76,9 @@ export default function TaskTile({
 
   return (
     <div
-      className={`p-2.5 sm:p-3 rounded-[var(--border-radius)] transition-shadow ${getTaskStyles(task.status)} ${deadlineClasses} ${
+      className={`p-2.5 sm:p-3 rounded-(--border-radius) transition-shadow ${getTaskStyles(task.status)} ${deadlineClasses} ${
         activeTask?.id === task.id
-          ? "ring-2 ring-[var(--accent)] ring-opacity-50"
+          ? "ring-2 ring-(--accent) ring-opacity-50"
           : ""
       }`}
       style={{
@@ -154,7 +154,7 @@ export default function TaskTile({
       {/* Detailed view */}
       {isDetailedView && (
         <div
-          className="mt-2 pt-2 rounded-lg bg-[var(--bg-lighter)] p-2 sm:p-2.5"
+          className="mt-2 pt-2 rounded-lg bg-(--bg-lighter) p-2 sm:p-2.5"
           style={{ boxShadow: "var(--shadow-inset)" }}
         >
           <div className="flex items-center justify-between gap-2 sm:gap-2.5">
@@ -193,19 +193,19 @@ function Stats({ totalTime, longestSession }: StatsProps) {
   return (
     <div className="flex items-center gap-2 sm:gap-3">
       <div className="text-center">
-        <div className="text-lg font-bold text-[var(--foreground)] leading-none">
+        <div className="text-lg font-bold text-foreground leading-none">
           {(totalTime / 3600).toFixed(1)}h
         </div>
-        <div className="text-[10px] text-[var(--secondary)] uppercase tracking-wider mt-1 font-semibold">
+        <div className="text-[10px] text-(--secondary) uppercase tracking-wider mt-1 font-semibold">
           Total
         </div>
       </div>
-      <div className="w-px h-8 bg-[var(--border)]"></div>
+      <div className="w-px h-8 bg-(--border)"></div>
       <div className="text-center">
-        <div className="text-lg font-bold text-[var(--success)] leading-none">
+        <div className="text-lg font-bold text-(--success) leading-none">
           {(longestSession / 3600).toFixed(1)}h
         </div>
-        <div className="text-[10px] text-[var(--secondary)] uppercase tracking-wider mt-1 font-semibold">
+        <div className="text-[10px] text-(--secondary) uppercase tracking-wider mt-1 font-semibold">
           Best
         </div>
       </div>
@@ -256,7 +256,7 @@ function Checkbox({
     <>
       {toggleIsPending ? (
         <div
-          className="w-5 h-5 rounded flex items-center justify-center transition-all bg-[var(--accent)]"
+          className="w-5 h-5 rounded flex items-center justify-center transition-all bg-(--accent)"
           style={{ boxShadow: "var(--shadow-sm)" }}
         >
           <div className="w-2.5 h-2.5 rounded-sm bg-white animate-ping"></div>
@@ -267,8 +267,8 @@ function Checkbox({
           disabled={disabled}
           className={`w-5 h-5 rounded flex items-center justify-center transition-all relative ${
             checked
-              ? "bg-[var(--accent)]"
-              : "bg-[var(--bg-base)] hover:bg-[var(--bg-lighter)]"
+              ? "bg-(--accent)"
+              : "bg-(--bg-base) hover:bg-(--bg-lighter)"
           }`}
           style={
             checked
@@ -335,7 +335,7 @@ function TaskName({
             }
           }}
           onKeyUp={handleKeyPress}
-          className="w-full bg-transparent border-none outline-none text-[var(--foreground)] font-medium"
+          className="w-full bg-transparent border-none outline-none text-foreground font-medium"
           autoFocus
           disabled={editIsPending}
         />
@@ -343,8 +343,8 @@ function TaskName({
         <span
           className={`block truncate font-medium ${
             completed
-              ? "line-through text-[var(--secondary)]"
-              : "text-[var(--foreground)]"
+              ? "line-through text-(--secondary)"
+              : "text-foreground"
           }`}
         >
           {taskName}
@@ -371,7 +371,7 @@ function CompleteBtn({
     <>
       {completeIsPending ? (
         <div
-          className="w-6 h-6 rounded-full flex items-center justify-center transition-all bg-[var(--success)]"
+          className="w-6 h-6 rounded-full flex items-center justify-center transition-all bg-(--success)"
           style={{ boxShadow: "var(--shadow-sm)" }}
         >
           <div className="w-3 h-3 rounded-full bg-white animate-ping"></div>
@@ -382,8 +382,8 @@ function CompleteBtn({
           disabled={disabled}
           className={`w-6 h-6 rounded-full flex items-center justify-center transition-all ${
             completed
-              ? "bg-[var(--success)] cursor-default"
-              : "bg-[var(--bg-base)] hover:bg-[var(--success)] cursor-pointer"
+              ? "bg-(--success) cursor-default"
+              : "bg-(--bg-base) hover:bg-(--success) cursor-pointer"
           }`}
           style={
             completed
@@ -430,10 +430,10 @@ function Menu({
             e.preventDefault();
             setShowMenu(!showMenu);
           }}
-          className={`w-8 h-8 flex items-center justify-center text-[var(--secondary)] hover:text-[var(--foreground)] transition-all rounded-lg flex-shrink-0 ${
+          className={`w-8 h-8 flex items-center justify-center text-(--secondary) hover:text-foreground transition-all rounded-lg flex-shrink-0 ${
             showMenu
-              ? "bg-[var(--bg-lighter)]"
-              : "hover:bg-[var(--bg-lighter)]"
+              ? "bg-(--bg-lighter)"
+              : "hover:bg-(--bg-lighter)"
           }`}
           style={
             showMenu
@@ -458,7 +458,7 @@ function Menu({
               }}
             />
             <div
-              className="absolute right-0 top-10 z-[110] bg-[var(--bg-lightest)] rounded-[var(--border-radius)] py-1.5 min-w-[160px]"
+              className="absolute right-0 top-10 z-[110] bg-(--bg-lightest) rounded-(--border-radius) py-1.5 min-w-[160px]"
               style={{ boxShadow: "var(--shadow-lg)" }}
               onClick={(e) => {
                 e.stopPropagation();
@@ -475,7 +475,7 @@ function Menu({
                       setShowMenu(false);
                       setTimeout(() => onEditClick(), 0);
                     }}
-                    className="w-full px-4 py-2.5 text-left text-sm font-semibold text-[var(--foreground)] hover:bg-[var(--bg-lighter)] transition-colors"
+                    className="w-full px-4 py-2.5 text-left text-sm font-semibold text-foreground hover:bg-(--bg-lighter) transition-colors"
                   >
                     Edit
                   </button>
@@ -488,7 +488,7 @@ function Menu({
                         setShowMenu(false);
                         setTimeout(() => onAddDeadlineClick(), 0);
                       }}
-                      className="w-full px-4 py-2.5 text-left text-sm font-semibold text-[var(--foreground)] hover:bg-[var(--bg-lighter)] transition-colors"
+                      className="w-full px-4 py-2.5 text-left text-sm font-semibold text-foreground hover:bg-(--bg-lighter) transition-colors"
                     >
                       Add deadline
                     </button>

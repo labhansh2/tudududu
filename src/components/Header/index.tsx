@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { UserButton } from "@clerk/nextjs";
 import { auth } from "@clerk/nextjs/server";
-import { Edit } from "lucide-react";
+import { CalendarPlus, Edit } from "lucide-react";
 import Link from "next/link";
 
 import TimeZoneSetter from "@/components/TimeZoneSetter";
@@ -27,17 +27,15 @@ export default async function Header() {
   }
 
   const userDeadline = await getDeadline();
-
-  if (!userDeadline) {
-    redirect("/deadline");
-  }
+  const hasValidDeadline =
+    userDeadline && userDeadline.getTime() > Date.now();
 
   const { totalSecondsToday, sessionIsActive } =
     await getTotalSecondsToday();
 
   return (
     <header
-      className="bg-[var(--bg-lightest)] relative"
+      className="bg-(--bg-lightest) relative"
       style={{
         boxShadow: "var(--shadow-sm)",
         borderBottom: "1px solid var(--border-light)",
@@ -46,18 +44,32 @@ export default async function Header() {
       <div className="mx-auto px-3 sm:px-6">
         <div className="flex items-center justify-between h-16 gap-2">
           <div className="flex items-center gap-1 sm:gap-2 min-w-0 flex-1">
-            <Countdown
-              secondsLeft={
-                (userDeadline.getTime() - new Date().getTime()) / 1000
-              }
-            />
-
-            <Link
-              href="/deadline"
-              className="px-2 sm:px-3 py-1.5 text-sm font-medium text-[var(--secondary)] hover:text-[var(--foreground)] transition-all rounded-lg hover:bg-[var(--bg-lighter)] flex-shrink-0"
-            >
-              <Edit className="w-4 h-4" />
-            </Link>
+            {hasValidDeadline ? (
+              <>
+                <Countdown
+                  secondsLeft={
+                    (userDeadline.getTime() - new Date().getTime()) / 1000
+                  }
+                />
+                <Link
+                  href="/deadline"
+                  className="px-2 sm:px-3 py-1.5 text-sm font-medium text-(--secondary) hover:text-foreground transition-all rounded-lg hover:bg-(--bg-lighter) flex-shrink-0"
+                >
+                  <Edit className="w-4 h-4" />
+                </Link>
+              </>
+            ) : (
+              <Link
+                href="/deadline"
+                className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1.5 sm:py-2 rounded-(--border-radius) bg-(--bg-lighter) min-w-0 hover:bg-(--bg-base) transition-colors"
+                style={{ boxShadow: "var(--shadow-sm)" }}
+              >
+                <CalendarPlus className="w-4 h-4 text-(--secondary)" />
+                <span className="font-mono text-sm sm:text-base font-bold text-foreground">
+                  Set Milestone
+                </span>
+              </Link>
+            )}
           </div>
 
           <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">

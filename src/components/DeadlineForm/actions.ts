@@ -5,31 +5,46 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { fromZonedTime } from "date-fns-tz";
+import { eq } from "drizzle-orm";
 
 import { db } from "@/drizzle";
 import { deadlines } from "@/drizzle/schema";
 
-export async function submitDeadline(formData: FormData) {
+export type DeadlineFormState = {
+  error?: string;
+} | null;
+
+export async function submitDeadline(
+  _prevState: DeadlineFormState,
+  formData: FormData,
+): Promise<DeadlineFormState> {
   const deadline = formData.get("deadline") as string;
+
+  if (!deadline) {
+    return { error: "Please select a deadline date and time" };
+  }
 
   const { userId } = await auth();
 
   if (!userId) {
-    throw new Error("User not authenticated");
+    return { error: "You must be signed in to set a deadline" };
   }
 
   const cookieStore = await cookies();
   const timezone = cookieStore.get("timezone")?.value;
 
   if (!timezone) {
-    throw new Error("Timezone not found");
+    return { error: "Timezone not detected. Please refresh and try again." };
   }
 
   const utcDate = fromZonedTime(deadline, timezone);
-  const now = new Date();
 
-  if (utcDate <= now) {
-    throw new Error("Deadline must be in the future");
+  if (isNaN(utcDate.getTime())) {
+    return { error: "Invalid date format. Please select a valid date." };
+  }
+
+  if (utcDate <= new Date()) {
+    return { error: "Deadline must be in the future" };
   }
 
   try {
@@ -45,10 +60,27 @@ export async function submitDeadline(formData: FormData) {
       });
   } catch (error) {
     console.error(error);
-    throw new Error("Database error occurred");
+    return { error: "Failed to save deadline. Please try again." };
   }
 
-  // Only redirect if the database operation was successful
+  revalidatePath("/");
+  redirect("/");
+}
+
+export async function removeDeadline(): Promise<DeadlineFormState> {
+  const { userId } = await auth();
+
+  if (!userId) {
+    return { error: "You must be signed in to remove a deadline" };
+  }
+
+  try {
+    await db.delete(deadlines).where(eq(deadlines.userId, userId));
+  } catch (error) {
+    console.error(error);
+    return { error: "Failed to remove deadline. Please try again." };
+  }
+
   revalidatePath("/");
   redirect("/");
 }
